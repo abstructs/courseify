@@ -3,7 +3,14 @@ import logo from './logo.svg';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import VideosContainer from './VideosContainer.js';
-import Navbar from './Navbar.js';
+import Home from './Home';
+import Navbar from './Navbar';
+import {
+  BrowserRouter as Router,
+  Route,
+  Link
+} from 'react-router-dom';
+import SignUp from './SignUp';
 
 class App extends Component {
   render() {
@@ -20,4 +27,15 @@ class App extends Component {
   }
 }
 
-export default App;
+const Main = () => (
+  <Router>
+    <div>
+      <Navbar />
+      <Route exact path="/" component={Home}/>
+      <Route path="/videos" component={VideosContainer}/>
+      <Route path="/signup" component={SignUp}/>
+    </div>
+  </Router>
+)
+
+export default Main;

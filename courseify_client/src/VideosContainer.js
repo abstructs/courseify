@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import axios from 'axios';
+import Navbar from './Navbar.js';
 
 class VideosContainer extends Component {
     constructor(props) {
@@ -21,7 +22,8 @@ class VideosContainer extends Component {
 
     render() {
         return (
-        <div>
+        <div className="bg-dark">
+            {/* <Navbar/> */}
             <div className="container">
                 <div className="row">
                     <div className="offset-7">

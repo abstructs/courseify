@@ -49,3 +49,6 @@ gem 'rename'
 
 # enable CORS so clients can make requests
 gem 'rack-cors', :require => 'rack/cors'
+
+# scaffold user creation and auth logic
+gem 'devise'
