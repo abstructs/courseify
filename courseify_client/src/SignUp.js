@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import axios from 'axios';
+import { Redirect } from 'react-router';
 
 class SignUp extends Component {
     constructor(props) {
@@ -8,7 +9,12 @@ class SignUp extends Component {
         this.state = {
             username: "",
             email: "",
-            password: ""
+            password: "",
+            errors: {
+                emailErrors: [],
+                passwordErrors: []
+            },
+            redirect: false
         }
     }
 
@@ -38,17 +44,50 @@ class SignUp extends Component {
         {
             email: this.state.email,
             password: this.state.password,
-            password_confirmation: this.state.password
+            password_confirmation: this.state.passwordConfirmation
         })
-        .then(res => console.log(res))
-        .catch(err => console.log(err));
+        .then(res => {
+            this.setState({
+                redirect: true
+            })
+        })
+        .catch(err => {
+            const errors = err.response.data.errors;
+            const emailErrors = errors.email || [];
+            const passwordErrors = errors.password || [];
+            // console.log(emailErrors)
+            this.setState({
+                errors: {
+                    emailErrors,
+                    passwordErrors
+                }
+            })
+        });
     }
 
     render() {
+        const { redirect } = this.state;
+        if (redirect) {
+            return <Redirect to='/' />;
+        }
+
         return (
-        <div className="bg-dark pt-5">
+        <div className="bg-dark">
+            {this.state.errors.emailErrors.map(errMsg => {
+                return (
+                    <div className="alert alert-danger m-0 border-0" role="alert">
+                        {"Email " + errMsg}
+                    </div>
+            )})}
+            {this.state.errors.passwordErrors.map(errMsg => {
+                    return (
+                        <div className="alert alert-danger m-0 border-0" role="alert">
+                            {"Password " + errMsg}
+                        </div>
+                    );
+            })}
             <h1 className="text-center text-light mb-5">SignUp</h1>
-            <div className="">
+            <div className="pt-5">
                 <form>
                     <div className="form-group col-md-6 offset-3">
                         <label className="text-light" htmlFor="email">Email</label>
@@ -56,7 +95,7 @@ class SignUp extends Component {
                         <br/>
                         <label className="text-light" htmlFor="password">Password</label>
                         <input onChange={this.handleInputChange.bind(this)} className="form-control" type="password" name="password" />
-                        <input onClick={this.handleSubmit.bind(this)} className="btn btn-primary mt-3" value="Submit" />
+                        <button onClick={this.handleSubmit.bind(this)} className="btn btn-primary mt-3" type="button">Submit</button>
                     </div>
                 </form>
             </div>
