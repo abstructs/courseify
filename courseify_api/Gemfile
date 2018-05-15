@@ -14,7 +14,7 @@ gem 'puma', '~> 3.11'
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
 # Use ActiveModel has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
+gem 'bcrypt', '~> 3.1.7'
 
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
@@ -50,8 +50,5 @@ gem 'rename'
 # enable CORS so clients can make requests
 gem 'rack-cors', :require => 'rack/cors'
 
-# scaffold user creation and auth logic
-gem 'devise'
-
 # handle tokens for api auth
-gem 'devise_token_auth'
+gem 'knock'

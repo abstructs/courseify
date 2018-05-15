@@ -11,6 +11,7 @@ import {
   Link
 } from 'react-router-dom';
 import SignUp from './SignUp';
+import LogIn from './LogIn';
 
 class App extends Component {
   render() {
@@ -34,6 +35,7 @@ const Main = () => (
       <Route exact path="/" component={Home}/>
       <Route path="/videos" component={VideosContainer}/>
       <Route path="/signup" component={SignUp}/>
+      <Route path="/login" component={LogIn}/>
     </div>
   </Router>
 )
