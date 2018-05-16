@@ -46,7 +46,7 @@ class LogIn extends Component {
                 "password": this.state.password
             }
         }
-        axios.post("http://localhost:3000/api/v1/user_token", req)
+        axios.post("http://localhost:3000/api/v1/users/user_token", req)
         .then(res => {
             console.log(res);
             // this.setState({

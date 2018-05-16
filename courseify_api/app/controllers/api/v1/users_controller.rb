@@ -1,8 +1,9 @@
 class Api::V1::UsersController < ApplicationController
-    def create
+  # skip_before_action :verify_authenticity_token
+
+  def create
     u = User.new users_params
 
-    puts u
     if u.save
       render status: 200
     else

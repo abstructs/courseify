@@ -3,10 +3,9 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :videos
       resources :users
-      post 'user_token' => 'user_token#create'
+      post 'users/user_token' => 'user_token#create'
     end
   end
-
   # devise_for :users, controllers: {
   #   sessions: 'users/sessions'
   # }
