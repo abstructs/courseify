@@ -13,7 +13,12 @@ class VideosContainer extends Component {
     }
 
     componentDidMount() {
-        axios.get("http://localhost:3000/api/v1/videos.json")
+        axios.get("http://localhost:3000/api/v1/videos.json",
+        {
+            'headers': { 
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+        })
         .then(response => {
             console.log(response)
             this.setState({videos: response.data})

@@ -12,6 +12,7 @@ import {
 } from 'react-router-dom';
 import SignUp from './SignUp';
 import LogIn from './LogIn';
+import LogOut from './LogOut';
 
 class App extends Component {
   render() {
@@ -28,14 +29,27 @@ class App extends Component {
   }
 }
 
+const isAuthed = () => {
+  return localStorage.getItem('token') !== null;
+}
+
+// const requireAuth = () => {
+//   if(!localStorage.getItem('token')) {
+//     <Redirect to={'/login'}/>
+//   }
+// }
+
 const Main = () => (
+
+  
   <Router>
     <div>
-      <Navbar />
+      <Navbar isLoggedIn={isAuthed} />
       <Route exact path="/" component={Home}/>
       <Route path="/videos" component={VideosContainer}/>
       <Route path="/signup" component={SignUp}/>
       <Route path="/login" component={LogIn}/>
+      <Route path="/logout" component={LogOut}/>
     </div>
   </Router>
 )

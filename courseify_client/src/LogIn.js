@@ -19,7 +19,7 @@ class LogIn extends Component {
     }
 
     componentDidMount() {
-        console.log(this.state)
+        // console.log(this.state)
         // axios.get("http://localhost:3000/api/v1/videos.json")
         // .then(response => {
         //     console.log(response)
@@ -36,7 +36,7 @@ class LogIn extends Component {
             [name]: value
         });
 
-        console.log(this.state)
+        // console.log(this.state)
     }
 
     handleSubmit(event) {
@@ -48,23 +48,24 @@ class LogIn extends Component {
         }
         axios.post("http://localhost:3000/api/v1/users/user_token", req)
         .then(res => {
-            console.log(res);
-            // this.setState({
-            //     redirect: true
-            // })
+            const jwt = res.data.jwt;
+            localStorage.setItem("token", jwt);
+            this.setState({
+                redirect: true
+            });
         })
         .catch(err => {
-            console.log(err);
-            // const errors = err.response.data.errors;
-            // const emailErrors = errors.email || [];
-            // const passwordErrors = errors.password || [];
-            // // console.log(emailErrors)
-            // this.setState({
-            //     errors: {
-            //         emailErrors,
-            //         passwordErrors
-            //     }
-            // })
+            console.log(err.response.data);
+            const errors = err.response.data.errors;
+            const emailErrors = errors.email || [];
+            const passwordErrors = errors.password || [];
+            // console.log(emailErrors)
+            this.setState({
+                errors: {
+                    emailErrors,
+                    passwordErrors
+                }
+            })
         });
     }
 
