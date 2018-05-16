@@ -7,9 +7,9 @@ class SignUp extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: "",
             email: "",
             password: "",
+            passwordConfirmation: "",
             errors: {
                 emailErrors: [],
                 passwordErrors: []
@@ -40,11 +40,14 @@ class SignUp extends Component {
     }
 
     handleSubmit(event) {
+        console.log(this.state.passwordConfirmation)
         axios.post("http://localhost:3000/api/v1/users/",
         {
-            email: this.state.email,
-            password: this.state.password,
-            password_confirmation: this.state.passwordConfirmation
+            user: {
+                email: this.state.email,
+                password: this.state.password,
+                password_confirmation: this.state.passwordConfirmation
+            }
         })
         .then(res => {
             this.setState({
@@ -95,6 +98,9 @@ class SignUp extends Component {
                         <br/>
                         <label className="text-light" htmlFor="password">Password</label>
                         <input onChange={this.handleInputChange.bind(this)} className="form-control" type="password" name="password" />
+                        <br/>
+                        <label className="text-light" htmlFor="passwordConfirmation">Password Confirmation</label>
+                        <input onChange={this.handleInputChange.bind(this)} className="form-control" type="password" name="passwordConfirmation" />
                         <button onClick={this.handleSubmit.bind(this)} className="btn btn-primary mt-3" type="button">Submit</button>
                     </div>
                 </form>
