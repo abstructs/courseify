@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import axios from 'axios';
 import { Redirect } from 'react-router';
+import Auth from './Auth';
 
 class LogIn extends Component {
     constructor(props) {
@@ -41,12 +42,13 @@ class LogIn extends Component {
 
     handleSubmit(event) {
         const req = {
-            "auth": {
+            // "auth": {
                 "email": this.state.email,
                 "password": this.state.password
-            }
+            // }
         }
-        axios.post("http://localhost:3000/api/v1/users/user_token", req)
+    
+        Auth().authenticate(req)
         .then(res => {
             const jwt = res.data.jwt;
             localStorage.setItem("token", jwt);

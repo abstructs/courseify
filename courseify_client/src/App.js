@@ -29,9 +29,7 @@ class App extends Component {
   }
 }
 
-const isAuthed = () => {
-  return localStorage.getItem('token') !== null;
-}
+
 
 // const requireAuth = () => {
 //   if(!localStorage.getItem('token')) {
@@ -40,11 +38,9 @@ const isAuthed = () => {
 // }
 
 const Main = () => (
-
-  
   <Router>
     <div>
-      <Navbar isLoggedIn={isAuthed} />
+      <Navbar />
       <Route exact path="/" component={Home}/>
       <Route path="/videos" component={VideosContainer}/>
       <Route path="/signup" component={SignUp}/>
