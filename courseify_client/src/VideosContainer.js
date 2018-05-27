@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import './App.css';
 import axios from 'axios';
 import Navbar from './Navbar.js';
+import Auth from './Auth';
+import { Redirect } from 'react-router';
 
 class VideosContainer extends Component {
     constructor(props) {
@@ -26,14 +28,18 @@ class VideosContainer extends Component {
     }
 
     render() {
+        if(!Auth().isAuthenticated()) {
+            return <Redirect to='/'/>;
+        }
+
         return (
-        <div className="bg-dark">
+        <div className="bg-light">
             {/* <Navbar/> */}
             <div className="container">
                 <div className="row">
                     <div className="offset-7">
                         <br/>
-                        <h1 class="text-light text-right font-weight-light">Videos</h1>
+                        <h1 class="text-dark text-right font-weight-light">Videos</h1>
                         <hr/>
                         <br/>
                         <br/>
@@ -43,11 +49,11 @@ class VideosContainer extends Component {
             
             <div className="container">
                 <div className="row">
-                    <div id="side-menu" className="bg-dark col-md-4 text-light">
+                    <div id="side-menu" className="bg-light col-md-4 text-light">
                         {this.state.videos.map(video => {
                             return (
                                 <div>
-                                    <button className={"btn btn-lg btn-block " + (video.id == this.state.active_video_id ? "btn-outline-info" : "btn-outline-light")}>
+                                    <button className={"btn btn-lg btn-block " + (video.id == this.state.active_video_id ? "btn-outline-info" : "btn-outline-dark")}>
                                         <small className="font-weight-light">Title: {video.title}</small>
                                         <br/>
                                         <small className="font-weight-light">Description: {video.description}</small>
@@ -59,7 +65,7 @@ class VideosContainer extends Component {
                             );
                         })}
                     </div>
-                    <div id="player" className="col-md-6 bg-dark">
+                    <div id="player" className="col-md-6 bg-light">
                         <video width="700" height="282" controls>
                             <source src="movie.mp4" type="video/mp4"/>
                             <source src="movie.ogg" type="video/ogg"/>

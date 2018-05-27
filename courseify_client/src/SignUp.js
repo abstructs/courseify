@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import axios from 'axios';
 import { Redirect } from 'react-router';
+import Auth from './Auth';
 
 class SignUp extends Component {
     constructor(props) {
@@ -40,20 +41,18 @@ class SignUp extends Component {
     }
 
     handleSubmit(event) {
-        console.log(this.state.passwordConfirmation)
-        axios.post("http://localhost:3000/api/v1/users/",
-        {
+        const payload = {
             user: {
                 email: this.state.email,
                 password: this.state.password,
                 password_confirmation: this.state.passwordConfirmation
             }
-        })
-        .then(res => {
-            this.setState({
-                redirect: true
-            })
-        })
+        }
+        
+        axios.post("http://localhost:3000/api/v1/users/", payload)
+        .then(res => Auth().authenticate(payload.user))
+        .then(res => localStorage.setItem('token', res.data.jwt))
+        .then(res => this.setState({redirect: true}))
         .catch(err => {
             const errors = err.response.data.errors;
             const emailErrors = errors.email || [];

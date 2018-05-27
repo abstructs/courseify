@@ -52,6 +52,7 @@ class LogIn extends Component {
         .then(res => {
             const jwt = res.data.jwt;
             localStorage.setItem("token", jwt);
+            
             this.setState({
                 redirect: true
             });

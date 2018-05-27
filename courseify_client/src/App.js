@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+// import 'jquery';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import VideosContainer from './VideosContainer.js';
 import Home from './Home';
 import Navbar from './Navbar';
