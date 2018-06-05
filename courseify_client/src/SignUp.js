@@ -74,7 +74,7 @@ class SignUp extends Component {
         }
 
         return (
-        <div className="bg-dark">
+        <div className="bg-light">
             {this.state.errors.emailErrors.map(errMsg => {
                 return (
                     <div className="alert alert-danger m-0 border-0" role="alert">
@@ -88,19 +88,21 @@ class SignUp extends Component {
                         </div>
                     );
             })}
-            <h1 className="text-center text-light mb-5">SignUp</h1>
-            <div className="pt-5">
+            <br/>
+            <h1 className="text-center text-dark">Sign Up</h1>
+            <p className="text-center text-dark">Ready to get this party rolling?... Oh yeah, if you're already a member hit <a href="/login">this</a>.</p>
+            <div className="pt-2">
                 <form>
                     <div className="form-group col-md-6 offset-3">
-                        <label className="text-light" htmlFor="email">Email</label>
+                        <label className="text-dark" htmlFor="email">Email</label>
                         <input onChange={this.handleInputChange.bind(this)} className="form-control" type="email" name="email" />
                         <br/>
-                        <label className="text-light" htmlFor="password">Password</label>
+                        <label className="text-dark" htmlFor="password">Password</label>
                         <input onChange={this.handleInputChange.bind(this)} className="form-control" type="password" name="password" />
                         <br/>
-                        <label className="text-light" htmlFor="passwordConfirmation">Password Confirmation</label>
+                        <label className="text-dark" htmlFor="passwordConfirmation">Password Confirmation</label>
                         <input onChange={this.handleInputChange.bind(this)} className="form-control" type="password" name="passwordConfirmation" />
-                        <button onClick={this.handleSubmit.bind(this)} className="btn btn-primary mt-3" type="button">Submit</button>
+                        <button onClick={this.handleSubmit.bind(this)} className="btn mt-3 pr-5 pl-5 text-white" style={{backgroundColor: "#ff6000"}} type="button">Join</button>
                     </div>
                 </form>
             </div>

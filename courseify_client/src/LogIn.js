@@ -79,7 +79,7 @@ class LogIn extends Component {
         }
 
         return (
-        <div className="bg-dark">
+        <div className="bg-light">
             {this.state.errors.emailErrors.map(errMsg => {
                 return (
                     <div className="alert alert-danger m-0 border-0" role="alert">
@@ -93,16 +93,18 @@ class LogIn extends Component {
                         </div>
                     );
             })}
-            <h1 className="text-center text-light mb-5">Log In</h1>
-            <div className="pt-5">
+            <br/>
+            <h1 className="text-center text-dark">Log In</h1>
+            <p className="text-center">This is the cool kids club! Not a <a href="/signup">member</a>?</p>
+            <div className="pt-2">
                 <form>
                     <div className="form-group col-md-6 offset-3">
-                        <label className="text-light" htmlFor="email">Email</label>
+                        <label className="text-dark" htmlFor="email">Email</label>
                         <input onChange={this.handleInputChange.bind(this)} className="form-control" type="email" name="email" />
                         <br/>
-                        <label className="text-light" htmlFor="password">Password</label>
+                        <label className="text-dark" htmlFor="password">Password</label>
                         <input onChange={this.handleInputChange.bind(this)} className="form-control" type="password" name="password" />
-                        <button onClick={this.handleSubmit.bind(this)} className="btn btn-primary mt-3" type="button">Submit</button>
+                        <button onClick={this.handleSubmit.bind(this)} className="btn mt-3 pr-5 pl-5 text-white" style={{backgroundColor: "#ff6000"}} type="button">Get In</button>
                     </div>
                 </form>
             </div>

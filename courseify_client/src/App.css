@@ -1,10 +1,14 @@
-.App {
+/* .App {
   text-align: center;
-}
+} */
 
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
   height: 80px;
+}
+
+footer a, p a {
+  color: #ff6000 !important;
 }
 
 .App-header {
@@ -27,7 +31,15 @@
   to { transform: rotate(360deg); }
 }
 
-html {
+/* html { */
   /* background-color: #343a40; */
+/* } */
+
+.landing-img {
+  object-fit: cover;
+  height: 100px;
 }
 
+.landing-strip {
+  height: 100px !important;
+}

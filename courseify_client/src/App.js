@@ -7,6 +7,8 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import VideosContainer from './VideosContainer.js';
 import Home from './Home';
 import Navbar from './Navbar';
+import Footer from './Footer';
+import Profile from './Profile';
 import {
   BrowserRouter as Router,
   Route,
@@ -19,7 +21,7 @@ import LogOut from './LogOut';
 class App extends Component {
   render() {
     return (
-      <div className="App bg-dark">
+      <div className="App bg-light">
         <Navbar />
         {/* <header className="App-header"> */}
           {/* <img src={logo} className="App-logo" alt="logo" /> */}
@@ -45,9 +47,11 @@ const Main = () => (
       <Navbar />
       <Route exact path="/" component={Home}/>
       <Route path="/videos" component={VideosContainer}/>
+      <Route path="/profile" component={Profile}/>
       <Route path="/signup" component={SignUp}/>
       <Route path="/login" component={LogIn}/>
       <Route path="/logout" component={LogOut}/>
+      <Footer />
     </div>
   </Router>
 )

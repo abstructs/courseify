@@ -4,6 +4,8 @@ class Api::V1::VideosController < ApplicationController
 
   # GET /videos
   def index
+    puts current_user
+
     @videos = Video.all
 
     render json: @videos

@@ -11,6 +11,7 @@ class Navbar extends Component {
 
     render() {
         const isLoggedIn = Auth().isAuthenticated();
+        const profileLink = isLoggedIn ? <li className="nav-item"><a className="nav-link" href="/profile">Profile</a></li> : <div></div>;
         const videoLink = isLoggedIn  ? <li className="nav-item"><a className="nav-link" href="/videos">Videos</a></li> : <div></div>;
         const rightNav = !isLoggedIn ?   <ul className="navbar-nav ml-auto mr-5">
                                             <li className="nav-item">
@@ -33,10 +34,8 @@ class Navbar extends Component {
                     <li className="nav-item active">
                         <a className="nav-link" href="/">Home <span className="sr-only">(current)</span></a>
                     </li>
+                    {profileLink}
                     {videoLink}
-                    <li className="nav-item">
-                        <a className="nav-link" href="#">About</a>
-                    </li>
                 </ul>
                 {rightNav}
             </nav>
