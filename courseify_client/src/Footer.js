@@ -23,7 +23,7 @@ class Footer extends Component {
                         <div className="col-md-3 offset-1">
                             <h4>Commited To Helping You Learn</h4>
                             <small>Courseify is proud to be participating in making resources on the web more open. We know how hard it is to find good and credible resources, 
-                               especailly when you are about to dedicate months of your time working on it.</small>
+                                   so we aim to make it easy :).</small>
                         </div>
 
                         <div className="col-md-3 offset-1">
