@@ -93,7 +93,7 @@ class SignUp extends Component {
             <p className="text-center text-dark">Ready to get this party rolling?... Oh yeah, if you're already a member hit <a href="/login">this</a>.</p>
             <div className="pt-2">
                 <form>
-                    <div className="form-group col-md-6 offset-3">
+                    <div className="form-group col-md-6 m-auto">
                         <label className="text-dark" htmlFor="email">Email</label>
                         <input onChange={this.handleInputChange.bind(this)} className="form-control" type="email" name="email" />
                         <br/>

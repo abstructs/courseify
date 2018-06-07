@@ -29,7 +29,7 @@ class LandingPage extends Component {
           <h1 className="text-center mb-5 text-dark">Three Reasons To Try Courseify</h1>
           <hr/>
 
-          <div className="row mt-5 h-5">
+           <div className="row mt-5 h-5 text-center mr-auto">
             
             <div className="col-md-3 offset-1">
               {/* <img className="card-img-top img-fluid" src={teacherImage} alt="Card image cap"/> */}
@@ -42,7 +42,7 @@ class LandingPage extends Component {
               </div>            
             </div>
 
-            <div className="col-md-4">
+            <div className="col-md-4 text-center">
               <div className="card border border-light bg-light" style={{minHeight: "175px"}}>
                 <div className="card-body">
                   <h5 className="card-title">Your People</h5>

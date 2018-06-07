@@ -4,6 +4,7 @@ Rails.application.routes.draw do
       resources :videos
       resources :users
       post 'users/user_token' => 'user_token#create'
+      get '/profile' => 'users#profile'
     end
   end
   # devise_for :users, controllers: {
