@@ -9,9 +9,9 @@ const Auth = () => ({
     },
 
     headers: () => { 
-      return {
-        'headers': { 'Authorization': 'Bearer ' + localStorage.getItem('token') } 
-      } 
+      const token = localStorage.getItem('token');
+      return { 'Authorization': `Bearer ${token}` }
+       
     }
 })
 
