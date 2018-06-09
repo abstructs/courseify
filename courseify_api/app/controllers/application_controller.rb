@@ -1,9 +1,9 @@
 class ApplicationController < ActionController::API
     include Knock::Authenticable
 
-    # private
+    private
 
-    # def authenticate_v1_user
+    # def authenticate_api_v1_user
     #     authenticate_for Api::V1::User
     # end
 

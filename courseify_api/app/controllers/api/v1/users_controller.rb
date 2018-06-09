@@ -1,6 +1,7 @@
 class Api::V1::UsersController < ApplicationController
   # skip_before_action :verify_authenticity_token
-  before_action :authenticate_user, only: [:profile, :update  ]
+  before_action :authenticate_user, only: [:profile, :update]
+  
   def index
     @users = User.all
 
@@ -8,16 +9,15 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def update
+    @user = current_user
     puts "\n\n\n"
-    puts current_user
+    puts params
     puts "\n\n\n"
-    # @user = current_user
-    
-    # if @user.update(update_params)
-    #     render status: 200
-    # else
-    #   render json: { errors: u.errors }, status: 400
-    # end 
+    if @user.update(update_params)
+        render status: 200
+    else
+      render json: { errors: @user.errors }, status: 400
+    end 
   end
 
   def show
@@ -32,7 +32,18 @@ class Api::V1::UsersController < ApplicationController
     @user = current_user
 
     if @user
-      render json: { email: @user.email, id: @user.id }
+      u = { 
+        id: @user.id, 
+        first_name: @user.first_name, 
+        last_name: @user.last_name, 
+        headline: @user.headline, 
+        education: @user.education, 
+        industry: @user.industry, 
+        country: @user.country, 
+        summary: @user.summary
+      }
+
+      render json: { user: u }
     end
   end
 
@@ -53,7 +64,7 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def update_params
-    params.require(:user).permit(:first_name, :last_name, :headline, :education, :industry, :country, :summary)
+    params.permit(:first_name, :last_name, :headline, :education, :industry, :country, :summary)
   end
 
   # def find_param

@@ -4,9 +4,13 @@ class User < ApplicationRecord
   
   validates_format_of :email, :with => /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/
   # validates :password, :email, presence: true
-  validates :password, length: { in: 6..20 }
-  validates :email, uniqueness: true
-  validate :check_password_confirmation
+  validates :password, length: { in: 6..20 }, on: :create
+  validates :email, uniqueness: true, on: :create
+  validate :check_password_confirmation, on: :create
+
+  # validates :password, length: { in: 6..20 }, on: :update, if :password_changed?
+  # validates :email, uniqueness: true, on: :update, if :password_changed?
+  # validate :check_password_confirmation, on: :update, if :password_changed?
 
   # before_save :hash_password, :if => proc{ |u| !u.password.blank? }
   
@@ -27,5 +31,11 @@ class User < ApplicationRecord
     # e.g.
     email = request.params["auth"] && request.params["auth"]["email"]
     self.find_by email: email
+  end
+
+  private
+
+  def password_changed?
+    !self.password.blank?
   end
 end
