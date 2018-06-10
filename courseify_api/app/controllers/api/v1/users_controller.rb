@@ -3,9 +3,9 @@ class Api::V1::UsersController < ApplicationController
   before_action :authenticate_user, only: [:profile, :update]
   
   def index
-    @users = User.all
+    @users = User.select(User.column_names - ['password_digest', 'created_at', 'updated_at', 'sign_in_count'])
 
-    render json: @users
+    render json: { users: @users }
   end
 
   def update

@@ -3,6 +3,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :videos
       resources :users
+      resources :recommendations
       post 'users/user_token' => 'user_token#create'
       get '/profile' => 'users#profile'
     end

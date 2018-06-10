@@ -17,6 +17,7 @@ import {
 import SignUp from './SignUp';
 import LogIn from './LogIn';
 import LogOut from './LogOut';
+import RecommendContainer from './Recommend';
 
 class App extends Component {
   render() {
@@ -47,6 +48,7 @@ const Main = () => (
       <Navbar />
       <Route exact path="/" component={Home}/>
       <Route path="/videos" component={VideosContainer}/>
+      <Route path="/recommend" component={RecommendContainer}/>
       <Route path="/profile" component={Profile}/>
       <Route path="/signup" component={SignUp}/>
       <Route path="/login" component={LogIn}/>
