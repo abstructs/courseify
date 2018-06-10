@@ -3,6 +3,7 @@ import './App.css';
 import axios from 'axios';
 import { Redirect } from 'react-router';
 import Auth from './Auth';
+import Alert from './Alert';
 
 class SignUp extends Component {
     constructor(props) {
@@ -15,6 +16,7 @@ class SignUp extends Component {
                 emailErrors: [],
                 passwordErrors: []
             },
+            messages: [],
             redirect: false
         }
     }
@@ -50,19 +52,22 @@ class SignUp extends Component {
         }
         
         axios.post("http://localhost:3000/api/v1/users/", payload)
-        .then(res => Auth().authenticate(payload.user))
-        .then(res => localStorage.setItem('token', res.data.jwt))
-        .then(res => this.setState({redirect: true}))
+        // .then(res => Auth().authenticate(payload.user))
+        // .then(res => localStorage.setItem('token', res.data.jwt))
+        // .then(res => this.setState({redirect: true}))
         .catch(err => {
-            const errors = err.response.data.errors;
-            const emailErrors = errors.email || [];
-            const passwordErrors = errors.password || [];
+            const messages = err.response.data.messages;
+            // const errors = err.response.data.errors;
+            // const emailErrors = errors.email || [];
+            // const passwordErrors = errors.password || [];
+            // console.log(err.response);
             // console.log(emailErrors)
             this.setState({
-                errors: {
-                    emailErrors,
-                    passwordErrors
-                }
+                // errors: {
+                //     emailErrors,
+                //     passwordErrors
+                // },
+                messages
             })
         });
     }
@@ -75,7 +80,7 @@ class SignUp extends Component {
 
         return (
         <div className="bg-light">
-            {this.state.errors.emailErrors.map(errMsg => {
+            {/* {this.state.errors.emailErrors.map(errMsg => {
                 return (
                     <div className="alert alert-danger m-0 border-0" role="alert">
                         {"Email " + errMsg}
@@ -87,6 +92,9 @@ class SignUp extends Component {
                             {"Password " + errMsg}
                         </div>
                     );
+            })} */}
+            {this.state.messages.map(message => {
+                return <Alert message={message} />;
             })}
             <br/>
             <h1 className="text-center text-dark">Sign Up</h1>

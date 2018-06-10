@@ -3,6 +3,10 @@ class ApplicationController < ActionController::API
 
     private
 
+    def flash_messages(entity, type="success")
+        entity.errors.full_messages.map { |txt| { text: txt, type: type } }
+    end
+
     # def authenticate_api_v1_user
     #     authenticate_for Api::V1::User
     # end

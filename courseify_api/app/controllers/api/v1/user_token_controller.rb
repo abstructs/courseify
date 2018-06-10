@@ -26,7 +26,7 @@ class Api::V1::UserTokenController < Knock::AuthTokenController
     end
 
     def authenticate
-        puts(auth_params)
+        # puts(auth_params)
         if !entity.present?
             raise InvalidEmail
         elsif !entity.authenticate(auth_params[:password])

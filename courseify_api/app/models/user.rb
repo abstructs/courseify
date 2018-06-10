@@ -23,7 +23,7 @@ class User < ApplicationRecord
   # end
 
   def check_password_confirmation
-    errors.add(:password, " and password confirmation do not match") if password != password_confirmation
+    errors.add(:password, "and password confirmation do not match") if password != password_confirmation
   end 
 
   def self.from_token_request request

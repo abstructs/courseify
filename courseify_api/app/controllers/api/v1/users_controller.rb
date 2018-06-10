@@ -48,12 +48,16 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def create
-    u = User.new users_params
+    @user = User.new users_params
 
-    if u.save
+    if @user.save
       render status: 200
     else
-      render json: { errors: u.errors }, status: 400
+      puts "\n\n\n"
+      puts(flash_messages(@user, "danger"))
+      puts "\n\n\n"
+      # errors: flash_messages(@user, "danger"),
+      render json: { messages: flash_messages(@user, "danger") }, status: 400
     end
   end
 
