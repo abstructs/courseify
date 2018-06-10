@@ -124,9 +124,7 @@ class Profile extends Component {
     }
 
     componentWillMount() {
-        if(this.getMatch()) {
-            this.setUserInfo();
-        }
+        this.setUserInfo();
     }
 
     // EFFECTS: Manages the data set on the profile page depending on if it's the current users profile or another user's
@@ -184,9 +182,9 @@ class Profile extends Component {
     render() {
         const isLoggedIn = Auth().isAuthenticated();
         
-        // if(!isLoggedIn) {
-        //     return <Redirect to='/'/>;
-        // }
+        if(!isLoggedIn && !this.getMatch()) {
+            return <Redirect to='/'/>;
+        }
 
         if(Object.keys(this.state.profile_info).length == 0) {
             return <div>Loading</div>
