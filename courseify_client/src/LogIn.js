@@ -3,6 +3,7 @@ import './App.css';
 import axios from 'axios';
 import { Redirect } from 'react-router';
 import Auth from './Auth';
+import Alert from './Alert';
 
 class LogIn extends Component {
     constructor(props) {
@@ -15,6 +16,7 @@ class LogIn extends Component {
                 emailErrors: [],
                 passwordErrors: []
             },
+            messages: [],
             redirect: false
         }
     }
@@ -59,15 +61,16 @@ class LogIn extends Component {
         })
         .catch(err => {
             console.log(err.response.data);
-            const errors = err.response.data.errors;
-            const emailErrors = errors.email || [];
-            const passwordErrors = errors.password || [];
+            // const errors = err.response.data.errors;
+            // const emailErrors = errors.email || [];
+            // const passwordErrors = errors.password || [];
             // console.log(emailErrors)
             this.setState({
-                errors: {
-                    emailErrors,
-                    passwordErrors
-                }
+                messages: err.response.data.messages
+                // errors: {
+                //     emailErrors,
+                //     passwordErrors
+                // }
             })
         });
     }
@@ -80,7 +83,10 @@ class LogIn extends Component {
 
         return (
         <div className="bg-light">
-            {this.state.errors.emailErrors.map(errMsg => {
+            {this.state.messages.map(message => {
+                return <Alert message={message} />;
+            })}
+            {/* {this.state.errors.emailErrors.map(errMsg => {
                 return (
                     <div className="alert alert-danger m-0 border-0" role="alert">
                         {"Email " + errMsg}
@@ -92,7 +98,7 @@ class LogIn extends Component {
                             {"Password " + errMsg}
                         </div>
                     );
-            })}
+            })} */}
             <br/>
             <h1 className="text-center text-dark">Log In</h1>
             <p className="text-center">This is the cool kids club! Not a <a href="/signup">member</a>?</p>

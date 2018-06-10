@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_10_044450) do
+ActiveRecord::Schema.define(version: 2018_06_10_185143) do
 
   create_table "recommendations", force: :cascade do |t|
     t.string "title"
@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(version: 2018_06_10_044450) do
     t.string "industry"
     t.string "country"
     t.text "summary"
+    t.string "username"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 

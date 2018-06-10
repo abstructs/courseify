@@ -18,11 +18,11 @@ class Api::V1::UserTokenController < Knock::AuthTokenController
     private
 
     def handleInvalidEmail
-        render json: { errors: { "email": [" does not exist in our database"] } }, status: 400
+        render json: { messages: [{ text: "Email does not exist in our database", type: "danger" }] }, status: 400
     end
 
     def handleInvalidPassword
-        render json: { errors: { "password": [" is incorrect"] } }, status: 400
+        render json: { messages: [{ text: "Password is incorrect", type: "danger" }] }, status: 400
     end
 
     def authenticate

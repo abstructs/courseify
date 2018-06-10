@@ -2,14 +2,14 @@ import React, { Component } from 'react';
 import './App.css';
 import axios from 'axios';
 import Auth from './Auth';
-import { Redirect } from 'react-router';
+import { Redirect, matchPath } from 'react-router';
 import teacherImage from './images/laptop.jpeg';
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
 
 class ProfileEdit extends Component {
     constructor(props) {
-        super(props);
+        super(props);        
     }
 
     render() {
@@ -93,31 +93,55 @@ class ProfileInfo extends Component {
 class Profile extends Component {
     constructor(props) {
         super(props);
+
+        // const is_profile = 
+        const parsedJwt = Auth().paraseJwt();
+
         this.state = {
+            current_user_id: parsedJwt ? parsedJwt.sub.user.id : -1,
+            is_current_user_profile: false,
             edit: false,
             save: false,
 
             // for profile edit
-            new_user_info: {},
+            new_profile_info: {},
 
             // user info
-            user_info: {}
+            profile_info: {}
         }
     }
 
-    componentWillMount() {
-        this.setUserInfo();
+    getMatch() {
+        // this.setState({ 
+        //     is_profile: (this.getMatch() ? this.getMatch().params.id == )
+        // })
+
+        return matchPath(this.props.history.location.pathname, {
+            path: '/people/:id',
+            exact: true,
+            strict: false
+        });
     }
 
-    setUserInfo() {
-        axios.get("http://localhost:3000/api/v1/profile", { headers: Auth().headers() })
-        .then(res => {
-            this.setState({
-                user_info: res.data.user,
-                new_user_info: res.data.user
-            })
+    componentWillMount() {
+        if(this.getMatch()) {
+            this.setUserInfo();
+        }
+    }
 
-            console.log(res.data.user)
+    // EFFECTS: Manages the data set on the profile page depending on if it's the current users profile or another user's
+    setUserInfo() {
+        const url = this.getMatch() ? "http://localhost:3000/api/v1/users/" + this.getMatch().params.id : 
+                                      "http://localhost:3000/api/v1/profile";
+
+        // const data = this.getMatch() ? {} : { headers: Auth().headers() };
+        axios.get(url)
+        .then(res => {
+            const profile_info = res.data.user;
+            const is_current_user_profile = res.data.user.id === this.state.current_user_id;
+            const new_profile_info = is_current_user_profile ? profile_info : [];
+
+            this.setState({ profile_info, new_profile_info, is_current_user_profile });
         })
         .catch(err => {
             console.log(err);
@@ -131,8 +155,8 @@ class Profile extends Component {
 
         this.setState(prevState => ({
             // ...prevState,
-            new_user_info: {
-                ...prevState.new_user_info,
+            new_profile_info: {
+                ...prevState.new_profile_info,
                 [name]: value
             }
         })); 
@@ -141,7 +165,7 @@ class Profile extends Component {
     }
 
     handleSave(e) {
-        axios.put("http://localhost:3000/api/v1/users/" + this.state.id, this.state.new_user_info)
+        axios.put("http://localhost:3000/api/v1/users/" + this.state.current_user_id, this.state.new_profile_info)
         .then(res => {
             this.setUserInfo();
             this.setState({edit: !this.state.edit});
@@ -160,16 +184,30 @@ class Profile extends Component {
     render() {
         const isLoggedIn = Auth().isAuthenticated();
         
-        if(!isLoggedIn) {
-            return <Redirect to='/'/>;
-        }
+        // if(!isLoggedIn) {
+        //     return <Redirect to='/'/>;
+        // }
 
-        if(Object.keys(this.state.user_info).length == 0) {
+        if(Object.keys(this.state.profile_info).length == 0) {
             return <div>Loading</div>
         }
 
-        const middleSection = this.state.edit ? <ProfileEdit new_user_info={this.state.new_user_info} handleUserInfoChange={this.handleUserInfoChange.bind(this)} /> : <ProfileInfo user_info={this.state.user_info}/>
-        
+        const middleSection = this.state.edit ? <ProfileEdit new_user_info={this.state.new_profile_info} handleUserInfoChange={this.handleUserInfoChange.bind(this)} /> : <ProfileInfo user_info={this.state.profile_info}/>
+        const editFunctions = !this.state.edit ? <a href="#edit" className="btn m-2 text-white m-auto text-center" style={{width: "250px", backgroundColor: "#ff6000"}} onClick={this.handleEdit.bind(this)}>Edit</a>
+                                               :
+                                                <div>
+                                                    <a href="#save" className="btn text-white m-auto text-center" style={{width: "250px", backgroundColor: "#ff6000"}} onClick={this.handleSave.bind(this)}>Save</a>
+                                                    <a href="#cancel" className="btn text-white m-2 text-center btn-primary" style={{width: "250px"}} onClick={this.handleCancel.bind(this)}>Cancel</a>
+                                                </div>;
+        const otherFunctions = <div>
+                                {/* <div className="mb-2 text-center">
+                                    <a href="#message" className="btn text-white m-auto text-center" style={{backgroundColor: "#ff6000", width: "250px"}}>Follow</a>
+                                </div> */}
+                                {/* <div className="mb-2 text-center">
+                                    <a href="#message" className="btn btn-primary text-white m-auto text-center" style={{width: "250px"}}>Message</a>
+                                </div> */}
+                               </div>;
+
         return (
             <div>
                 <header className="bg-dark border-0 pt-5" style={{marginBottom: "0px", height: "150px", backgroundImage: "url(" + teacherImage +")", backgroundPosition: "250px 660px"}}>
@@ -179,23 +217,11 @@ class Profile extends Component {
                     <div className="row">
                         <div className="col-xl-4">
                             <div className="rounded-circle border border-white bg-dark ml-auto mr-auto p-auto text-center" style={{height: "150px", width: "150px", marginTop: "-70px"}}></div>   
-                            <h2 className="text-dark text-center font-weight-light p-auto">{this.state.user_info.first_name + " " + this.state.user_info.last_name}</h2>
-                            <div className="mb-2 mt-4 text-center">
-                            {
-                                !this.state.edit ?
-                                <a href="#edit" className="btn m-2 text-white m-auto text-center" style={{width: "250px", backgroundColor: "#ff6000"}} onClick={this.handleEdit.bind(this)}>Edit</a>
-                                :
-                                <div>
-                                    <a href="#save" className="btn text-white m-auto text-center" style={{width: "250px", backgroundColor: "#ff6000"}} onClick={this.handleSave.bind(this)}>Save</a>
-                                    <a href="#cancel" className="btn text-white m-2 text-center btn-primary" style={{width: "250px"}} onClick={this.handleCancel.bind(this)}>Cancel</a>
-                                </div>
-                            }
-                                {/* <a href="#edit" className="btn text-white m-auto text-center" style={{width: "250px", backgroundColor: "#ff6000"}} onClick={this.handleEdit.bind(this)}>{!this.state.edit ? "Edit" : "Save"}</a> */}
-                            
+                                <h2 className="text-dark text-center font-weight-light p-auto">{this.state.profile_info.first_name + " " + this.state.profile_info.last_name}</h2>
+                                <div className="mb-2 mt-4 text-center">
+                                {this.state.is_current_user_profile ? editFunctions : otherFunctions}
                             </div>
-                            {/* <div className="mb-2 text-center">
-                                <a href="#message" className="btn btn-primary text-white m-auto text-center" style={{width: "250px"}}>Message</a>
-                            </div> */}
+
                         </div>
                         {middleSection}
                     </div>

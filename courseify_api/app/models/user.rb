@@ -33,6 +33,14 @@ class User < ApplicationRecord
     self.find_by email: email
   end
 
+  def self.from_token_payload payload
+    self.find payload["sub"]["user"]["id"]
+  end
+
+  def to_token_payload
+    { sub: { user: { id: self.id, email: self.email } } }
+  end
+
   private
 
   def password_changed?

@@ -50,6 +50,9 @@ const Main = () => (
       <Route path="/videos" component={VideosContainer}/>
       <Route path="/recommend" component={RecommendContainer}/>
       <Route path="/profile" component={Profile}/>
+      <Route path="/people" component={Profile}>
+        <Route path="/:username" component={Profile} />
+      </Route>
       <Route path="/signup" component={SignUp}/>
       <Route path="/login" component={LogIn}/>
       <Route path="/logout" component={LogOut}/>

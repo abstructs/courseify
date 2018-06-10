@@ -10,10 +10,8 @@ class Api::V1::UsersController < ApplicationController
 
   def update
     @user = current_user
-    puts "\n\n\n"
-    puts params
-    puts "\n\n\n"
-    if @user.update(update_params)
+
+    if current_user[:id].to_i == update_params[:id].to_i && @user.update(update_params)
         render status: 200
     else
       render json: { errors: @user.errors }, status: 400
@@ -24,7 +22,18 @@ class Api::V1::UsersController < ApplicationController
     @user = User.find(params[:id])
     
     if @user
-      render json: { email: @user.email, id: @user.id }
+      u = { 
+        id: @user.id, 
+        first_name: @user.first_name, 
+        last_name: @user.last_name, 
+        headline: @user.headline, 
+        education: @user.education, 
+        industry: @user.industry, 
+        country: @user.country, 
+        summary: @user.summary
+      }
+
+      render json: { user: u }
     end
   end
 
@@ -53,10 +62,6 @@ class Api::V1::UsersController < ApplicationController
     if @user.save
       render status: 200
     else
-      puts "\n\n\n"
-      puts(flash_messages(@user, "danger"))
-      puts "\n\n\n"
-      # errors: flash_messages(@user, "danger"),
       render json: { messages: flash_messages(@user, "danger") }, status: 400
     end
   end
@@ -68,7 +73,7 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def update_params
-    params.permit(:first_name, :last_name, :headline, :education, :industry, :country, :summary)
+    params.permit(:id, :user, :first_name, :last_name, :headline, :education, :industry, :country, :summary)
   end
 
   # def find_param

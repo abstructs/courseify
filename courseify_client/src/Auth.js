@@ -12,6 +12,16 @@ const Auth = () => ({
       const token = localStorage.getItem('token');
       return { 'Authorization': `Bearer ${token}` }
        
+    },
+
+    paraseJwt: () => {
+      var token = localStorage.getItem("token");
+      if(!token) {
+        return false;
+      }
+      var base64Url = token.split('.')[1];
+      var base64 = base64Url.replace('-', '+').replace('_', '/');
+      return JSON.parse(window.atob(base64));
     }
 })
 
