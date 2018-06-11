@@ -6,6 +6,7 @@ Rails.application.routes.draw do
       resources :recommendations
       post 'users/user_token' => 'user_token#create'
       get '/profile' => 'users#profile'
+      get '/profile/:user_id/recommendations' => 'users#profile_recommendations'
     end
   end
   # devise_for :users, controllers: {

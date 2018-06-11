@@ -10,15 +10,30 @@ axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization
 class ProfileRecommendation extends Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            recommendations: []
+        }
     }
 
     componentWillMount() {
+        axios.get(`http://localhost:3000/api/v1/profile/${this.props.profile_info.id}/recommendations`)
+        .then(res => {
+          const recommendations = res.data.recommendations;
 
+          console.log(this.props.profile_info)
+          
+          this.setState({ recommendations });          
+        })
     }
 
     render() {
         return (
-            <div>Recommendations</div>
+            <div>
+                {this.state.recommendations.map(recommendation => {
+                    return <div key={recommendation.id}>{recommendation.title} by {recommendation.author}.</div>;
+                })}
+            </div>
         );
     }
 }
@@ -160,11 +175,8 @@ class Profile extends Component {
         }
     }
 
+    // EFFECTS: Gets the parameters from the url react router style
     getMatch() {
-        // this.setState({ 
-        //     is_profile: (this.getMatch() ? this.getMatch().params.id == )
-        // })
-
         return matchPath(this.props.history.location.pathname, {
             path: '/people/:id',
             exact: true,
@@ -239,7 +251,8 @@ class Profile extends Component {
             return <div>Loading</div>
         }
 
-        const middleSection = this.state.edit ? <ProfileEdit new_user_info={this.state.new_profile_info} handleUserInfoChange={this.handleUserInfoChange.bind(this)} /> : <ProfileInfo user_info={this.state.profile_info}/>
+    const middleSection = this.state.edit ? <ProfileEdit new_user_info={this.state.new_profile_info} handleUserInfoChange={this.handleUserInfoChange.bind(this)} /> : <ProfileInfo user_info={this.state.profile_info}/>;
+
     const editFunctions = !this.state.edit ? (this.state.tab == "info" ? <a href="#edit" className="btn m-2 text-white m-auto text-center" style={{width: "250px", backgroundColor: "#ff6000"}} onClick={this.handleEdit.bind(this)}>Edit</a> : <div></div>)
                                               :
                                                 <div>
@@ -247,9 +260,9 @@ class Profile extends Component {
                                                     <a href="#cancel" className="btn text-white m-2 text-center btn-primary" style={{width: "250px"}} onClick={this.handleCancel.bind(this)}>Cancel</a>
                                                 </div>;
         const otherFunctions = <div>
-                                {/* <div className="mb-2 text-center">
-                                    <a href="#message" className="btn text-white m-auto text-center" style={{backgroundColor: "#ff6000", width: "250px"}}>Follow</a>
-                                </div> */}
+                                <div className="mb-2 text-center">
+                                    <a onClick={this.handleFollow} href="#" className="btn text-white m-auto text-center" style={{backgroundColor: "#ff6000", width: "250px"}}>Follow</a>
+                                </div>
                                 {/* <div className="mb-2 text-center">
                                     <a href="#message" className="btn btn-primary text-white m-auto text-center" style={{width: "250px"}}>Message</a>
                                 </div> */}
@@ -260,14 +273,18 @@ class Profile extends Component {
                 case "info":
                     return middleSection;
                 case "recommendations":
-                    return <ProfileRecommendation />;
+                    return <ProfileRecommendation profile_info={this.state.profile_info} />;
                 case "following":
-                    return <ProfileFollowing />;
+                    return <ProfileFollowing profile_info={this.state.profile_info} />;
                 case "followers":
-                    return <ProfileFollowers />;
+                    return <ProfileFollowers profile_info={this.state.profile_info} />;
                 default:
                     return <div>Something went wrong :(.</div>;
             }
+        }
+
+        if(!this.state.profile_info) {
+            return <div>Loading</div>;
         }
 
         return (
@@ -286,18 +303,18 @@ class Profile extends Component {
 
                         </div>  
                         <div className  ="col-xl-5 m-4 text-center text-justify">
-                            <ul class="nav nav-tabs nav-fill mb-4">
-                                <li class="nav-item">
-                                    <a href="#" class={"nav-link " + (this.state.tab == "info" ? "active" : "")} onClick={() => {this.setState({tab: "info"})}}>Info</a>
+                            <ul className="nav nav-tabs nav-fill mb-4">
+                                <li name="nav-item">
+                                    <a href="#" className={"nav-link " + (this.state.tab == "info" ? "active" : "")} onClick={() => {this.setState({tab: "info"})}}>Info</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a href="#" class={"nav-link " + (this.state.tab == "recommendations" ? "active" : "")} onClick={() => {this.setState({tab: "recommendations"})}}>Recommendations (0)</a>
+                                <li className="nav-item">
+                                    <a href="#" className={"nav-link " + (this.state.tab == "recommendations" ? "active" : "")} onClick={() => {this.setState({tab: "recommendations"})}}>Recommendations ({this.state.profile_info.recommendationsCount || 0})</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a href="#" class={"nav-link " + (this.state.tab == "followers" ? "active" : "")} onClick={() => {this.setState({tab: "followers"})}}>Followers (0)</a>
+                                <li className="nav-item">
+                                    <a href="#" className={"nav-link " + (this.state.tab == "followers" ? "active" : "")} onClick={() => {this.setState({tab: "followers"})}}>Followers (0)</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a href="#" class={"nav-link " + (this.state.tab == "following" ? "active" : "")} onClick={() => {this.setState({tab: "following"})}}>Following (0)</a>
+                                <li className="nav-item">
+                                    <a href="#" className={"nav-link " + (this.state.tab == "following" ? "active" : "")} onClick={() => {this.setState({tab: "following"})}}>Following (0)</a>
                                 </li>
                             </ul>
                             {content()}

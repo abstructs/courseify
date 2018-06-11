@@ -16,8 +16,8 @@ class Api::V1::RecommendationsController < ApplicationController
 
   # POST /recommendations
   def create
-    @recommendation = Recommendation.new(recommendation_params)
-    @recommendation.user_id = current_user.id
+    @recommendation = current_user.recommendations.new(recommendation_params)
+    # @recommendation.user_id = current_user.id
 
     if @recommendation.save
       render json: @recommendation, status: :created

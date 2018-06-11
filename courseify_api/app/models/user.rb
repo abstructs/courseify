@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  has_many :recommendations, dependent: :destroy
   has_secure_password
   # attr_accessor :password, :salt, :password_confirmation
   

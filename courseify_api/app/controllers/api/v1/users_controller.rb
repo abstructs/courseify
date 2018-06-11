@@ -1,6 +1,6 @@
 class Api::V1::UsersController < ApplicationController
   # skip_before_action :verify_authenticity_token
-  before_action :authenticate_user, only: [:profile, :update]
+  before_action :authenticate_user, only: [:profile, :update, :profile]
   
   def index
     @users = User.select(User.column_names - ['password_digest', 'created_at', 'updated_at', 'sign_in_count'])
@@ -49,10 +49,19 @@ class Api::V1::UsersController < ApplicationController
         education: @user.education, 
         industry: @user.industry, 
         country: @user.country, 
-        summary: @user.summary
+        summary: @user.summary,
+        recommendationsCount: @user.recommendations.count
       }
 
       render json: { user: u }
+    end
+  end
+
+  def profile_recommendations
+    @user = User.find(params[:user_id])
+
+    if @user
+      render json: { recommendations: @user.recommendations }
     end
   end
 

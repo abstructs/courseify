@@ -50,36 +50,36 @@ class RecommendContainer extends Component {
                     Recommend Something
                 </button>
 
-                <div className="modal fade" id="recommendModal" tabindex="-1" role="dialog" aria-labelledby="recommendModalLabel" aria-hidden="true">
+                <div className="modal fade" id="recommendModal" tabIndex="-1" role="dialog" aria-labelledby="recommendModalLabel" aria-hidden="true">
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">
                             <div className="modal-header border-0">
-                                <h5 class="modal-title" id="recommendModalLabel">Recommend Something</h5>
+                                <h5 className="modal-title" id="recommendModalLabel">Recommend Something</h5>
                                 <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                            <div class="modal-body">
+                            <div className="modal-body">
                                 <form>
                                     <div className="form-row mb-3">
-                                        <label className="" for="title">Title*</label>
+                                        <label className="" htmlFor="title">Title*</label>
                                         <input onChange={this.handleInputChange.bind(this)} value={this.state.recommendation.title} name="title" type="text" placeholder="Title" className="form-control" />
                                     </div>
                                     <div className="form-row mb-3">
-                                        <label className="" for="author">Author*</label>
+                                        <label className="" htmlFor="author">Author*</label>
                                         <input onChange={this.handleInputChange.bind(this)} value={this.state.recommendation.author} name="author" type="text" placeholder="Author" className="form-control" />
                                     </div>
                                     <div className="form-row mb-3">
-                                        <label className="" for="url">URL*</label>
+                                        <label className="" htmlFor="url">URL*</label>
                                         <input onChange={this.handleInputChange.bind(this)} value={this.state.recommendation.url} name="url" type="text" placeholder="URL" className="form-control" />
                                     </div>
                                     <div className="form-row">
-                                        <label className="" for="description">Description*</label>
+                                        <label className="" htmlFor="description">Description*</label>
                                         <textarea onChange={this.handleInputChange.bind(this)} value={this.state.recommendation.description} name="description" className="form-control" placeholder="Description"></textarea>
                                     </div>
                                 </form>
                             </div>
-                            <div class="modal-footer">
+                            <div className="modal-footer">
                                 <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
                                 <button type="button" className="btn text-light" style={{width: "250px", backgroundColor: "#ff6000"}} onClick={this.handleSubmit.bind(this)}>Make Recommendation</button>
                             </div>
