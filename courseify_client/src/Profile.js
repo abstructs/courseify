@@ -7,6 +7,54 @@ import teacherImage from './images/laptop.jpeg';
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
 
+class ProfileRecommendation extends Component {
+    constructor(props) {
+        super(props);
+    }
+
+    componentWillMount() {
+
+    }
+
+    render() {
+        return (
+            <div>Recommendations</div>
+        );
+    }
+}
+
+class ProfileFollowing extends Component {
+    constructor(props) {
+        super(props);
+    }
+
+    componentWillMount() {
+        
+    }
+
+    render() {
+        return (
+            <div>Following</div>
+        );
+    }
+}
+
+class ProfileFollowers extends Component {
+    constructor(props) {
+        super(props);
+    }
+
+    componentWillMount() {
+        
+    }
+
+    render() {
+        return (
+            <div>Followers</div>
+        );
+    }
+}
+
 class ProfileEdit extends Component {
     constructor(props) {
         super(props);        
@@ -14,7 +62,7 @@ class ProfileEdit extends Component {
 
     render() {
         return (
-            <div className="col-xl-5 mt-4 mr-auto pl-5 pr-5">
+            <div className="">
                 <form>
                     <div className="form-row mb-4">
                         <div className="col-md-4">
@@ -71,20 +119,19 @@ class ProfileInfo extends Component {
 
     render() {
         return (
-            <div className="col-xl-4 m-4 text-center text-justify">
+            <div>
                 {/* <h2 className="text-light font-weight-light p-auto">Andrew Wilson</h2> */}
                 {/* <div className="text-center "> */}
-                    <p className="d-inline pr-3"><b>0</b> recommendations</p>
+                    {/* <p className="d-inline pr-3"><b>0</b> recommendations</p>
                     <p className="d-inline pr-3"><b>0</b> followers</p>
-                    <p className="d-inline pr-3"><b>0</b> following</p>
+                    <p className="d-inline pr-3"><b>0</b> following</p> */}
                 {/* </div> */}
-                <br/>
-                <br/>
+                {/* <br/>
+                <br/> */}
                 <p className=""><b><i>{this.props.user_info.headline}</i></b> in <b><i>{this.props.user_info.country}</i></b>.</p>
                 <p>Involved in <b><i>{this.props.user_info.industry}</i></b>.</p>
                 <p className="">Attended <b><i>{this.props.user_info.education}</i></b>.</p>
                 <p className="" style={{whiteSpace: "pre-wrap"}}><i>{this.props.user_info.summary}</i></p>
-
             </div>
         );
     }
@@ -103,6 +150,8 @@ class Profile extends Component {
             edit: false,
             save: false,
 
+            // tab logic
+            tab: "info",
             // for profile edit
             new_profile_info: {},
 
@@ -191,8 +240,8 @@ class Profile extends Component {
         }
 
         const middleSection = this.state.edit ? <ProfileEdit new_user_info={this.state.new_profile_info} handleUserInfoChange={this.handleUserInfoChange.bind(this)} /> : <ProfileInfo user_info={this.state.profile_info}/>
-        const editFunctions = !this.state.edit ? <a href="#edit" className="btn m-2 text-white m-auto text-center" style={{width: "250px", backgroundColor: "#ff6000"}} onClick={this.handleEdit.bind(this)}>Edit</a>
-                                               :
+    const editFunctions = !this.state.edit ? (this.state.tab == "info" ? <a href="#edit" className="btn m-2 text-white m-auto text-center" style={{width: "250px", backgroundColor: "#ff6000"}} onClick={this.handleEdit.bind(this)}>Edit</a> : <div></div>)
+                                              :
                                                 <div>
                                                     <a href="#save" className="btn text-white m-auto text-center" style={{width: "250px", backgroundColor: "#ff6000"}} onClick={this.handleSave.bind(this)}>Save</a>
                                                     <a href="#cancel" className="btn text-white m-2 text-center btn-primary" style={{width: "250px"}} onClick={this.handleCancel.bind(this)}>Cancel</a>
@@ -205,6 +254,21 @@ class Profile extends Component {
                                     <a href="#message" className="btn btn-primary text-white m-auto text-center" style={{width: "250px"}}>Message</a>
                                 </div> */}
                                </div>;
+
+        const content = () => {
+            switch(this.state.tab) {
+                case "info":
+                    return middleSection;
+                case "recommendations":
+                    return <ProfileRecommendation />;
+                case "following":
+                    return <ProfileFollowing />;
+                case "followers":
+                    return <ProfileFollowers />;
+                default:
+                    return <div>Something went wrong :(.</div>;
+            }
+        }
 
         return (
             <div>
@@ -220,8 +284,24 @@ class Profile extends Component {
                                 {this.state.is_current_user_profile ? editFunctions : otherFunctions}
                             </div>
 
+                        </div>  
+                        <div className  ="col-xl-5 m-4 text-center text-justify">
+                            <ul class="nav nav-tabs nav-fill mb-4">
+                                <li class="nav-item">
+                                    <a href="#" class={"nav-link " + (this.state.tab == "info" ? "active" : "")} onClick={() => {this.setState({tab: "info"})}}>Info</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#" class={"nav-link " + (this.state.tab == "recommendations" ? "active" : "")} onClick={() => {this.setState({tab: "recommendations"})}}>Recommendations (0)</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#" class={"nav-link " + (this.state.tab == "followers" ? "active" : "")} onClick={() => {this.setState({tab: "followers"})}}>Followers (0)</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#" class={"nav-link " + (this.state.tab == "following" ? "active" : "")} onClick={() => {this.setState({tab: "following"})}}>Following (0)</a>
+                                </li>
+                            </ul>
+                            {content()}
                         </div>
-                        {middleSection}
                     </div>
                 </section>
             </div>

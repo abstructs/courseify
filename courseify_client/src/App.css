@@ -43,3 +43,7 @@ footer a, p a {
 .landing-strip {
   height: 100px !important;
 }
+
+.dark-input {
+  border-color: #222;
+}
