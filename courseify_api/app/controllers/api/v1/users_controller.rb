@@ -30,7 +30,8 @@ class Api::V1::UsersController < ApplicationController
         education: @user.education, 
         industry: @user.industry, 
         country: @user.country, 
-        summary: @user.summary
+        summary: @user.summary,
+        recommendationsCount: @user.recommendations.count
       }
 
       render json: { user: u }

@@ -240,6 +240,11 @@ class Profile extends Component {
         this.setState({edit: false});
     }
 
+    handleFollow(e) {
+        if(this.state.is_current_user_profile) return;
+        
+    }
+
     render() {
         const isLoggedIn = Auth().isAuthenticated();
         
@@ -251,9 +256,9 @@ class Profile extends Component {
             return <div>Loading</div>
         }
 
-    const middleSection = this.state.edit ? <ProfileEdit new_user_info={this.state.new_profile_info} handleUserInfoChange={this.handleUserInfoChange.bind(this)} /> : <ProfileInfo user_info={this.state.profile_info}/>;
+        const middleSection = this.state.edit ? <ProfileEdit new_user_info={this.state.new_profile_info} handleUserInfoChange={this.handleUserInfoChange.bind(this)} /> : <ProfileInfo user_info={this.state.profile_info}/>;
 
-    const editFunctions = !this.state.edit ? (this.state.tab == "info" ? <a href="#edit" className="btn m-2 text-white m-auto text-center" style={{width: "250px", backgroundColor: "#ff6000"}} onClick={this.handleEdit.bind(this)}>Edit</a> : <div></div>)
+        const editFunctions = !this.state.edit ? (this.state.tab == "info" ? <a href="#edit" className="btn m-2 text-white m-auto text-center" style={{width: "250px", backgroundColor: "#ff6000"}} onClick={this.handleEdit.bind(this)}>Edit</a> : <div></div>)
                                               :
                                                 <div>
                                                     <a href="#save" className="btn text-white m-auto text-center" style={{width: "250px", backgroundColor: "#ff6000"}} onClick={this.handleSave.bind(this)}>Save</a>
@@ -261,7 +266,7 @@ class Profile extends Component {
                                                 </div>;
         const otherFunctions = <div>
                                 <div className="mb-2 text-center">
-                                    <a onClick={this.handleFollow} href="#" className="btn text-white m-auto text-center" style={{backgroundColor: "#ff6000", width: "250px"}}>Follow</a>
+                                    <a onClick={this.handleFollow.bind(this)} href="#" className="btn text-white m-auto text-center" style={{backgroundColor: "#ff6000", width: "250px"}}>Follow</a>
                                 </div>
                                 {/* <div className="mb-2 text-center">
                                     <a href="#message" className="btn btn-primary text-white m-auto text-center" style={{width: "250px"}}>Message</a>
