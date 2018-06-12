@@ -31,7 +31,19 @@ class Api::V1::UsersController < ApplicationController
         industry: @user.industry, 
         country: @user.country, 
         summary: @user.summary,
-        recommendationsCount: @user.recommendations.count
+        recommendationsCount: @user.recommendations.count,
+        followerCount: @user.followers.count,
+        followingCount: @user.following.count,
+        follow_info: (
+          if current_user then 
+            { 
+              follow_id: current_user.active_follows.find_by(followed_id: @user.id).try(:id),
+              is_following: current_user.following?(@user)
+            }
+          else 
+            { is_following: false }
+          end),
+        # relationship: (if current_user then current_user.active_follows.find_by(followed_id: @user.id) else false end)
       }
 
       render json: { user: u }
@@ -51,9 +63,12 @@ class Api::V1::UsersController < ApplicationController
         industry: @user.industry, 
         country: @user.country, 
         summary: @user.summary,
-        recommendationsCount: @user.recommendations.count
+        recommendationsCount: @user.recommendations.count,
+        followerCount: @user.followers.count,
+        followingCount: @user.following.count,
+        follow_info: { is_following: false }
       }
-
+      
       render json: { user: u }
     end
   end
@@ -72,7 +87,7 @@ class Api::V1::UsersController < ApplicationController
     if @user.save
       render status: 200
     else
-      render json: { messages: flash_messages(@user, "danger") }, status: 400
+      render json: { messages: error_messages(@user, "danger") }, status: 400
     end
   end
 

@@ -164,6 +164,10 @@ class Profile extends Component {
             is_current_user_profile: false,
             edit: false,
             save: false,
+            follow_info: {
+                is_following: false,
+                id: -1
+            },
 
             // tab logic
             tab: "info",
@@ -190,6 +194,7 @@ class Profile extends Component {
 
     // EFFECTS: Manages the data set on the profile page depending on if it's the current users profile or another user's
     setUserInfo() {
+        
         const url = this.getMatch() ? "http://localhost:3000/api/v1/users/" + this.getMatch().params.id : 
                                       "http://localhost:3000/api/v1/profile";
 
@@ -199,8 +204,12 @@ class Profile extends Component {
             const profile_info = res.data.user;
             const is_current_user_profile = res.data.user.id === this.state.current_user_id;
             const new_profile_info = is_current_user_profile ? profile_info : [];
+            const follow_info = profile_info.follow_info;
+            console.log(res)
 
-            this.setState({ profile_info, new_profile_info, is_current_user_profile });
+            this.setState({ profile_info, new_profile_info, is_current_user_profile, follow_info });
+
+            
         })
         .catch(err => {
             console.log(err);
@@ -242,7 +251,34 @@ class Profile extends Component {
 
     handleFollow(e) {
         if(this.state.is_current_user_profile) return;
-        
+        axios.post("http://localhost:3000/api/v1/follows", { followed_id: this.state.profile_info.id })
+        .then(res => {
+            this.setState(prevState => ({
+                follow_info: {
+                    ...prevState.follow_info,
+                    is_following: true
+                }
+            }))
+        })
+        .then(res => {
+            this.setUserInfo();
+        })
+    }
+
+    handleUnfollow(e) {
+        if(this.state.is_current_user_profile) return;
+        axios.delete("http://localhost:3000/api/v1/follows/" + this.state.follow_info.follow_id)
+        .then(res => {
+            this.setState(prevState => ({
+                follow_info: {
+                    ...prevState.follow_info,
+                    is_following: false
+                }
+            }))
+        })
+        .then(res => {
+            this.setUserInfo();
+        })
     }
 
     render() {
@@ -266,7 +302,14 @@ class Profile extends Component {
                                                 </div>;
         const otherFunctions = <div>
                                 <div className="mb-2 text-center">
-                                    <a onClick={this.handleFollow.bind(this)} href="#" className="btn text-white m-auto text-center" style={{backgroundColor: "#ff6000", width: "250px"}}>Follow</a>
+                                    {
+                                        this.state.follow_info.is_following ?
+                                        <a onClick={ this.handleUnfollow.bind(this) } href="#" className="btn text-white m-auto text-center" style={{backgroundColor: "#ff6000", width: "250px"}}>Unfollow</a>
+                                        :
+                                        <a onClick={this.handleFollow.bind(this)} href="#" className="btn text-white m-auto text-center" style={{backgroundColor: "#ff6000", width: "250px"}}>Follow</a>
+                                    }
+                                    
+
                                 </div>
                                 {/* <div className="mb-2 text-center">
                                     <a href="#message" className="btn btn-primary text-white m-auto text-center" style={{width: "250px"}}>Message</a>
@@ -303,7 +346,7 @@ class Profile extends Component {
                             <div className="rounded-circle border border-white bg-dark ml-auto mr-auto p-auto text-center" style={{height: "150px", width: "150px", marginTop: "-70px"}}></div>   
                                 <h2 className="text-dark text-center font-weight-light p-auto">{this.state.profile_info.first_name + " " + this.state.profile_info.last_name}</h2>
                                 <div className="mb-2 mt-4 text-center">
-                                {this.state.is_current_user_profile ? editFunctions : otherFunctions}
+                                { isLoggedIn ? (this.state.is_current_user_profile ? editFunctions : otherFunctions) : <div></div> }
                             </div>
 
                         </div>  
@@ -316,10 +359,10 @@ class Profile extends Component {
                                     <a href="#" className={"nav-link " + (this.state.tab == "recommendations" ? "active" : "")} onClick={() => {this.setState({tab: "recommendations"})}}>Recommendations ({this.state.profile_info.recommendationsCount || 0})</a>
                                 </li>
                                 <li className="nav-item">
-                                    <a href="#" className={"nav-link " + (this.state.tab == "followers" ? "active" : "")} onClick={() => {this.setState({tab: "followers"})}}>Followers (0)</a>
+                                    <a href="#" className={"nav-link " + (this.state.tab == "followers" ? "active" : "")} onClick={() => {this.setState({tab: "followers"})}}>Followers ({this.state.profile_info.followerCount || 0})</a>
                                 </li>
                                 <li className="nav-item">
-                                    <a href="#" className={"nav-link " + (this.state.tab == "following" ? "active" : "")} onClick={() => {this.setState({tab: "following"})}}>Following (0)</a>
+                                    <a href="#" className={"nav-link " + (this.state.tab == "following" ? "active" : "")} onClick={() => {this.setState({tab: "following"})}}>Following ({this.state.profile_info.followingCount || 0})</a>
                                 </li>
                             </ul>
                             {content()}
