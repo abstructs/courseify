@@ -18,33 +18,29 @@ class Api::V1::UsersController < ApplicationController
     end 
   end
 
+  def followers
+    u = User.find(params[:user_id])
+
+    render json: { followers: u.followers }
+  end
+
+  def following
+    u = User.find(params[:user_id])
+
+    render json: { following: u.following }
+  end
+
   def show
     @user = User.find(params[:id])
     
     if @user
-      u = { 
-        id: @user.id, 
-        first_name: @user.first_name, 
-        last_name: @user.last_name, 
-        headline: @user.headline, 
-        education: @user.education, 
-        industry: @user.industry, 
-        country: @user.country, 
-        summary: @user.summary,
-        recommendationsCount: @user.recommendations.count,
-        followerCount: @user.followers.count,
-        followingCount: @user.following.count,
-        follow_info: (
-          if current_user then 
-            { 
-              follow_id: current_user.active_follows.find_by(followed_id: @user.id).try(:id),
-              is_following: current_user.following?(@user)
-            }
-          else 
-            { is_following: false }
-          end),
-        # relationship: (if current_user then current_user.active_follows.find_by(followed_id: @user.id) else false end)
-      }
+      u = user_data(@user)
+      u[:follow_info] = follow_info = if current_user 
+                                      then { 
+                                        follow_id: current_user.active_follows.find_by(followed_id: @user.id).try(:id),
+                                        is_following: current_user.following?(@user) }
+                                      else { is_following: false }
+                                      end
 
       render json: { user: u }
     end
@@ -54,20 +50,7 @@ class Api::V1::UsersController < ApplicationController
     @user = current_user
 
     if @user
-      u = { 
-        id: @user.id, 
-        first_name: @user.first_name, 
-        last_name: @user.last_name, 
-        headline: @user.headline, 
-        education: @user.education, 
-        industry: @user.industry, 
-        country: @user.country, 
-        summary: @user.summary,
-        recommendationsCount: @user.recommendations.count,
-        followerCount: @user.followers.count,
-        followingCount: @user.following.count,
-        follow_info: { is_following: false }
-      }
+      u = user_data(@user)
       
       render json: { user: u }
     end
@@ -99,6 +82,23 @@ class Api::V1::UsersController < ApplicationController
 
   def update_params
     params.permit(:id, :user, :first_name, :last_name, :headline, :education, :industry, :country, :summary)
+  end
+
+  def user_data(user)
+    { 
+      id: user.id, 
+      first_name: user.first_name, 
+      last_name: user.last_name, 
+      headline: user.headline, 
+      education: user.education, 
+      industry: user.industry, 
+      country: user.country, 
+      summary: user.summary,
+      recommendationsCount: user.recommendations.count,
+      followerCount: user.followers.count,
+      followingCount: user.following.count,
+      follow_info: { is_following: false }
+    }
   end
 
   # def find_param

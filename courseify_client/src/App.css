@@ -47,3 +47,7 @@ footer a, p a {
 .dark-input {
   border-color: #222;
 }
+
+.btn-orange {
+  background-color: #ff6000 !important;
+}

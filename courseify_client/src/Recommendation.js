@@ -7,7 +7,7 @@ import $ from 'jquery';
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
 
-class RecommendContainer extends Component {
+class RecommendationContainer extends Component {
     constructor(props) {
         super(props);
 
@@ -91,4 +91,4 @@ class RecommendContainer extends Component {
     }
 }
 
-export default RecommendContainer;
+export default RecommendationContainer;

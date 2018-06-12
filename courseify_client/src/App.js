@@ -17,7 +17,7 @@ import {
 import SignUp from './SignUp';
 import LogIn from './LogIn';
 import LogOut from './LogOut';
-import RecommendContainer from './Recommend';
+import RecommendationContainer from './Recommendation';
 
 class App extends Component {
   render() {
@@ -48,7 +48,7 @@ const Main = () => (
       <Navbar />
       <Route exact path="/" component={Home}/>
       <Route path="/videos" component={VideosContainer}/>
-      <Route path="/recommend" component={RecommendContainer}/>
+      <Route path="/recommend" component={RecommendationContainer}/>
       <Route path="/profile" component={Profile}/>
       <Route path="/people" component={Profile}>
         <Route path="/:username" component={Profile} />

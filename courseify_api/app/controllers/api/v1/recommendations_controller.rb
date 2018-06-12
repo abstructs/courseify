@@ -28,7 +28,7 @@ class Api::V1::RecommendationsController < ApplicationController
 
   # PATCH/PUT /recommendations/1
   def update
-    if @recommendation.update(recommendation_params)
+    if current_user.id == @recommendation.user_id && @recommendation.update(recommendation_params)
       render json: @recommendation
     else
       render json: @recommendation.errors, status: :unprocessable_entity

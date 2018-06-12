@@ -4,8 +4,130 @@ import axios from 'axios';
 import Auth from './Auth';
 import { Redirect, matchPath } from 'react-router';
 import teacherImage from './images/laptop.jpeg';
+import $ from 'jquery';
+{/* <button type="button" className="text-light nav-link btn" style={{width: "250px", backgroundColor: "#ff6000"}} data-toggle="modal" data-target="#recommendModal"> */}
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
+
+class Recommendation extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            id: null,
+            title : "",
+            author: "",
+            description: "",
+            url: ""
+        }
+    }
+
+    componentWillMount() {
+        this.setState({
+            ...this.props.recommendation
+        })
+        // console.log(this.props.recommendation);
+    }
+
+    handleRecommendationChange(event) {  
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+
+        this.setState({[name]: value});
+    }
+
+    handleUpdate(e) {
+        const new_data = {
+            title: this.state.title,
+            author: this.state.author,
+            description: this.state.description,
+            url: this.state.url
+        }
+        
+        axios.put(`http://localhost:3000/api/v1/recommendations/${this.state.id}`, new_data)
+        .then(res => {
+            $(`#recommendation-modal-${this.state.id}`).modal('hide');
+            this.setState({ ...new_data });
+        })
+        // e.preventDefault();
+        // e.stopPropagation();
+        // console.log("update")
+        // return false;
+    }
+
+    handleDelete(e) {
+        axios.delete(`http://localhost:3000/api/v1/recommendations/${this.state.id}`)
+        .then(res => {
+            $(`#recommendation-modal-${this.state.id}`).modal('hide');
+        })
+    }
+
+    render() {
+        // onClick={this.handleDropdown.bind(this)} 
+        return (
+            <div className="m-2">
+                {this.state.title} by {this.state.author}. 
+                <button type="button" data-toggle="dropdown" className="btn btn-light dropdown-toggle ml-4"   aria-haspopup="true" aria-expanded="false">
+                                
+                </button>
+                <div className="p-4 dropdown-menu recommendation-dropdown">
+                    <p className="text-center">Actions</p>
+                    {/* <button className="btn btn-orange text-light m-2">Update</button> */}
+                    {/* <button type="button" className="text-light m-2 btn" style={{width: "250px", backgroundColor: "#ff6000"}} data-toggle="modal" data-target="#recommendationModal">Update</button> */}
+                    <button type="button" className="btn btn-orange text-light" data-toggle="modal" data-target={`#recommendation-modal-${this.state.id}`}>Update</button>
+                    <button className="btn btn-danger text-light m-2">Delete</button>
+                </div>
+
+                <div className="modal fade" id={`recommendation-modal-${this.state.id}`} tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="exampleModalLabel">Change Your Recommendation</h5>
+                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                                <form >
+                                    <div className="form-group">
+                                        <label className="mr-auto">Title</label>
+                                        <input id={`title_${this.state.id}`} name="title" type="text" className="form-control" placeholder="Title" value={this.state.title} onChange={this.handleRecommendationChange.bind(this)} required />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Author</label>
+                                        <input id={`author_${this.state.id}`} name="author" type="text" className="form-control" placeholder="Author" value={this.state.author} onChange={this.handleRecommendationChange.bind(this)} required />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Link</label>
+                                        <input id={`url_${this.state.id}`} name="url" type="text" className="form-control" placeholder="Link" value={this.state.url} onChange={this.handleRecommendationChange.bind(this)} required />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Description</label>
+                                        <textarea id={`description_${this.state.id}`} name="description" className="form-control" placeholder="Description" value={this.state.description} onChange={this.handleRecommendationChange.bind(this)} required></textarea>
+                                    </div>
+                                    {/* <div className="form-check">
+                                        <input id={`description_${this.state.id}`} type="checkbox" className="form-check-input" />
+                                        <label className="form-check-label">
+                                        Remember me
+                                        </label>
+                                    </div> */}
+                                    {/* <button type="submit" onClick={this.handleUpdate.bind(this)} className="btn text-light mr-2 btn-orange">Update</button>
+                                    <button className="btn btn-danger">Delete</button> */}
+                                </form> 
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary m-2" data-dismiss="modal">Close</button>
+                                <button type="submit" onClick={this.handleUpdate.bind(this)} className="btn text-light m-2 btn-orange">Update</button>
+                                <button className="btn btn-danger m-2">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+}
 
 class ProfileRecommendation extends Component {
     constructor(props) {
@@ -30,8 +152,12 @@ class ProfileRecommendation extends Component {
     render() {
         return (
             <div>
+                <div>
+
+                </div>
                 {this.state.recommendations.map(recommendation => {
-                    return <div key={recommendation.id}>{recommendation.title} by {recommendation.author}.</div>;
+                    // return <div key={recommendation.id}>{recommendation.title} by {recommendation.author}.</div>;
+                    return <Recommendation key={recommendation.id} recommendation={recommendation} />
                 })}
             </div>
         );
@@ -41,15 +167,29 @@ class ProfileRecommendation extends Component {
 class ProfileFollowing extends Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            following: []
+        }
     }
 
     componentWillMount() {
-        
+        axios.get(`http://localhost:3000/api/v1/users/${this.props.profile_info.id}/following/`)
+        .then(res => {
+            const following = res.data.following;
+            console.log(following)
+
+            this.setState({ following });
+        })
     }
 
     render() {
         return (
-            <div>Following</div>
+            <div>
+                {this.state.following.map(follow => {
+                    return <div><a href={`/people/${follow.id}`}>{follow.email}</a></div>;
+                })}
+            </div>
         );
     }
 }
@@ -57,15 +197,28 @@ class ProfileFollowing extends Component {
 class ProfileFollowers extends Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            followers: []
+        }
     }
 
     componentWillMount() {
-        
+        axios.get(`http://localhost:3000/api/v1/users/${this.props.profile_info.id}/followers/`)
+        .then(res => {
+            const followers = res.data.followers;
+
+            console.log(followers);
+
+            this.setState({ followers });
+        })
     }
 
     render() {
         return (
-            <div>Followers</div>
+            <div>{this.state.followers.map(follow => {
+                return <div><a href={`/people/${follow.id}`}>{follow.email}</a></div>;
+            })}</div>
         );
     }
 }
