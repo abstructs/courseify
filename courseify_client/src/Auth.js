@@ -1,7 +1,11 @@
 import axios from 'axios';
 
 const Auth = () => ({
-    isAuthenticated: () => localStorage.getItem('token') !== null,
+    isAuthenticated: () => {
+      const token = localStorage.getItem('token');
+      const current_time = new Date().getTime() / 1000;
+      return token && Auth().paraseJwt(token).exp > current_time;
+    },
 
     // auth should be in the form "auth": { "email": ___, "password": ___ }
     authenticate: ({ email, password }) => {
