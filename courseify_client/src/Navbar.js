@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
-import axios from 'axios';
+// import axios from 'axios';
 import Auth from './Auth';
-import RecommendationContainer from './Recommendation';
+import RecommendationCreateModal from './Recommendation/RecommendationCreateModal';
 
 class Navbar extends Component {
     constructor(props) {
@@ -24,7 +24,7 @@ class Navbar extends Component {
                                         </ul>
                                     :   <ul className="navbar-nav  ml-auto mr-5">
                                             <li className="nav-item mr-5">
-                                                <RecommendationContainer />
+                                                <RecommendationCreateModal />
                                                 {/* <button className="text-light nav-link btn" style={{width: "250px", backgroundColor: "#ff6000"}} href="/recommend">Recommend Something</button> */}
                                             </li>
                                             <li className="nav-item">

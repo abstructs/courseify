@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import './App.css';
+import '../App.css';
 import axios from 'axios';
-import Auth from './Auth';
+import Auth from '../Auth';
 import $ from 'jquery';
 import swal from 'sweetalert';
 // import { Redirect } from 'react-router';
@@ -23,7 +23,7 @@ const initialState = {
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
 
-class RecommendationContainer extends Component {
+class RecommendationCreateModal extends Component {
     constructor(props) {
         super(props);
         
@@ -166,4 +166,4 @@ class RecommendationContainer extends Component {
     }
 }
 
-export default RecommendationContainer;
+export default RecommendationCreateModal;

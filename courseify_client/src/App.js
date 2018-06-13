@@ -8,7 +8,7 @@ import VideosContainer from './VideosContainer.js';
 import Home from './Home';
 import Navbar from './Navbar';
 import Footer from './Footer';
-import Profile from './Profile';
+import ProfileContainer from './Profile/ProfileContainer';
 import {
   BrowserRouter as Router,
   Route,
@@ -17,7 +17,7 @@ import {
 import SignUp from './SignUp';
 import LogIn from './LogIn';
 import LogOut from './LogOut';
-import RecommendationContainer from './Recommendation';
+// import RecommendationCreateModal from './Recommendation/RecommendationCreateModal';
 
 class App extends Component {
   render() {
@@ -48,10 +48,10 @@ const Main = () => (
       <Navbar />
       <Route exact path="/" component={Home}/>
       <Route path="/videos" component={VideosContainer}/>
-      <Route path="/recommend" component={RecommendationContainer}/>
-      <Route path="/profile" component={Profile}/>
-      <Route path="/people" component={Profile}>
-        <Route path="/:username" component={Profile} />
+      {/* <Route path="/recommend" component={RecommendationContainer}/> */}
+      <Route path="/profile" component={ProfileContainer}/>
+      <Route path="/people" component={ProfileContainer}>
+        <Route path="/:username" component={ProfileContainer} />
       </Route>
       <Route path="/signup" component={SignUp}/>
       <Route path="/login" component={LogIn}/>
