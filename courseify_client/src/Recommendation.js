@@ -6,49 +6,99 @@ import $ from 'jquery';
 import swal from 'sweetalert';
 // import { Redirect } from 'react-router';
 
+const initialState = {
+    recommendation: {
+        title: "",
+        author: "",
+        url: "",
+        description: ""
+    },
+    formErrors: {
+        title: "",
+        author: "",
+        url: "",
+        description: ""
+    }
+}
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
 
 class RecommendationContainer extends Component {
     constructor(props) {
         super(props);
+        
+        this.state = initialState;
 
-        this.state = {
-            recommendation: {
-                title: "",
-                author: "",
-                url: "",
-                description: ""
-            },
-            formErrors: {
-                title: "",
-                authpr: "",
-                url: "",
-                description: ""
-            }
-        }
     }
 
     handleSubmit(e) {
         axios.post("http://localhost:3000/api/v1/recommendations", this.state.recommendation)
-        .then(res => {
+        .then( _ => this.setState({ ...initialState }))
+        .then(_ => {
             swal({
                 title: "Success",
                 text: "Your recommendation is out there and helping others!",
                 icon: "success"
             })
-            .then(_ => $('#recommendModal').modal('hide'));
         })
+        .then(_ => $('#recommendModal').modal('hide'))
         .catch(err => {
+            this.setState(prevState => ({
+                formErrors: {
+                    ...prevState.formErrors,
+                    title: this.validateTitle(),
+                    author: this.validateAuthor(),
+                    url: this.validateUrl(),
+                    description: this.validateDescription()
+                }
+            }));
+
             swal({
                 title: "Something went wrong!",
-                text: "Please double check all the forms x(!",
+                text: "Please check the error messages!",
                 icon: "error",
                 dangerMode: true
                 // text: err.response.data
             })
         });
     }
+
+    validateTitle() {
+        let error = "";
+        if(this.state.recommendation.title == "") {
+            error = "Title can't be blank.";
+        }
+
+        return error;
+    }
+
+    validateAuthor() {
+        let error = "";
+        if(this.state.recommendation.author == "") {
+            error = "Author can't be blank.";
+        }
+
+        return error;
+    }
+
+    validateUrl() {
+        let error = "";
+        if(this.state.recommendation.url == "") {
+            error = "Url can't be blank.";
+        }
+
+        return error;
+    }
+
+    validateDescription() {
+        let error = "";
+        if(this.state.recommendation.description == "") {
+            error = "Description can't be blank.";
+        }
+
+        return error;
+    }
+    
     
     handleInputChange(event) {  
         const target = event.target;
@@ -77,26 +127,30 @@ class RecommendationContainer extends Component {
                             <div className="modal-header border-0">
                                 <h5 className="modal-title" id="recommendModalLabel">Recommend Something</h5>
                                 <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
+                                    <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
                             <div className="modal-body">
                                 <form>
                                     <div className="form-row mb-3">
                                         <label className="" htmlFor="title">Title*</label>
-                                        <input onChange={this.handleInputChange.bind(this)} value={this.state.recommendation.title} name="title" type="text" placeholder="Title" className="form-control" />
+                                        <input onChange={this.handleInputChange.bind(this)} value={this.state.recommendation.title} name="title" type="text" placeholder="Title" className={`form-control ${this.state.formErrors.title != "" && "border-danger"}`} />
+                                        {<small className="m-1 text-danger">{this.state.formErrors.title}</small>}
                                     </div>
                                     <div className="form-row mb-3">
                                         <label className="" htmlFor="author">Author*</label>
-                                        <input onChange={this.handleInputChange.bind(this)} value={this.state.recommendation.author} name="author" type="text" placeholder="Author" className="form-control" />
+                                        <input onChange={this.handleInputChange.bind(this)} value={this.state.recommendation.author} name="author" type="text" placeholder="Author" className={`form-control ${this.state.formErrors.author != "" && "border-danger"}`} />
+                                        {<small className="m-1 text-danger">{this.state.formErrors.author}</small>}
                                     </div>
                                     <div className="form-row mb-3">
                                         <label className="" htmlFor="url">URL*</label>
-                                        <input onChange={this.handleInputChange.bind(this)} value={this.state.recommendation.url} name="url" type="text" placeholder="URL" className="form-control" />
+                                        <input onChange={this.handleInputChange.bind(this)} value={this.state.recommendation.url} name="url" type="text" placeholder="URL" className={`form-control ${this.state.formErrors.url != "" && "border-danger"}`} />
+                                        {<small className="m-1 text-danger">{this.state.formErrors.url}</small>}
                                     </div>
                                     <div className="form-row">
                                         <label className="" htmlFor="description">Description*</label>
-                                        <textarea onChange={this.handleInputChange.bind(this)} value={this.state.recommendation.description} name="description" className="form-control" placeholder="Description"></textarea>
+                                        <textarea onChange={this.handleInputChange.bind(this)} value={this.state.recommendation.description} name="description" className={`form-control ${this.state.formErrors.description != "" && "border-danger"}`} placeholder="Description"></textarea>
+                                        {<small className="m-1 text-danger">{this.state.formErrors.description}</small>}
                                     </div>
                                 </form>
                             </div>
