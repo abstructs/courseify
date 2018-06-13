@@ -98,18 +98,27 @@ class Recommendation extends Component {
         if(this.state.deleted) return <div></div>;
         // onClick={this.handleDropdown.bind(this)} 
         return (
-            <div className="m-2">
-                {this.state.title} by {this.state.author}. 
-                <button type="button" data-toggle="dropdown" className="btn btn-light dropdown-toggle ml-4"   aria-haspopup="true" aria-expanded="false">
-                                
-                </button>
-                <div className="p-4 dropdown-menu recommendation-dropdown">
-                    <p className="text-center">Actions</p>
-                    {/* <button className="btn btn-orange text-light m-2">Update</button> */}
-                    {/* <button type="button" className="text-light m-2 btn" style={{width: "250px", backgroundColor: "#ff6000"}} data-toggle="modal" data-target="#recommendationModal">Update</button> */}
-                    <button type="button" className="btn btn-orange text-light" data-toggle="modal" data-target={`#recommendation-modal-${this.state.id}`}>Update</button>
-                    <button onClick={this.handleDelete.bind(this)} className="btn btn-danger text-light m-2">Delete</button>
+            <div className="">
+                <div className="card m-2" style={{width: "16rem"}}>
+                    <div className="card-body">
+                        <h5 className="card-title">{this.state.title}</h5>
+                        <h6 className="card-subtitle mb-2 text-muted">By {this.state.author}</h6>
+                        <p className="card-text">{this.state.description}</p>
+
+                        <button type="button" data-toggle="dropdown" className="btn btn-light dropdown-toggle ml-4" aria-haspopup="true" aria-expanded="false">Options</button>
+                        <a href={this.state.url} target="__blank" className="btn btn-orange text-light">Check It Out</a>
+
+                        <div className="p-4 dropdown-menu recommendation-dropdown">
+                            <p className="text-center">Actions</p>
+                            {/* <button className="btn btn-orange text-light m-2">Update</button> */}
+                            {/* <button type="button" className="text-light m-2 btn" style={{width: "250px", backgroundColor: "#ff6000"}} data-toggle="modal" data-target="#recommendationModal">Update</button> */}
+                            <button type="button" className="btn btn-orange text-light" data-toggle="modal" data-target={`#recommendation-modal-${this.state.id}`}>Update</button>
+                            <button onClick={this.handleDelete.bind(this)} className="btn btn-danger text-light m-2">Delete</button>
+                        </div>
+                    </div>
                 </div>
+
+
 
                 <div className="modal fade" id={`recommendation-modal-${this.state.id}`} tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div className="modal-dialog" role="document">
@@ -183,10 +192,7 @@ class ProfileRecommendation extends Component {
 
     render() {
         return (
-            <div>
-                <div>
-
-                </div>
+            <div className="card-group justify-content-center">
                 {this.state.recommendations.map(recommendation => {
                     // return <div key={recommendation.id}>{recommendation.title} by {recommendation.author}.</div>;
                     return <Recommendation incrementRecommendations={this.props.incrementRecommendations} key={recommendation.id} recommendation={recommendation} />
@@ -255,6 +261,7 @@ class ProfileFollowers extends Component {
     }
 }
 
+// TODO: Change ProfileEdit to handle it's own state
 class ProfileEdit extends Component {
     constructor(props) {
         super(props);        
@@ -428,11 +435,24 @@ class Profile extends Component {
 
     handleSave(e) {
         axios.put("http://localhost:3000/api/v1/users/" + this.state.current_user_id, this.state.new_profile_info)
-        .then(res => {
-            this.setUserInfo();
-            this.setState({edit: !this.state.edit});
-        })
-        .catch(err => {} /* TODO: Error handling */);        
+        .then(res => swal({
+                title: "Success",
+                text: "The new profile is looking sexy ;)!",
+                icon: "success"
+            })
+        )
+        .then(_ => this.setUserInfo())
+        .then(_ => this.setState({edit: !this.state.edit}))
+        .catch(err => {
+            swal({
+                title: "Something went wrong!",
+                // text: "Please check the error messages!",
+                text: "Todo: error message here",
+                icon: "error",
+                dangerMode: true
+                // text: err.response.data
+            })
+        });        
     }
 
     handleEdit(e) {
