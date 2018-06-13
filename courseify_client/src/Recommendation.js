@@ -3,7 +3,9 @@ import './App.css';
 import axios from 'axios';
 import Auth from './Auth';
 import $ from 'jquery';
+import swal from 'sweetalert';
 // import { Redirect } from 'react-router';
+
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
 
@@ -17,6 +19,12 @@ class RecommendationContainer extends Component {
                 author: "",
                 url: "",
                 description: ""
+            },
+            formErrors: {
+                title: "",
+                authpr: "",
+                url: "",
+                description: ""
             }
         }
     }
@@ -24,9 +32,22 @@ class RecommendationContainer extends Component {
     handleSubmit(e) {
         axios.post("http://localhost:3000/api/v1/recommendations", this.state.recommendation)
         .then(res => {
-            $('#recommendModal').modal('hide');
+            swal({
+                title: "Success",
+                text: "Your recommendation is out there and helping others!",
+                icon: "success"
+            })
+            .then(_ => $('#recommendModal').modal('hide'));
         })
-        .catch(err => console.error(err));
+        .catch(err => {
+            swal({
+                title: "Something went wrong!",
+                text: "Please double check all the forms x(!",
+                icon: "error",
+                dangerMode: true
+                // text: err.response.data
+            })
+        });
     }
     
     handleInputChange(event) {  

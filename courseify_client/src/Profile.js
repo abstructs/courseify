@@ -5,6 +5,8 @@ import Auth from './Auth';
 import { Redirect, matchPath } from 'react-router';
 import teacherImage from './images/laptop.jpeg';
 import $ from 'jquery';
+import swal from 'sweetalert';
+
 {/* <button type="button" className="text-light nav-link btn" style={{width: "250px", backgroundColor: "#ff6000"}} data-toggle="modal" data-target="#recommendModal"> */}
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
@@ -18,7 +20,8 @@ class Recommendation extends Component {
             title : "",
             author: "",
             description: "",
-            url: ""
+            url: "",
+            deleted: false
         }
     }
 
@@ -46,10 +49,16 @@ class Recommendation extends Component {
         }
         
         axios.put(`http://localhost:3000/api/v1/recommendations/${this.state.id}`, new_data)
-        .then(res => {
-            $(`#recommendation-modal-${this.state.id}`).modal('hide');
-            this.setState({ ...new_data });
-        })
+        .then(res => this.setState({ ...new_data }))
+        .then(_ => 
+            swal({
+                    title: "Success",
+                    text: "Update totally went through :)",
+                    icon: "success",
+                    timer: 3000
+            })
+        )
+        .then(_ => $(`#recommendation-modal-${this.state.id}`).modal('hide'));
         // e.preventDefault();
         // e.stopPropagation();
         // console.log("update")
@@ -57,13 +66,36 @@ class Recommendation extends Component {
     }
 
     handleDelete(e) {
-        axios.delete(`http://localhost:3000/api/v1/recommendations/${this.state.id}`)
-        .then(res => {
-            $(`#recommendation-modal-${this.state.id}`).modal('hide');
+        swal({
+            title: "Are you sure?",
+            text: "Once it's gone... It's gone.",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true
         })
+        .then(willDelete => {
+            if(willDelete) {
+                axios.delete(`http://localhost:3000/api/v1/recommendations/${this.state.id}`)
+                .then(res => {
+                    swal("Poof! It's been deleted", {
+                        icon: "success",
+                    })
+                    .then(_ => $(`#recommendation-modal-${this.state.id}`).modal('hide'))
+                    .then(_ => { 
+                        this.props.incrementRecommendations(-1);
+                        this.setState({ deleted: true });
+                    });
+                })
+            } else {
+                swal("It's all good, it's safe!");
+            }
+        })
+        console.log("run")
+
     }
 
     render() {
+        if(this.state.deleted) return <div></div>;
         // onClick={this.handleDropdown.bind(this)} 
         return (
             <div className="m-2">
@@ -76,7 +108,7 @@ class Recommendation extends Component {
                     {/* <button className="btn btn-orange text-light m-2">Update</button> */}
                     {/* <button type="button" className="text-light m-2 btn" style={{width: "250px", backgroundColor: "#ff6000"}} data-toggle="modal" data-target="#recommendationModal">Update</button> */}
                     <button type="button" className="btn btn-orange text-light" data-toggle="modal" data-target={`#recommendation-modal-${this.state.id}`}>Update</button>
-                    <button className="btn btn-danger text-light m-2">Delete</button>
+                    <button onClick={this.handleDelete.bind(this)} className="btn btn-danger text-light m-2">Delete</button>
                 </div>
 
                 <div className="modal fade" id={`recommendation-modal-${this.state.id}`} tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -118,8 +150,8 @@ class Recommendation extends Component {
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-secondary m-2" data-dismiss="modal">Close</button>
-                                <button type="submit" onClick={this.handleUpdate.bind(this)} className="btn text-light m-2 btn-orange">Update</button>
-                                <button className="btn btn-danger m-2">Delete</button>
+                                <button type="button" onClick={this.handleUpdate.bind(this)} className="btn text-light m-2 btn-orange">Save</button>
+                                <button type="button" onClick={this.handleDelete.bind(this)} className="btn btn-danger m-2">Delete</button>
                             </div>
                         </div>
                     </div>
@@ -157,7 +189,7 @@ class ProfileRecommendation extends Component {
                 </div>
                 {this.state.recommendations.map(recommendation => {
                     // return <div key={recommendation.id}>{recommendation.title} by {recommendation.author}.</div>;
-                    return <Recommendation key={recommendation.id} recommendation={recommendation} />
+                    return <Recommendation incrementRecommendations={this.props.incrementRecommendations} key={recommendation.id} recommendation={recommendation} />
                 })}
             </div>
         );
@@ -345,6 +377,15 @@ class Profile extends Component {
         this.setUserInfo();
     }
 
+    incrementRecommendations(num) {
+        this.setState(prevState => ({
+            profile_info: {
+                ...prevState.profile_info,
+                recommendationsCount: this.state.profile_info.recommendationsCount + num
+            }
+        }));
+    }
+
     // EFFECTS: Manages the data set on the profile page depending on if it's the current users profile or another user's
     setUserInfo() {
         
@@ -474,7 +515,7 @@ class Profile extends Component {
                 case "info":
                     return middleSection;
                 case "recommendations":
-                    return <ProfileRecommendation profile_info={this.state.profile_info} />;
+                    return <ProfileRecommendation incrementRecommendations={this.incrementRecommendations.bind(this)} profile_info={this.state.profile_info} />;
                 case "following":
                     return <ProfileFollowing profile_info={this.state.profile_info} />;
                 case "followers":
