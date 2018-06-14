@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import { Paper } from '@material-ui/core';
 // import axios from 'axios';
 // import Auth from './Auth';
 
@@ -11,8 +12,8 @@ class Footer extends Component {
 
     render() {
         return (
-            <footer className="bg-dark text-light pt-5 pb-5 mt-5" style={{minHeight: "200px"}}>
-                <div className="container">
+            <footer style={{marginTop: "100px", backgroundColor: "#222", height: "200px"}}>
+                {/* <div className="container">
                     <div className="row">
                         <div className="col-md-3 offset-1">
                             <h4>Stay Connected</h4>
@@ -37,7 +38,7 @@ class Footer extends Component {
                             </nav>
                         </div>
                     </div>
-                </div>
+                </div> */}
             </footer>
         );
     }
