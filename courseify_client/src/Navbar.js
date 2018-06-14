@@ -48,26 +48,26 @@ class Navbar extends Component {
 
     render() {
         const isLoggedIn = Auth().isAuthenticated();
-        const profileLink = isLoggedIn ? <li className="nav-item"><a className="nav-link" href="/profile">Profile</a></li> : <div></div>;
-        const videoLink = isLoggedIn  ? <li className="nav-item"><a className="nav-link" href="/videos">Videos</a></li> : <div></div>;
-        const rightNav = !isLoggedIn ?   <ul className="navbar-nav ml-auto mr-5">
-                                            <li className="nav-item">
-                                                <a className="nav-link" href="/signup">Sign Up</a>
-                                            </li>
+        // const profileLink = isLoggedIn ? <li className="nav-item"><a className="nav-link" href="/profile">Profile</a></li> : <div></div>;
+        // const videoLink = isLoggedIn  ? <li className="nav-item"><a className="nav-link" href="/videos">Videos</a></li> : <div></div>;
+        // const rightNav = !isLoggedIn ?   <ul className="navbar-nav ml-auto mr-5">
+        //                                     <li className="nav-item">
+        //                                         <a className="nav-link" href="/signup">Sign Up</a>
+        //                                     </li>
                                             
-                                            <li className="nav-item">
-                                                <a className="nav-link" href="/login">Log In</a>
-                                            </li>
-                                        </ul>
-                                    :   <ul className="navbar-nav  ml-auto mr-5">
-                                            <li className="nav-item mr-5">
-                                                <RecommendationCreateModal />
-                                                {/* <button className="text-light nav-link btn" style={{width: "250px", backgroundColor: "#ff6000"}} href="/recommend">Recommend Something</button> */}
-                                            </li>
-                                            <li className="nav-item">
-                                                <a className="nav-link" href="/logout">Log Out</a>
-                                            </li>
-                                        </ul>;
+        //                                     <li className="nav-item">
+        //                                         <a className="nav-link" href="/login">Log In</a>
+        //                                     </li>
+        //                                 </ul>
+        //                             :   <ul className="navbar-nav  ml-auto mr-5">
+        //                                     <li className="nav-item mr-5">
+        //                                         <RecommendationCreateModal />
+        //                                         {/* <button className="text-light nav-link btn" style={{width: "250px", backgroundColor: "#ff6000"}} href="/recommend">Recommend Something</button> */}
+        //                                     </li>
+        //                                     <li className="nav-item">
+        //                                         <a className="nav-link" href="/logout">Log Out</a>
+        //                                     </li>
+        //                                 </ul>;
 
         const { classes } = this.props;
         const { anchorEl } = this.state;
@@ -77,25 +77,40 @@ class Navbar extends Component {
               <AppBar position="static" color="primary">
                 <Toolbar>
                   <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
-                    {/* <MenuIcon onClick={this.handleClick} />
-                    <Menu
-                        id="fade-menu"
-                        anchorEl={anchorEl}
-                        open={Boolean(anchorEl)}
-                        onClose={this.handleClose}
-                        TransitionComponent={Fade}
-                    >
-                        <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                        <MenuItem onClick={this.handleClose}>My account</MenuItem>
-                        <MenuItem onClick={this.handleClose}>Logout</MenuItem>
-                    </Menu> */}
+                  {isLoggedIn ?
+                    <div>
+                        <MenuIcon onClick={this.handleClick} />
+                        <Menu
+                            id="fade-menu"
+                            anchorEl={anchorEl}
+                            open={Boolean(anchorEl)}
+                            onClose={this.handleClose}
+                            TransitionComponent={Fade}
+                        >
+                            <Button style={{ marginLeft: "5px", marginRight: "5px" }} size="medium" button href="/profile">Profile</Button>
+                            {/* <MenuItem onClick={this.handleClose}>My account</MenuItem> */}
+                            <br/>
+                            {/* <Button style={{ marginLeft: "5px", marginRight: "5px" }} size="medium" button href="/logout" onClick={this.handleClose}>Logout</Button> */}
+                        </Menu>
+                    </div>
+                    :
+                    <div></div>
+                  }
                   </IconButton>
                   <Typography variant="title" color="inherit" className={classes.flex}>
                     Courseify
                   </Typography>
-                  <Button href="/" color="inherit">Home</Button>
-                  <Button href="/signup" color="inherit">Sign Up</Button>
-                  <Button href="/login" color="inherit">Login</Button>
+                  {!isLoggedIn ?
+                    <div>
+                        <Button href="/" color="inherit">Home</Button>
+                        <Button href="/signup" color="inherit">Sign Up</Button>
+                        <Button href="/login" color="inherit">Login</Button>
+                    </div>
+                    :
+                    <div>
+                        <Button href="/" color="inherit">Home</Button>
+                        <Button href="/logout" color="inherit">Logout</Button>
+                    </div>}
                 </Toolbar>
               </AppBar>
             </div>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import headerImage from './images/book.jpeg';
+import headerImage from '../images/book.jpeg';
 import { Typography, Grid, Paper, withStyles, Card, CardMedia, CardContent, Button } from '@material-ui/core';
 
 const styles = theme => ({
@@ -14,7 +14,7 @@ const styles = theme => ({
   },
 });
 
-class LandingPage extends Component {
+class HomeLandingPage extends Component {
   render() {
 
     const { classes } = this.props;
@@ -92,7 +92,7 @@ class LandingPage extends Component {
             </Grid>
           </Grid>
 
-          <Button href="/signup" style={{margin: "auto", marginTop: "30px"}} variant="contained" size="large" color="primary" className={classes.button}>
+          <Button href="/signup" style={{margin: "auto", marginTop: "15px"}} variant="contained" size="large" color="primary" className={classes.button}>
             Get Started
           </Button>
         </Grid>
@@ -101,8 +101,8 @@ class LandingPage extends Component {
   }
 }
 
-LandingPage.propTypes = {
+HomeLandingPage.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(LandingPage);
+export default withStyles(styles)(HomeLandingPage);

@@ -4,6 +4,29 @@ import axios from 'axios';
 import { Redirect } from 'react-router';
 import Auth from './Auth';
 import Alert from './Alert';
+import { Grid, Paper, withStyles, Typography, TextField, FormControl, Button } from '@material-ui/core';
+import PropTypes from 'prop-types';
+
+const styles = theme => ({
+    root: {
+      flexGrow: 1,
+    },
+    paper: {
+      padding: theme.spacing.unit * 2,
+      textAlign: 'center',
+      color: theme.palette.text.secondary,
+    },
+    container: {
+        display: 'flex',
+        flexWrap: 'wrap',
+    },
+        textField: {
+        marginLeft: theme.spacing.unit,
+        marginRight: theme.spacing.unit,
+        width: "25%",
+    },
+});
+
 
 class SignUp extends Component {
     constructor(props) {
@@ -74,12 +97,44 @@ class SignUp extends Component {
 
     render() {
         const { redirect } = this.state;
+        const { classes } = this.props;
+
         if (redirect) {
             return <Redirect to='/' />;
         }
 
         return (
-        <div className="bg-light">
+            <div className={classes.root}>
+                <Grid container spacing={24}>
+                    <Grid item xs={12} align="center">
+                        <Typography align="center" style={{color: "black", marginTop: "50px", marginBottom: "20px"}} variant="display2">
+                            Sign Up
+                        </Typography>
+                        <Typography align="center" variant="subheading">
+                            Already have an account? Click <a href="/login">here</a> to login!
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={12} align="center">
+                        {/* <Paper align="center"> */}
+                            <FormControl margin="normal" fullWidth>
+                                <TextField name="email" onChange={this.handleInputChange.bind(this)} fullWidth={true} className={classes.textField} label="Email" type="email" placeholder="Email"></TextField>
+                            </FormControl>
+                            {/* <FormControl>
+                                <TextField className={classes.textField} label="Email" type="text" placeholder="Email"></TextField>
+                            </FormControl>
+                            <br/> */}
+                            <FormControl margin="normal" fullWidth>
+                                <TextField name="password" onChange={this.handleInputChange.bind(this)} fullWidth className={classes.textField} label="Password" type="password" placeholder="Password"></TextField>
+                            </FormControl>
+                            <FormControl margin="normal" fullWidth>
+                                <TextField name="passwordConfirmation" className={classes.textField} label="Password Confirmation" type="password" placeholder="Password Confirmation"></TextField>
+                            </FormControl>
+                        {/* </Paper> */}
+                    </Grid>
+                    <Button onClick={this.handleSubmit.bind(this)} style={{margin: "auto", marginTop: "30px"}} variant="contained" size="large" color="primary" className={classes.button}>
+                        Sign Up
+                    </Button>
+                </Grid>
             {/* {this.state.errors.emailErrors.map(errMsg => {
                 return (
                     <div className="alert alert-danger m-0 border-0" role="alert">
@@ -93,30 +148,16 @@ class SignUp extends Component {
                         </div>
                     );
             })} */}
-            {this.state.messages.map(message => {
+            {/* {this.state.messages.map(message => {
                 return <Alert message={message} />;
-            })}
-            <br/>
-            <h1 className="text-center text-dark">Sign Up</h1>
-            <p className="text-center text-dark">Ready to get this party rolling?... Oh yeah, if you're already a member hit <a href="/login">this</a>.</p>
-            <div className="pt-2">
-                <form>
-                    <div className="form-group col-md-6 m-auto">
-                        <label className="text-dark" htmlFor="email">Email</label>
-                        <input onChange={this.handleInputChange.bind(this)} className="form-control" type="email" name="email" />
-                        <br/>
-                        <label className="text-dark" htmlFor="password">Password</label>
-                        <input onChange={this.handleInputChange.bind(this)} className="form-control" type="password" name="password" />
-                        <br/>
-                        <label className="text-dark" htmlFor="passwordConfirmation">Password Confirmation</label>
-                        <input onChange={this.handleInputChange.bind(this)} className="form-control" type="password" name="passwordConfirmation" />
-                        <button onClick={this.handleSubmit.bind(this)} className="btn mt-3 pr-5 pl-5 text-white" style={{backgroundColor: "#ff6000"}} type="button">Join</button>
-                    </div>
-                </form>
-            </div>
+            })}*/}
         </div>
         );
     }
 }
 
-export default SignUp;
+SignUp.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(SignUp);

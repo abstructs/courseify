@@ -5,7 +5,7 @@ import './App.css';
 // import 'jquery';
 // import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import VideosContainer from './VideosContainer.js';
-import Home from './Home';
+import HomeContainer from './Home/HomeContainer';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import ProfileContainer from './Profile/ProfileContainer';
@@ -64,7 +64,7 @@ const Main = () => (
   <Router>
     <MuiThemeProvider theme={theme}>
       <Navbar />
-      <Route exact path="/" component={Home}/>
+      <Route exact path="/" component={HomeContainer}/>
       <Route path="/videos" component={VideosContainer}/>
       {/* <Route path="/recommend" component={RecommendationContainer}/> */}
       <Route path="/profile" component={ProfileContainer}/>

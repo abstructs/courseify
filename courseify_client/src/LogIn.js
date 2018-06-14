@@ -1,9 +1,32 @@
 import React, { Component } from 'react';
 import './App.css';
-import axios from 'axios';
+// import axios from 'axios';
 import { Redirect } from 'react-router';
 import Auth from './Auth';
-import Alert from './Alert';
+import PropTypes from 'prop-types';
+// import Alert from './Alert';
+import { Grid, Paper, withStyles, Typography, TextField, FormControl, Button } from '@material-ui/core';
+
+const styles = theme => ({
+    root: {
+      flexGrow: 1,
+    },
+    paper: {
+      padding: theme.spacing.unit * 2,
+      textAlign: 'center',
+      color: theme.palette.text.secondary,
+    },
+    container: {
+        display: 'flex',
+        flexWrap: 'wrap',
+    },
+        textField: {
+        marginLeft: theme.spacing.unit,
+        marginRight: theme.spacing.unit,
+        width: "25%",
+    },
+});
+  
 
 class LogIn extends Component {
     constructor(props) {
@@ -76,16 +99,52 @@ class LogIn extends Component {
     }
 
     render() {
+        const { classes } = this.props;
         const { redirect } = this.state;
+        
         if (redirect) {
             return <Redirect to='/' />;
         }
 
         return (
-        <div className="bg-light">
-            {this.state.messages.map(message => {
+        <div className={classes.root}>
+            <Grid container spacing={24}>
+                <Grid item xs={12} align="center">
+                    <Typography align="center" style={{color: "black", marginTop: "50px", marginBottom: "20px"}} variant="display2">
+                        Login
+                    </Typography>
+                    <Typography align="center" variant="subheading">
+                        No Account yet? Click <a href="/signup">here</a> to sign up!
+                    </Typography>
+                    {/* <Paper>
+                        Login
+                    </Paper> */}
+                </Grid>
+                <Grid item xs={12} align="center">
+                    {/* <Paper align="center"> */}
+                        <FormControl margin="normal" fullWidth>
+                            <TextField name="email" onChange={this.handleInputChange.bind(this)} fullWidth={true} className={classes.textField} label="Email" type="email" placeholder="Email"></TextField>
+                        </FormControl>
+                        {/* <FormControl>
+                            <TextField className={classes.textField} label="Email" type="text" placeholder="Email"></TextField>
+                        </FormControl>
+                        <br/> */}
+                        <FormControl margin="normal" fullWidth>
+                            <TextField name="password" onChange={this.handleInputChange.bind(this)} fullWidth className={classes.textField} label="Password" type="password" placeholder="Password"></TextField>
+                        </FormControl>
+                        {/* <FormControl>
+                            <TextField className={classes.textField} label="Password Confirmation" type="password" placeholder="Password Confirmation"></TextField>
+                        </FormControl> */}
+                    {/* </Paper> */}
+                </Grid>
+                <Button onClick={this.handleSubmit.bind(this)} style={{margin: "auto", marginTop: "30px"}} variant="contained" size="large" color="primary" className={classes.button}>
+                    Login
+                </Button>
+            </Grid>
+
+            {/* {this.state.messages.map(message => {
                 return <Alert message={message} />;
-            })}
+            })} */}
             {/* {this.state.errors.emailErrors.map(errMsg => {
                 return (
                     <div className="alert alert-danger m-0 border-0" role="alert">
@@ -99,7 +158,7 @@ class LogIn extends Component {
                         </div>
                     );
             })} */}
-            <br/>
+            {/* <br/>
             <h1 className="text-center text-dark">Log In</h1>
             <p className="text-center">This is the cool kids club! Not a <a href="/signup">member</a>?</p>
             <div className="pt-2">
@@ -113,10 +172,14 @@ class LogIn extends Component {
                         <button onClick={this.handleSubmit.bind(this)} className="btn mt-3 pr-5 pl-5 text-white" style={{backgroundColor: "#ff6000"}} type="button">Get In</button>
                     </div>
                 </form>
-            </div>
+            </div> */}
         </div>
         );
     }
 }
 
-export default LogIn;
+LogIn.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(LogIn);
