@@ -84,9 +84,10 @@ class Recommendation extends Component {
                     .then(_ => { 
                         this.props.incrementRecommendations(-1);
                         this.setState({ deleted: true });
-                    });
+                    })
+                    .catch(err => console.error(err.response.data) /* handle err */);
                 })
-            } else {
+            } else { 
                 swal("It's all good, it's safe!");
             }
         })
@@ -100,12 +101,12 @@ class Recommendation extends Component {
         return (
             <div className="">
                 <div className="card m-2" style={{width: "16rem"}}>
-                    <div className="card-body">
-                        <h5 className="card-title">{this.state.title}</h5>
+                    <div className="card-body pt-0">
+                        <br/>
+                        <button type="button" style={{top: "10px", right: "10px"}} data-toggle="dropdown" className="position-absolute ml-auto btn dropdown-toggle" aria-haspopup="true" aria-expanded="false"></button>
+                        <h5 className="d-inline card-title mt-5">{this.state.title}</h5>
                         <h6 className="card-subtitle mb-2 text-muted">By {this.state.author}</h6>
                         <p className="card-text">{this.state.description}</p>
-
-                        <button type="button" data-toggle="dropdown" className="btn btn-light dropdown-toggle ml-4" aria-haspopup="true" aria-expanded="false">Options</button>
                         <a href={this.state.url} target="__blank" className="btn btn-orange text-light">Check It Out</a>
 
                         <div className="p-4 dropdown-menu recommendation-dropdown">

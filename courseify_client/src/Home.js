@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
+// import 'bootstrap/dist/css/bootstrap.min.css';
 // import VideosContainer from './VideosContainer.js';
 import Auth from './Auth';
 import teacherImage from './images/laptop.jpeg';
