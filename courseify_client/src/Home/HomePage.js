@@ -11,12 +11,14 @@ import { withStyles, List, ListItem, ListItemIcon, ListItemText, ExpansionPanelS
 
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
-
+import UserCard from '../User/UserCard';
+import RecommendationCard from '../Recommendation/RecommendationCard';
 // Icons
 import InboxIcon from '@material-ui/icons/Inbox';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ViewListIcon from '@material-ui/icons/ViewList';
+import Recommendation from '../Recommendation/Recommendation';
 
 const styles = theme => ({
     root: {
@@ -108,29 +110,7 @@ class HomePage extends Component {
                             {this.state.recommendations.map(recommendation => {
 
                                 return (
-                                    <Card style={{margin: "50px"}} className={classes.card}>
-                                        <CardMedia
-                                        className={classes.media}
-                                        image="/static/images/cards/contemplative-reptile.jpg"
-                                        title="Contemplative Reptile"
-                                        />
-                                        <CardContent>
-                                        <Typography gutterBottom variant="headline" component="h2">
-                                            {recommendation.title} <small>by</small> {recommendation.author}
-                                        </Typography>
-                                        <Typography component="p">
-                                            {recommendation.description}
-                                        </Typography>
-                                        </CardContent>
-                                        <CardActions>
-                                        {/* <Button size="small" color="primary">
-                                            Share
-                                        </Button> */}
-                                        <Button href={recommendation.url} size="small" color="primary">
-                                            Learn More
-                                        </Button>
-                                        </CardActions>
-                                    </Card>
+                                    <RecommendationCard recommendation={recommendation} />
                                 )
                             })}
                         </div>
@@ -142,39 +122,11 @@ class HomePage extends Component {
                         // <Paper style={{paddingTop: "20px", paddingBottom: "20px", marginTop: "20px"}}>
                         <div>
                             <Typography style={{marginTop: "50px", color: "black"}} align="center" variant="display1">
-                                New fPeople
+                                New People
                             </Typography>
                             {this.state.users.map(user => {
                                 return (
-                                    <Card style={{margin: "50px"}} className={classes.card}>
-                                        <CardMedia
-                                        className={classes.media}
-                                        image="/static/images/cards/contemplative-reptile.jpg"
-                                        title="Contemplative Reptile"
-                                        />
-                                        <CardContent>
-                                        <Typography gutterBottom variant="headline" component="h2">
-                                            {user.first_name} {user.last_name} 
-                                        </Typography>
-                                        <Typography gutterBottom variant="subheading">
-                                            is a {user.headline} from {user.country}
-                                        </Typography>
-                                        <Typography gutterBottom variant="body2">
-                                            Summary
-                                        </Typography>
-                                        <Typography component="body1">
-                                            {user.summary}
-                                        </Typography>
-                                        </CardContent>
-                                        <CardActions>
-                                            <Button href={`/people/${user.id}`} size="small" color="primary">
-                                                Check Out Their Profile
-                                            </Button>
-                                            {/* <Button size="small" color="primary">
-                                                Message
-                                            </Button> */}
-                                        </CardActions>
-                                    </Card>
+                                    <UserCard user={user} />
                                 )
                             })}
                             {/* </Paper> */}

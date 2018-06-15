@@ -5,7 +5,7 @@ Rails.application.routes.draw do
       resources :users do
         get :followers, :following
       end
-      resources :follows
+      resources :follows, param: :user_id
       resources :recommendations
       post 'users/user_token' => 'user_token#create'
       get '/profile' => 'users#profile'

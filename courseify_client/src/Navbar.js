@@ -87,7 +87,7 @@ class Navbar extends Component {
                             onClose={this.handleClose}
                             TransitionComponent={Fade}
                         >
-                            <Button style={{ marginLeft: "5px", marginRight: "5px" }} size="medium" button href="/profile">Profile</Button>
+                            <Button style={{ marginLeft: "5px", marginRight: "5px" }} size="medium" button="true" href="/profile">Profile</Button>
                             {/* <MenuItem onClick={this.handleClose}>My account</MenuItem> */}
                             <br/>
                             {/* <Button style={{ marginLeft: "5px", marginRight: "5px" }} size="medium" button href="/logout" onClick={this.handleClose}>Logout</Button> */}

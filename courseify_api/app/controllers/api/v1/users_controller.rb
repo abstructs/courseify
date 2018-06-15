@@ -35,12 +35,15 @@ class Api::V1::UsersController < ApplicationController
     
     if @user
       u = user_data(@user)
-      u[:follow_info] = follow_info = if current_user 
-                                      then { 
-                                        follow_id: current_user.active_follows.find_by(followed_id: @user.id).try(:id),
-                                        is_following: current_user.following?(@user) }
-                                      else { is_following: false }
-                                      end
+      # u[:follow_info] = follow_info = if current_user 
+      #                                 then { 
+      #                                   follow_id: current_user.active_follows.find_by(followed_id: @user.id).try(:id),
+      #                                   is_following: current_user.following?(@user) }
+      #                                 else { is_following: false }
+      #                                 end
+
+      u[:is_current_user_profile] = current_user == @user
+      u[:current_user_is_following] = current_user.following?(@user)
 
       render json: { user: u }
     end
@@ -51,6 +54,8 @@ class Api::V1::UsersController < ApplicationController
 
     if @user
       u = user_data(@user)
+
+      u[:is_current_user_profile] = true
       
       render json: { user: u }
     end

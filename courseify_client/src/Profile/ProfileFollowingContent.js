@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import '../App.css';
 import axios from 'axios';
 import Auth from '../Auth';
+import UserCard from '../User/UserCard';
 // import { Redirect, matchPath } from 'react-router';
 // import teacherImage from './images/laptop.jpeg';
 // import $ from 'jquery';
@@ -11,33 +12,34 @@ import Auth from '../Auth';
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
 
-class ProfileFollowers extends Component {
+class ProfileFollowing extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            followers: []
+            following: []
         }
     }
 
     componentWillMount() {
-        axios.get(`http://localhost:3000/api/v1/users/${this.props.profile_info.id}/followers/`)
+        axios.get(`http://localhost:3000/api/v1/users/${this.props.profile.id}/following/`)
         .then(res => {
-            const followers = res.data.followers;
+            const following = res.data.following;
+            console.log(following)
 
-            console.log(followers);
-
-            this.setState({ followers });
+            this.setState({ following });
         })
     }
 
     render() {
         return (
-            <div>{this.state.followers.map(follow => {
-                return <div><a href={`/people/${follow.id}`}>{follow.email}</a></div>;
-            })}</div>
+            <div>
+                {this.state.following.map(follow => {
+                    return <UserCard user={follow} />;
+                })}
+            </div>
         );
     }
 }
 
-export default ProfileFollowers;
+export default ProfileFollowing;

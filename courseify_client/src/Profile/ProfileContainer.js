@@ -1,23 +1,74 @@
 import React, { Component } from 'react';
 import '../App.css';
+import bookImage from '../images/book.jpeg';
 import axios from 'axios';
 import Auth from '../Auth';
 import { Redirect, matchPath } from 'react-router';
 import teacherImage from '../images/laptop.jpeg';
 // import $ from 'jquery';
 import swal from 'sweetalert';
+import PropTypes from 'prop-types';
 
 import ProfileEdit from './ProfileEdit';
-import ProfileFollowers from './ProfileFollowers';
-import ProfileFollowing from './ProfileFollowing';
+import ProfileFollowerContent from './ProfileFollowerContent';
+import ProfileFollowingContent from './ProfileFollowingContent';
 import ProfileInfo from './ProfileInfo';
 import ProfileRecommendation from './ProfileRecommendation';
+import { Grid, Paper, withStyles, Card, CardMedia, CardContent, Typography, CardActions, Button, BottomNavigation, BottomNavigationAction, AppBar, Tabs, Tab, List, ListItem, ListItemIcon, ListItemText, Divider } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
+import PersonIcon from '@material-ui/icons/Person';
+import EditIcon from '@material-ui/icons/Create';
+import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 
 // , ProfileFollowers, ProfileFollowing, ProfileInfo, ProfileRecommendation }
 
 {/* <button type="button" className="text-light nav-link btn" style={{width: "250px", backgroundColor: "#ff6000"}} data-toggle="modal" data-target="#recommendModal"> */}
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
+
+const styles = theme => ({
+    root: {
+      flexGrow: 1,
+    },
+    paper: {
+      padding: theme.spacing.unit * 2,
+      textAlign: 'center',
+      color: theme.palette.text.secondary,
+    },
+    container: {
+        display: 'flex',
+        flexWrap: 'wrap',
+    },
+        textField: {
+        marginLeft: theme.spacing.unit,
+        marginRight: theme.spacing.unit,
+        width: "25%",
+    },
+    media: {
+        height: 0,
+        // paddingTop: '56.25%', // 16:9
+        paddingTop: '30%', // 16:9
+        // maxHeight: "200px"
+    },
+});
+
+class TabContainer extends Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        return (
+            <Typography component="div" style={{ padding: 8 * 3 }}>
+                {this.props.children}
+            </Typography>
+        );
+    }
+}
+
+TabContainer.propTypes = {
+    children: PropTypes.node.isRequired,
+  };
 
 class ProfileContainer extends Component {
     constructor(props) {
@@ -37,7 +88,7 @@ class ProfileContainer extends Component {
             },
 
             // tab logic
-            tab: "info",
+            tab: 0,
             // for profile edit
             new_profile_info: {},
 
@@ -68,6 +119,24 @@ class ProfileContainer extends Component {
         }));
     }
 
+    toggleCurrentUserIsFollowing() {
+        this.setState(prevState => ({
+            profile_info: {
+                ...prevState.profile_info,
+                current_user_is_following: !this.state.profile_info.current_user_is_following
+            }
+        }))
+    }
+
+    incrementFollowers(num) {
+        this.setState(prevState => ({
+            profile_info: {
+                ...prevState.profile_info,
+                followerCount: this.state.profile_info.followerCount + num
+            }
+        }));
+    }
+
     // EFFECTS: Manages the data set on the profile page depending on if it's the current users profile or another user's
     setUserInfo() {
         
@@ -78,12 +147,13 @@ class ProfileContainer extends Component {
         axios.get(url)
         .then(res => {
             const profile_info = res.data.user;
-            const is_current_user_profile = res.data.user.id === this.state.current_user_id;
-            const new_profile_info = is_current_user_profile ? profile_info : [];
-            const follow_info = profile_info.follow_info;
-            console.log(res)
+            // const is_current_user_profile = res.data.user.id === this.state.current_user_id;
+            const new_profile_info = profile_info.is_current_user_profile ? profile_info : [];
+            // const follow_info = profile_info.follow_info;
+            console.log(profile_info)
 
-            this.setState({ profile_info, new_profile_info, is_current_user_profile, follow_info });
+            // this.setState({ profile_info, new_profile_info, is_current_user_profile, follow_info });
+            this.setState({ profile_info, new_profile_info });
 
             
         })
@@ -139,7 +209,7 @@ class ProfileContainer extends Component {
     }
 
     handleFollow(e) {
-        if(this.state.is_current_user_profile) return;
+        if(this.state.profile_info.is_current_user_profile) return;
         axios.post("http://localhost:3000/api/v1/follows", { followed_id: this.state.profile_info.id })
         .then(res => {
             this.setState(prevState => ({
@@ -152,6 +222,10 @@ class ProfileContainer extends Component {
         .then(res => {
             this.setUserInfo();
         })
+    }
+
+    handleTab(e, tab) {
+        this.setState({ tab });
     }
 
     handleUnfollow(e) {
@@ -212,9 +286,9 @@ class ProfileContainer extends Component {
                 case "recommendations":
                     return <ProfileRecommendation incrementRecommendations={this.incrementRecommendations.bind(this)} profile_info={this.state.profile_info} />;
                 case "following":
-                    return <ProfileFollowing profile_info={this.state.profile_info} />;
+                    return <ProfileFollowingContent profile_info={this.state.profile_info} />;
                 case "followers":
-                    return <ProfileFollowers profile_info={this.state.profile_info} />;
+                    return <ProfileFollowerContent profile_info={this.state.profile_info} />;
                 default:
                     return <div>Something went wrong :(.</div>;
             }
@@ -224,9 +298,90 @@ class ProfileContainer extends Component {
             return <div>Loading</div>;
         }
 
+        const { classes } = this.props;
+        const { profile_info } = this.state;
+
         return (
-            <div>
-                <header className="bg-dark border-0 pt-5" style={{marginBottom: "0px", height: "150px", backgroundImage: "url(" + teacherImage +")", backgroundPosition: "250px 660px"}}>
+            <div className={classes.root}>
+                <Grid container spacing={24}>
+                    <Grid item lg={3}>
+                        <List component="nav">
+                            <ListItem button >
+                                <ListItemIcon>
+                                    <PersonIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Profile" />
+                            </ListItem>
+                            <Divider />
+                            {/* <ListItem button>
+                                <ListItemIcon>
+                                    <InboxIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Inbox" />
+                            </ListItem> */}
+                            <ListItem button >
+                                <ListItemIcon>
+                                    <LibraryBooksIcon />
+                                </ListItemIcon>
+                                <ListItemText primary={`Recommendations`} />
+                            </ListItem>
+                        </List>
+                    </Grid>
+                    <Grid item lg={6}>
+                        <Card style={{margin: "50px"}} className={classes.card}>
+                            <AppBar position="static">
+                                <Tabs value={this.state.tab} onChange={this.handleTab.bind(this)}>
+                                    <Tab value={0} label="Info" />
+                                    <Tab value={1} label={`Following (${this.state.profile_info.followingCount || 0})`} />
+                                    <Tab value={2} label={`Followers (${this.state.profile_info.followerCount || 0})`} />
+                                </Tabs>
+                            </AppBar>
+                            {/* {0 === 0 && <TabContainer>Item One</TabContainer>}
+                            {0 === 1 && <TabContainer>Item Two</TabContainer>}
+                            {0 === 2 && <TabContainer>Item Three</TabContainer>} */}
+                            <CardMedia
+                            className={classes.media}
+                            image={bookImage}
+                            title="Contemplative Reptile"
+                            />
+                            {/* {this.state.tab === 0 ? 
+                            : } */}
+                            {(() => {
+                                switch(this.state.tab) {
+                                    case 0:
+                                        return <ProfileInfoContent toggleCurrentUserIsFollowing={this.toggleCurrentUserIsFollowing.bind(this)} incrementFollowers={this.incrementFollowers.bind(this)}  profile={profile_info} classes={classes} />;
+                                    case 1:
+                                        return <ProfileFollowingContent profile={profile_info} classes={classes} />;
+                                    case 2:
+                                        return <ProfileFollowerContent profile={profile_info} classes={classes} />;
+                                }
+                            })()}
+
+                            
+                            <CardActions>
+                                <BottomNavigation
+                                    value={-1}
+                                    onChange={this.handleChange}
+                                    showLabels
+                                    className={classes.root}
+                                >
+                                    {/* <BottomNavigationAction label="Ping"/>
+                                    <BottomNavigationAction label="Message"/> */}
+                                    {/* <BottomNavigationAction label="Following"/> */}
+                                </BottomNavigation>
+                                {/* <Button href={`/people/${profile_info.id}`} size="small" color="primary">
+                                    Check Out Their Profile
+                                </Button> */}
+                                {/* <Button size="small" color="primary">
+                                    Message
+                                </Button> */}
+                            </CardActions>
+                        </Card>
+                    </Grid>
+                    
+                </Grid>
+                {/* {this.state.profile_info.first_name} */}
+                {/* <header className="bg-dark border-0 pt-5" style={{marginBottom: "0px", height: "150px", backgroundImage: "url(" + teacherImage +")", backgroundPosition: "250px 660px"}}>
                     
                 </header>
                 <section>
@@ -257,10 +412,100 @@ class ProfileContainer extends Component {
                             {content()}
                         </div>
                     </div>
-                </section>
+                </section> */}
             </div>
         );
     }
 }
 
-export default ProfileContainer;
+class ProfileInfoContent extends Component {
+    constructor(props) {
+        super(props);
+        
+        this.state = {
+            profile: props.profile
+        }
+    }
+
+    handleFollow(e) {
+        const { profile } = this.state;
+
+        if(profile.current_user_is_following) {
+            this.unfollow(profile.id);
+        } else {
+            this.follow(profile.id);
+        }
+    }
+
+    follow(user_id) {
+        axios.post("http://localhost:3000/api/v1/follows", { user_id })
+        .then(res => {
+            this.setState(prevState => ({ 
+                profile: {
+                    ...prevState.profile,
+                    current_user_is_following: true
+                }
+            }))
+        })
+        .then(_ => {
+            this.props.incrementFollowers(1);
+        })
+        .then(_ => this.props.toggleCurrentUserIsFollowing());
+    }
+
+    unfollow(user_id) {
+        if(this.state.is_current_user_profile) return;
+        axios.delete("http://localhost:3000/api/v1/follows/" + user_id)
+        .then(res => {
+            this.setState(prevState => ({ 
+                profile: {
+                    ...prevState.profile,
+                    current_user_is_following: false
+                }
+            }))
+        })
+        .then(_ => {
+            this.props.incrementFollowers(-1);
+        })
+        .then(_ => this.props.toggleCurrentUserIsFollowing());
+    }
+
+    render() {
+        const { classes } = this.props;
+        const { profile } = this.state;
+
+        return (
+            <CardContent>
+                <Typography gutterBottom variant="headline" component="h2">
+                    {profile.first_name} {profile.last_name} 
+                    {profile.is_current_user_profile ? 
+                        <div></div>
+                    :
+                        <Button onClick={this.handleFollow.bind(this)} style={{marginLeft: "15px"}}>
+                            {profile.current_user_is_following ? "Unfollow" : "Follow"}
+                        </Button>
+                    }
+                    <Button style={{float: "right", marginTop: "-45px", marginRight: "30px"}} variant="fab" color="secondary" aria-label="add" className={classes.button}>
+                        <EditIcon />
+                    </Button>
+                </Typography>
+
+                <Typography gutterBottom variant="subheading">
+                    is a {profile.headline} from {profile.country}
+                </Typography>
+                <Typography gutterBottom variant="body2">
+                    Summary
+                </Typography>
+                <Typography component="body1">
+                    {profile.summary}
+                </Typography>
+            </CardContent>
+        );
+    }
+}
+
+ProfileContainer.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(ProfileContainer);

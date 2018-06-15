@@ -1,8 +1,8 @@
 class Api::V1::FollowsController < ApplicationController
     before_action :authenticate_user, only: [:create, :destroy]
     def create
-        followed_user = User.find(params[:followed_id])
-        current_user.follow(followed_user)
+        user = User.find(params[:user_id])
+        current_user.follow(user)
 
         # if current_user.follow(followed_user)
         #     render json: { messages: { text: "Successfully followed " + followed_user.full_name, type: "success" }}
@@ -12,7 +12,7 @@ class Api::V1::FollowsController < ApplicationController
     end
 
     def destroy
-        user = Follow.find(params[:id]).followed
+        user = User.find(params[:user_id])
 
         current_user.unfollow(user)
         # if 
