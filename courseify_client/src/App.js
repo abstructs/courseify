@@ -20,7 +20,7 @@ import LogOut from './LogOut';
 import { createMuiTheme, withTheme, MuiThemeProvider } from '@material-ui/core';
 // import RecommendationCreateModal from './Recommendation/RecommendationCreateModal';
 
-const theme = createMuiTheme({
+const blueTheme = createMuiTheme({
   palette: {
     primary: {
       light: '#5472d3',
@@ -33,6 +33,23 @@ const theme = createMuiTheme({
       main: '#546e7a',
       dark: '#29434e',
       contrastText: '#ffffff'
+    },
+  },
+});
+
+const darkTheme = createMuiTheme({
+  palette: {
+    primary: {
+      light: '#4f5b62',
+      main: '#263238',
+      dark: '#000a12',
+      contrastText: '#ffffff',
+    },
+    secondary: {
+      light: '#ffc947',
+      main: '#ff9800',
+      dark: '#c66900',
+      contrastText: '#000000'
     },
   },
 });
@@ -62,7 +79,7 @@ const theme = createMuiTheme({
 
 const Main = () => (
   <Router>
-    <MuiThemeProvider theme={theme}>
+    <MuiThemeProvider theme={darkTheme}>
       <Navbar />
       <Route exact path="/" component={HomeContainer}/>
       <Route path="/videos" component={VideosContainer}/>

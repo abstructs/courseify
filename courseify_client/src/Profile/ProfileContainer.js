@@ -9,7 +9,7 @@ import teacherImage from '../images/laptop.jpeg';
 import swal from 'sweetalert';
 import PropTypes from 'prop-types';
 
-import ProfileEdit from './ProfileEdit';
+import ProfileEditContent from './ProfileEditContent';
 import ProfileFollowerContent from './ProfileFollowerContent';
 import ProfileFollowingContent from './ProfileFollowingContent';
 import ProfileInfo from './ProfileInfo';
@@ -52,24 +52,6 @@ const styles = theme => ({
     },
 });
 
-class TabContainer extends Component {
-    constructor(props) {
-        super(props);
-    }
-
-    render() {
-        return (
-            <Typography component="div" style={{ padding: 8 * 3 }}>
-                {this.props.children}
-            </Typography>
-        );
-    }
-}
-
-TabContainer.propTypes = {
-    children: PropTypes.node.isRequired,
-  };
-
 class ProfileContainer extends Component {
     constructor(props) {
         super(props);
@@ -107,7 +89,7 @@ class ProfileContainer extends Component {
     }
 
     componentWillMount() {
-        this.setUserInfo();
+        this.refreshUserInfo();
     }
 
     incrementRecommendations(num) {
@@ -138,7 +120,7 @@ class ProfileContainer extends Component {
     }
 
     // EFFECTS: Manages the data set on the profile page depending on if it's the current users profile or another user's
-    setUserInfo() {
+    refreshUserInfo() {
         
         const url = this.getMatch() ? "http://localhost:3000/api/v1/users/" + this.getMatch().params.id : 
                                       "http://localhost:3000/api/v1/profile";
@@ -150,7 +132,7 @@ class ProfileContainer extends Component {
             // const is_current_user_profile = res.data.user.id === this.state.current_user_id;
             const new_profile_info = profile_info.is_current_user_profile ? profile_info : [];
             // const follow_info = profile_info.follow_info;
-            console.log(profile_info)
+            // console.log(profile_info)
 
             // this.setState({ profile_info, new_profile_info, is_current_user_profile, follow_info });
             this.setState({ profile_info, new_profile_info });
@@ -162,7 +144,11 @@ class ProfileContainer extends Component {
         });
     }
 
-    handleUserInfoChange(event) {  
+    toggleEdit() {
+        this.setState({ edit: !this.state.edit });
+    }
+
+    handleUserInfoChange(event) {
         const target = event.target;
         const value = target.value;
         const name = target.name;
@@ -186,7 +172,7 @@ class ProfileContainer extends Component {
                 icon: "success"
             })
         )
-        .then(_ => this.setUserInfo())
+        .then(_ => this.refreshUserInfo())
         .then(_ => this.setState({edit: !this.state.edit}))
         .catch(err => {
             swal({
@@ -220,7 +206,7 @@ class ProfileContainer extends Component {
             }))
         })
         .then(res => {
-            this.setUserInfo();
+            this.refreshUserInfo();
         })
     }
 
@@ -240,7 +226,7 @@ class ProfileContainer extends Component {
             }))
         })
         .then(res => {
-            this.setUserInfo();
+            this.refreshUserInfo();
         })
     }
 
@@ -252,10 +238,10 @@ class ProfileContainer extends Component {
         }
 
         if(Object.keys(this.state.profile_info).length == 0) {
-            return <div>Loading</div>
+            return <div>Loading</div>;
         }
 
-        const middleSection = this.state.edit ? <ProfileEdit new_user_info={this.state.new_profile_info} handleUserInfoChange={this.handleUserInfoChange.bind(this)} /> : <ProfileInfo user_info={this.state.profile_info}/>;
+        const middleSection = this.state.edit ? <ProfileEditContent refreshUserInfo={this.refreshUserInfo.bind(this)} new_user_info={this.state.new_profile_info} handleUserInfoChange={this.handleUserInfoChange.bind(this)} /> : <ProfileInfo user_info={this.state.profile_info}/>;
 
         const editFunctions = !this.state.edit ? (this.state.tab == "info" ? <a href="#edit" className="btn m-2 text-white m-auto text-center" style={{width: "250px", backgroundColor: "#ff6000"}} onClick={this.handleEdit.bind(this)}>Edit</a> : <div></div>)
                                               :
@@ -339,17 +325,19 @@ class ProfileContainer extends Component {
                             {/* {0 === 0 && <TabContainer>Item One</TabContainer>}
                             {0 === 1 && <TabContainer>Item Two</TabContainer>}
                             {0 === 2 && <TabContainer>Item Three</TabContainer>} */}
-                            <CardMedia
+                            {/* <CardMedia
                             className={classes.media}
                             image={bookImage}
                             title="Contemplative Reptile"
-                            />
+                            /> */}
                             {/* {this.state.tab === 0 ? 
                             : } */}
                             {(() => {
                                 switch(this.state.tab) {
                                     case 0:
-                                        return <ProfileInfoContent toggleCurrentUserIsFollowing={this.toggleCurrentUserIsFollowing.bind(this)} incrementFollowers={this.incrementFollowers.bind(this)}  profile={profile_info} classes={classes} />;
+                                        return !this.state.edit 
+                                        ? <ProfileInfoContent toggleEdit={this.toggleEdit.bind(this)} toggleCurrentUserIsFollowing={this.toggleCurrentUserIsFollowing.bind(this)} incrementFollowers={this.incrementFollowers.bind(this)}  profile={profile_info} classes={classes} /> 
+                                        : <ProfileEditContent refreshUserInfo={this.refreshUserInfo.bind(this)} profile={profile_info} classes={classes} toggleEdit={this.toggleEdit.bind(this)} />;
                                     case 1:
                                         return <ProfileFollowingContent profile={profile_info} classes={classes} />;
                                     case 2:
@@ -471,35 +459,42 @@ class ProfileInfoContent extends Component {
     }
 
     render() {
-        const { classes } = this.props;
+        const { classes, toggleEdit } = this.props;
         const { profile } = this.state;
 
         return (
-            <CardContent>
-                <Typography gutterBottom variant="headline" component="h2">
-                    {profile.first_name} {profile.last_name} 
-                    {profile.is_current_user_profile ? 
-                        <div></div>
-                    :
-                        <Button onClick={this.handleFollow.bind(this)} style={{marginLeft: "15px"}}>
-                            {profile.current_user_is_following ? "Unfollow" : "Follow"}
+            <div>
+                <CardMedia
+                className={classes.media}
+                image={bookImage}
+                title="Contemplative Reptile"
+                />
+                <CardContent>
+                    <Typography gutterBottom variant="headline" component="h2">
+                        {profile.first_name} {profile.last_name} 
+                        {profile.is_current_user_profile ? 
+                            <div></div>
+                        :
+                            <Button onClick={this.handleFollow.bind(this)} style={{marginLeft: "15px"}}>
+                                {profile.current_user_is_following ? "Unfollow" : "Follow"}
+                            </Button>
+                        }
+                        <Button onClick={toggleEdit} style={{float: "right", marginTop: "-75px", marginRight: "30px"}} variant="fab" color="secondary" aria-label="add" className={classes.button}>
+                            <EditIcon />
                         </Button>
-                    }
-                    <Button style={{float: "right", marginTop: "-45px", marginRight: "30px"}} variant="fab" color="secondary" aria-label="add" className={classes.button}>
-                        <EditIcon />
-                    </Button>
-                </Typography>
+                    </Typography>
 
-                <Typography gutterBottom variant="subheading">
-                    is a {profile.headline} from {profile.country}
-                </Typography>
-                <Typography gutterBottom variant="body2">
-                    Summary
-                </Typography>
-                <Typography component="body1">
-                    {profile.summary}
-                </Typography>
-            </CardContent>
+                    <Typography gutterBottom variant="subheading">
+                        is a {profile.headline} from {profile.country}
+                    </Typography>
+                    <Typography gutterBottom variant="body2">
+                        Summary
+                    </Typography>
+                    <Typography component="body1">
+                        {profile.summary}
+                    </Typography>
+                </CardContent>
+            </div>
         );
     }
 }
