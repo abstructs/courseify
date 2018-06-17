@@ -33,7 +33,7 @@ class ProfileFollowers extends Component {
         return (
             <div>
                 {this.state.followers.map(follow => {
-                    return <UserCard user={follow} />;
+                    return <UserCard key={follow.id} user={follow} />;
                 })}
             </div>
         );

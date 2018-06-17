@@ -2,16 +2,8 @@ import React, { Component } from 'react';
 import '../App.css';
 import axios from 'axios';
 import Auth from '../Auth';
-import { Grid, Paper, withStyles, Card, CardMedia, CardContent, Typography, CardActions, Button, BottomNavigation, BottomNavigationAction, AppBar, Tabs, Tab, List, ListItem, ListItemIcon, ListItemText, Divider, TextField, FormControl } from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Create';
-import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
-import bookImage from '../images/book.jpeg';
+import { withStyles, CardContent, Button, TextField, FormControl } from '@material-ui/core';
 import PropTypes from 'prop-types';
-// import Profile from './ProfileContainer';
-// import { Redirect, matchPath } from 'react-router';
-// import teacherImage from './images/laptop.jpeg';
-// import $ from 'jquery';
-// import swal from 'sweetalert';
 
 {/* <button type="button" className="text-light nav-link btn" style={{width: "250px", backgroundColor: "#ff6000"}} data-toggle="modal" data-target="#recommendModal"> */}
 
@@ -72,26 +64,9 @@ class ProfileEditContent extends Component {
 
     handleSave(event) {
         axios.put("http://localhost:3000/api/v1/users/" + this.state.profile.id, this.state.profile)
-        .then(res => 
-            console.log('success')
-            // swal({
-            //     title: "Success",
-            //     text: "The new profile is looking sexy ;)!",
-            //     icon: "success"
-            // })
-        )
-        .then(_ => this.props.toggleEdit())
-        .catch(err => {
-            console.log('error')
-            // swal({
-            //     title: "Something went wrong!",
-            //     // text: "Please check the error messages!",
-            //     text: "Todo: error message here",
-            //     icon: "error",
-            //     dangerMode: true
-            //     // text: err.response.data
-            // })
-        })
+        // .then(res => this.props.refreshUserInfo())
+        .then(_ => this.props.refreshUserInfo())
+        .catch(err => console.log('error'));
     }
 
     handleChange(event) {
@@ -185,55 +160,6 @@ class ProfileEditContent extends Component {
         );
     }
 }
-
-        // return (
-        //     <div className="">
-        //         <form>
-        //             <div className="form-row mb-4">
-        //                 <div className="col-md-4">
-        //                     <label for="first_name">First name</label>
-        //                     <input onChange={this.props.handleUserInfoChange} value={this.props.new_user_info.first_name} type="text" className="form-control" name="first_name" placeholder="First Name" required />
-        //                 </div>
-                            
-        //                 <div className="col-md-4">
-        //                     <label for="last_name">Last Name</label>
-        //                     <input onChange={this.props.handleUserInfoChange} value={this.props.new_user_info.last_name} type="text" className="form-control" name="last_name" placeholder="Last Name" required />
-        //                 </div>
-
-        //                 <div className="col-md-4">
-        //                     <label for="headline">Headline</label>
-        //                     <input onChange={this.props.handleUserInfoChange} value={this.props.new_user_info.headline} type="text" className="form-control" name="headline" placeholder="Job Title" required />
-        //                 </div> 
-        //             </div>
-
-        //             <div className="form-row mb-4">
-        //                 <div className="col-md-6">
-        //                     <label for="country">Country</label>
-        //                     <input onChange={this.props.handleUserInfoChange} value={this.props.new_user_info.country} type="text" className="form-control" name="country" placeholder="Country" required />
-        //                 </div>
-                                
-        //                 <div className="col-md-6">
-        //                     <label for="education">Education</label>
-        //                     <input onChange={this.props.handleUserInfoChange} value={this.props.new_user_info.education} type="text" className="form-control" name="education" placeholder="Education" required />
-        //                 </div>
-        //             </div>
-
-        //             <div className="form-row mb-4">
-        //                 <div className="col-md-12">
-        //                     <label for="industry">Industry</label>
-        //                     <input onChange={this.props.handleUserInfoChange} value={this.props.new_user_info.industry} type="text" className="form-control" name="industry" placeholder="Industry" required />
-        //                 </div>
-        //             </div>
-
-        //             <div className="form-row mb-4">
-        //                 <div className="col-md-12">
-        //                     <label for="summary">Summary</label>
-        //                     <textarea onChange={this.props.handleUserInfoChange} value={this.props.new_user_info.summary} className="form-control" name="summary" placeholder="Summary" required />
-        //                 </div>
-        //             </div>
-        //         </form>
-        //     </div>
-        // );
 
 ProfileEditContent.propTypes = {
     classes: PropTypes.object.isRequired,

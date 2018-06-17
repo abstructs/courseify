@@ -3,12 +3,6 @@ import '../App.css';
 import axios from 'axios';
 import Auth from '../Auth';
 import UserCard from '../User/UserCard';
-// import { Redirect, matchPath } from 'react-router';
-// import teacherImage from './images/laptop.jpeg';
-// import $ from 'jquery';
-// import swal from 'sweetalert';
-
-{/* <button type="button" className="text-light nav-link btn" style={{width: "250px", backgroundColor: "#ff6000"}} data-toggle="modal" data-target="#recommendModal"> */}
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
 
@@ -35,7 +29,7 @@ class ProfileFollowing extends Component {
         return (
             <div>
                 {this.state.following.map(follow => {
-                    return <UserCard user={follow} />;
+                    return <UserCard key={follow.id} user={follow} />;
                 })}
             </div>
         );
