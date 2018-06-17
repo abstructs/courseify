@@ -10,15 +10,9 @@ import ProfileInfoContent from './ProfileInfoContent';
 import ProfileEditContent from './ProfileEditContent';
 import ProfileFollowerContent from './ProfileFollowerContent';
 import ProfileFollowingContent from './ProfileFollowingContent';
-import { Grid, Paper, withStyles, Card, CardMedia, CardContent, Typography, CardActions, Button, BottomNavigation, BottomNavigationAction, AppBar, Tabs, Tab, List, ListItem, ListItemIcon, ListItemText, Divider } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
+import { Grid, withStyles, Card, AppBar, Tabs, Tab, List, ListItem, ListItemIcon, ListItemText, Divider } from '@material-ui/core';
 import PersonIcon from '@material-ui/icons/Person';
-import EditIcon from '@material-ui/icons/Create';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
-
-// , ProfileFollowers, ProfileFollowing, ProfileInfo, ProfileRecommendation }
-
-{/* <button type="button" className="text-light nav-link btn" style={{width: "250px", backgroundColor: "#ff6000"}} data-toggle="modal" data-target="#recommendModal"> */}
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
 
@@ -35,7 +29,7 @@ const styles = theme => ({
         display: 'flex',
         flexWrap: 'wrap',
     },
-        textField: {
+    textField: {
         marginLeft: theme.spacing.unit,
         marginRight: theme.spacing.unit,
         width: "25%",
@@ -46,6 +40,9 @@ const styles = theme => ({
         paddingTop: '30%', // 16:9
         // maxHeight: "200px"
     },
+    cardContent: {
+        // width: "500px"
+    }
 });
 
 class ProfileContainer extends Component {
@@ -159,8 +156,8 @@ class ProfileContainer extends Component {
 
         return (
             <div className={classes.root}>
-                <Grid container spacing={24}>
-                    <Grid item lg={3}>
+                <Grid container spacing={0}>
+                    <Grid item xl={3}>
                         <List component="nav">
                             <ListItem button >
                                 <ListItemIcon>
@@ -177,7 +174,7 @@ class ProfileContainer extends Component {
                             </ListItem>
                         </List>
                     </Grid>
-                    <Grid item lg={6}>
+                    <Grid item xs={8}>
                         <Card style={{margin: "50px"}} className={classes.card}>
                             <AppBar position="static">
                                 <Tabs value={this.state.tab} onChange={this.handleTab.bind(this)}>

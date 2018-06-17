@@ -2,10 +2,8 @@ import React, { Component } from 'react';
 import '../App.css';
 import axios from 'axios';
 import Auth from '../Auth';
-import { withStyles, CardContent, Button, TextField, FormControl } from '@material-ui/core';
+import { withStyles, CardContent, Button, TextField, FormControl, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
 import PropTypes from 'prop-types';
-
-{/* <button type="button" className="text-light nav-link btn" style={{width: "250px", backgroundColor: "#ff6000"}} data-toggle="modal" data-target="#recommendModal"> */}
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
 
@@ -18,7 +16,7 @@ const styles = theme => ({
         display: 'flex',
         flexWrap: 'wrap',
     },
-        textField: {
+    textField: {
         marginLeft: theme.spacing.unit,
         marginRight: theme.spacing.unit,
         width: "25%",
@@ -46,20 +44,48 @@ const styles = theme => ({
     }
 });
 
+class AlertDialog extends React.Component {
+  state = {
+    open: false,
+  };
+
+  handleClickOpen = () => {
+    this.setState({ open: true });
+  };
+
+  handleClose = () => {
+    this.setState({ open: false });
+  };
+
+  render() {
+    return (
+      <div>
+
+      </div>
+    );
+  }
+}
+
 // TODO: Change ProfileEdit to handle it's own state
 class ProfileEditContent extends Component {
     constructor(props) {
         super(props);       
         
         this.state = {
-            profile: props.profile
+            profile: props.profile,
+            open: false
         }
 
     }
 
+    handleClickOpen() {
+        this.setState({ open: true });
+    }
+
     handleCancel(e) {
-        console.log('cancel')
+        this.handleClose();
         this.props.toggleEdit();
+
     }
 
     handleSave(event) {
@@ -81,6 +107,10 @@ class ProfileEditContent extends Component {
                 [name]: value
             }
         })); 
+    }
+
+    handleClose() {
+        this.setState({ open: false })
     }
 
     render() {
@@ -149,12 +179,27 @@ class ProfileEditContent extends Component {
                         margin="normal"
                         />
                     </FormControl>
+                    <AlertDialog />
                     <Button onClick={this.handleSave.bind(this)} variant="contained" color="primary" className={classes.button}>
                         Save
                     </Button>
-                    <Button onClick={this.handleCancel.bind(this)} variant="contained" color="secondary" className={classes.button}>
+                    {/* onClick={this.handleCancel.bind(this)} variant="contained" color="secondary" className={classes.button} */}
+                    <Button onClick={this.handleClickOpen.bind(this)}>Cancel</Button>
+                    <Dialog
+                    open={this.state.open}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                    >
+                    <DialogTitle id="alert-dialog-title">{"Undo changes?"}</DialogTitle>
+                    <DialogActions>
+                        <Button onClick={this.handleCancel.bind(this)} color="primary">
+                        Yes, I don't want change
+                        </Button>
+                        <Button onClick={this.handleClose.bind(this)} color="primary" autoFocus>
                         Cancel
-                    </Button>
+                        </Button>
+                    </DialogActions>
+                    </Dialog>
                 </CardContent>
             </div>
         );

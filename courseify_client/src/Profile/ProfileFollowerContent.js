@@ -3,12 +3,7 @@ import '../App.css';
 import axios from 'axios';
 import Auth from '../Auth';
 import UserCard from '../User/UserCard';
-// import { Redirect, matchPath } from 'react-router';
-// import teacherImage from './images/laptop.jpeg';
-// import $ from 'jquery';
-// import swal from 'sweetalert';
-
-{/* <button type="button" className="text-light nav-link btn" style={{width: "250px", backgroundColor: "#ff6000"}} data-toggle="modal" data-target="#recommendModal"> */}
+import { CardContent } from '@material-ui/core';
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
 
@@ -30,12 +25,13 @@ class ProfileFollowers extends Component {
     }
 
     render() {
+        const { classes } = this.props;
         return (
-            <div>
+            <CardContent className={classes.cardContent}>
                 {this.state.followers.map(follow => {
                     return <UserCard key={follow.id} user={follow} />;
                 })}
-            </div>
+            </CardContent>
         );
     }
 }

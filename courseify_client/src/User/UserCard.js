@@ -24,7 +24,7 @@ class UserCard extends Component {
         const { classes } = this.props;
 
         return (
-            <Card style={{margin: "50px"}} className={classes.card}>
+            <Card style={{margin: "20px"}} className={classes.card}>
                 <CardMedia
                 className={classes.media}
                 image="/static/images/cards/contemplative-reptile.jpg"

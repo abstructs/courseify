@@ -3,6 +3,7 @@ import '../App.css';
 import axios from 'axios';
 import Auth from '../Auth';
 import UserCard from '../User/UserCard';
+import { CardContent } from '@material-ui/core';
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
 
@@ -26,12 +27,14 @@ class ProfileFollowing extends Component {
     }
 
     render() {
+        const { classes } = this.props;
+
         return (
-            <div>
+            <CardContent className={classes.cardContent}>
                 {this.state.following.map(follow => {
                     return <UserCard key={follow.id} user={follow} />;
                 })}
-            </div>
+            </CardContent>
         );
     }
 }

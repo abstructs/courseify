@@ -95,7 +95,7 @@ class ProfileInfoContent extends Component {
                 image={bookImage}
                 title="Contemplative Reptile"
                 />
-                <CardContent>
+                <CardContent className={classes.cardContent}>
                     <Typography gutterBottom variant="headline" component="h2">
                         {profile.first_name} {profile.last_name} 
                         {profile.is_current_user_profile ? 

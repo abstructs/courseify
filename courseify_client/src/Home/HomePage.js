@@ -18,7 +18,6 @@ import InboxIcon from '@material-ui/icons/Inbox';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ViewListIcon from '@material-ui/icons/ViewList';
-import Recommendation from '../Recommendation/Recommendation';
 
 const styles = theme => ({
     root: {

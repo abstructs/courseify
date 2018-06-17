@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import '../App.css';
 import axios from 'axios';
 import Auth from '../Auth';
-import Recommendation from '../Recommendation/Recommendation';
+// import Recommendation from '../Recommendation/Recommendation';
 // import { Redirect, matchPath } from 'react-router';
 // import teacherImage from './images/laptop.jpeg';
 // import $ from 'jquery';
@@ -36,7 +36,6 @@ class ProfileRecommendation extends Component {
         return (
             <div className="card-group justify-content-center">
                 {this.state.recommendations.map(recommendation => {
-                    // return <div key={recommendation.id}>{recommendation.title} by {recommendation.author}.</div>;
                     return <Recommendation incrementRecommendations={this.props.incrementRecommendations} key={recommendation.id} recommendation={recommendation} />
                 })}
             </div>
