@@ -185,20 +185,16 @@ class ProfileEditContent extends Component {
                     </Button>
                     {/* onClick={this.handleCancel.bind(this)} variant="contained" color="secondary" className={classes.button} */}
                     <Button onClick={this.handleClickOpen.bind(this)}>Cancel</Button>
-                    <Dialog
-                    open={this.state.open}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                    >
-                    <DialogTitle id="alert-dialog-title">{"Undo changes?"}</DialogTitle>
-                    <DialogActions>
-                        <Button onClick={this.handleCancel.bind(this)} color="primary">
-                        Yes, I don't want change
-                        </Button>
-                        <Button onClick={this.handleClose.bind(this)} color="primary" autoFocus>
-                        Cancel
-                        </Button>
-                    </DialogActions>
+                    <Dialog open={this.state.open} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+                        <DialogTitle id="alert-dialog-title">{"Undo changes?"}</DialogTitle>
+                        <DialogActions>
+                            <Button onClick={this.handleCancel.bind(this)} color="primary">
+                            Yes, I don't want change
+                            </Button>
+                            <Button onClick={this.handleClose.bind(this)} color="primary" autoFocus>
+                            Cancel
+                            </Button>
+                        </DialogActions>
                     </Dialog>
                 </CardContent>
             </div>

@@ -1,5 +1,6 @@
-class CoursesController < ApplicationController
+class Api::V1::CoursesController < ApplicationController
   before_action :set_course, only: [:show, :update, :destroy]
+  before_action :authenticate_user, only: [:create, :destroy]
 
   # GET /courses
   def index
@@ -16,9 +17,12 @@ class CoursesController < ApplicationController
   # POST /courses
   def create
     @course = Course.new(course_params)
+    @course.user_id = current_user.id
+    # @course.user_id = current_user.id
+    # @course.user = current_user
 
     if @course.save
-      render json: @course, status: :created, location: @course
+      render json: @course, status: :created
     else
       render json: @course.errors, status: :unprocessable_entity
     end
@@ -46,6 +50,6 @@ class CoursesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def course_params
-      params.require(:course).permit(:title, :url, :description, :author, :user_id)
+      params.permit(:title, :url, :description, :author)
     end
 end

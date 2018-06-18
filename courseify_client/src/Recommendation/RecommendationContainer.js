@@ -8,14 +8,15 @@ import $ from 'jquery';
 import PropTypes from 'prop-types';
 import swal from 'sweetalert';
 import bookImage from '../images/book.jpeg';
-import { Grid, List, ListItem, ListItemIcon, ListItemText, Divider, ListSubheader, CardHeader, CardMedia, CardContent, Typography, CardActions, Collapse, Card, withStyles, Button, IconButton, Avatar, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Paper, Input, FormControl, TextField } from '@material-ui/core';
+import { Grid, List, ListItem, ListItemIcon, ListItemText, Divider, ListSubheader, CardHeader, CardMedia, CardContent, Typography, CardActions, Collapse, Card, withStyles, Button, IconButton, Avatar, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Paper, Input, FormControl, TextField, CircularProgress, Dialog, DialogTitle, DialogActions } from '@material-ui/core';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import DoneIcon from '@material-ui/icons/Done';
-import classnames from 'classnames';
+import classNames from 'classnames';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-{/* <button type="button" className="text-light nav-link btn" style={{width: "250px", backgroundColor: "#ff6000"}} data-toggle="modal" data-target="#recommendModal"> */}
+import green from '@material-ui/core/colors/green';
+
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
 
@@ -38,6 +39,24 @@ const styles = theme => ({
         marginLeft: theme.spacing.unit,
         marginRight: theme.spacing.unit,
         // width: 200,  
+    },
+    buttonSuccess: {
+        backgroundColor: green[500],
+        '&:hover': {
+          backgroundColor: green[700],
+        },
+    },
+    wrapper: {
+        margin: theme.spacing.unit,
+        position: 'relative',
+    },
+    buttonProgress: {
+        color: "",
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        marginTop: -12,
+        marginLeft: -12,
     },
     // expand: {
     //   transform: 'rotate(0deg)',
@@ -109,6 +128,10 @@ class RecommendationContainer extends Component {
         // return false;
     }
 
+    handleCancel(e) {
+        this.setState({ expanded: false });
+    }
+
     handleExpandClick(e) {
         this.setState({ expanded: !this.state.expanded});
     }
@@ -146,6 +169,7 @@ class RecommendationContainer extends Component {
     render() {
         if(this.state.deleted) return <div></div>;
         const { classes } = this.props;
+        const { course } = this.state;
         // onClick={this.handleDropdown.bind(this)} 
         return (
             <div className={classes.root}>
@@ -193,46 +217,7 @@ class RecommendationContainer extends Component {
                                 </Button>
                             </Grid>
                             <Grid item xs={12}>
-                                <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
-
-                                    <Card style={{margin: "3px", marginBottom: "40px"}} className={classes.card}>
-                                        {/* <CardMedia
-                                        className={classes.media}
-                                        image="/static/images/cards/contemplative-reptile.jpg"
-                                        title="Contemplative Reptile"
-                                        /> */}
-                                        <CardContent>
-                                            
-                                            <TextField name="title" className={classes.textField} label="Title" type="text" placeholder="Title"></TextField>
-                                            <TextField name="author" className={classes.textField} label="Author" type="text" placeholder="Author"></TextField>
-
-                                            {/* <FormControl fullWidth margin="normal"> */}
-                                            <TextField name="url" className={classes.textField} label="Link" type="url" placeholder="http://"></TextField>
-
-                                            <FormControl margin="normal" fullWidth>
-                                                <TextField
-                                                // onChange={this.handleChange.bind(this)}
-                                                label="Summary" 
-                                                name="summary"
-                                                className={classes.textField}
-                                                multiline
-                                                fullWidth
-                                                // value={this.state.profile.summary}
-                                                margin="normal"
-                                                />
-                                            </FormControl>
-                                        </CardContent>
-                                        <CardActions>
-                                        <Button size="small" color="primary">
-                                            Add
-                                        </Button>
-                                        <Button size="small" color="primary">
-                                            Cancel
-                                        </Button>
-                                        </CardActions>
-                                    </Card>
-
-                                </Collapse>
+                                <CourseAddExpansion handleCancel={this.handleCancel.bind(this)} classes={classes} expanded={this.state.expanded} />
                             </Grid>
                         </Grid>
                         {this.state.recommendations.map(recommendation => {
@@ -271,74 +256,169 @@ class RecommendationContainer extends Component {
                     </Grid>
                 </Grid>
             </div>
-            // <div className="">
-            //     <div className="card m-2" style={{width: "16rem"}}>
-            //         <div className="card-body pt-0">
-            //             <br/>
-            //             <button type="button" style={{top: "10px", right: "10px"}} data-toggle="dropdown" className="position-absolute ml-auto btn dropdown-toggle" aria-haspopup="true" aria-expanded="false"></button>
-            //             <h5 className="d-inline card-title mt-5">{this.state.title}</h5>
-            //             <h6 className="card-subtitle mb-2 text-muted">By {this.state.author}</h6>
-            //             <p className="card-text">{this.state.description}</p>
-            //             <a href={this.state.url} target="__blank" className="btn btn-orange text-light">Check It Out</a>
+        );
+    }
+}
 
-            //             <div className="p-4 dropdown-menu recommendation-dropdown">
-            //                 <p className="text-center">Actions</p>
-            //                 {/* <button className="btn btn-orange text-light m-2">Update</button> */}
-            //                 {/* <button type="button" className="text-light m-2 btn" style={{width: "250px", backgroundColor: "#ff6000"}} data-toggle="modal" data-target="#recommendationModal">Update</button> */}
-            //                 <button type="button" className="btn btn-orange text-light" data-toggle="modal" data-target={`#recommendation-modal-${this.state.id}`}>Update</button>
-            //                 <button onClick={this.handleDelete.bind(this)} className="btn btn-danger text-light m-2">Delete</button>
-            //             </div>
-            //         </div>
-            //     </div>
+class CourseAddExpansion extends Component {
+    constructor(props) {
+        super(props);
 
+        this.state = {
+            course: {
+                title: "",
+                author: "",
+                url: "",
+                description: ""
+            },
+            loading: false,
+            success: false,
+            dialog_open: false
+        }
+    }
 
+    clearState() {
+        this.setState({
+            course: {
+                title: "",
+                author: "",
+                url: "",
+                description: ""
+            },
+            loading: false,
+            success: false,
+            dialog_open: false
+        })
+    }
 
-            //     <div className="modal fade" id={`recommendation-modal-${this.state.id}`} tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            //         <div className="modal-dialog" role="document">
-            //             <div className="modal-content">
-            //                 <div className="modal-header">
-            //                     <h5 className="modal-title" id="exampleModalLabel">Change Your Recommendation</h5>
-            //                     <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-            //                     <span aria-hidden="true">&times;</span>
-            //                     </button>
-            //                 </div>
-            //                 <div className="modal-body">
-            //                     <form >
-            //                         <div className="form-group">
-            //                             <label className="mr-auto">Title</label>
-            //                             <input id={`title_${this.state.id}`} name="title" type="text" className="form-control" placeholder="Title" value={this.state.title} onChange={this.handleRecommendationChange.bind(this)} required />
-            //                         </div>
-            //                         <div className="form-group">
-            //                             <label>Author</label>
-            //                             <input id={`author_${this.state.id}`} name="author" type="text" className="form-control" placeholder="Author" value={this.state.author} onChange={this.handleRecommendationChange.bind(this)} required />
-            //                         </div>
-            //                         <div className="form-group">
-            //                             <label>Link</label>
-            //                             <input id={`url_${this.state.id}`} name="url" type="text" className="form-control" placeholder="Link" value={this.state.url} onChange={this.handleRecommendationChange.bind(this)} required />
-            //                         </div>
-            //                         <div className="form-group">
-            //                             <label>Description</label>
-            //                             <textarea id={`description_${this.state.id}`} name="description" className="form-control" placeholder="Description" value={this.state.description} onChange={this.handleRecommendationChange.bind(this)} required></textarea>
-            //                         </div>
-            //                         {/* <div className="form-check">
-            //                             <input id={`description_${this.state.id}`} type="checkbox" className="form-check-input" />
-            //                             <label className="form-check-label">
-            //                             Remember me
-            //                             </label>
-            //                         </div> */}
-            //                         {/* <button type="submit" onClick={this.handleUpdate.bind(this)} className="btn text-light mr-2 btn-orange">Update</button>
-            //                         <button className="btn btn-danger">Delete</button> */}
-            //                     </form> 
-            //                 </div>
-            //                 <div className="modal-footer">
-            //                     <button type="button" className="btn btn-secondary m-2" data-dismiss="modal">Close</button>
-            //                     <button type="button" onClick={this.handleUpdate.bind(this)} className="btn text-light m-2 btn-orange">Save</button>
-            //                     <button type="button" onClick={this.handleDelete.bind(this)} className="btn btn-danger m-2">Delete</button>
-            //                 </div>
-            //             </div>
-            //         </div>
-            //     </div>
-            // </div>
+    componentWillUnmount() {
+        this.clearState();
+    }
+
+    handleCourseAdd(e) {
+        const { course, loading, success } = this.state;
+
+        if(!loading && !success) {
+            this.setState({
+                loading: true, 
+                success: false,
+                error: false
+            }, 
+            _ => {
+                new Promise(resolve => {
+                    setTimeout(_ => {
+                        axios.post(`http://localhost:3000/api/v1/courses`, { ...course })
+                        .then(res => {
+                            this.setState({ loading: false, success: true }, resolve);
+                        })
+                        .catch(err => {
+                            this.setState(
+                                { loading: false, success: false, error: true }, 
+                                _ => new Error());
+                        })
+                    }, 1000)
+                })
+                .then(_ => {
+                    setTimeout(_ => {
+                        this.props.handleCancel();
+                    }, 1000);
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+            });
+        }
+    }
+
+    handleCourseChange(event) {
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+
+        this.setState(prevState => ({
+            // ...prevState,
+            course: {
+                ...prevState.course,
+                [name]: value
+            }
+        })); 
+    }
+
+    handleCancel(e) {
+        this.setState({ dialog_open: false }, _ => this.props.handleCancel());
+    }
+
+    handleCloseDialog() {
+        this.setState({ dialog_open: false });
+    }
+
+    handleOpenDialog(e) {
+        this.setState({ dialog_open: true });
+    }
+
+    render() {
+
+        const { classes, expanded } = this.props;
+        const { course, loading, success } = this.state;
+        const addBtnClassName = classNames({
+            [classes.buttonSuccess]: success
+        });
+
+        return (
+            <Collapse in={expanded} timeout="auto" unmountOnExit>
+                {/* <Dialog open={this.state.dialog_open} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+                    <DialogTitle id="alert-dialog-title">{"If you do that your changes won't be saved"}</DialogTitle>
+                    <DialogActions>
+                        <Button onClick={this.handleCloseDialog.bind(this)} color="primary" autoFocus>
+                            Keep Changes
+                        </Button>
+                        <Button onClick={this.handleCancel.bind(this)} color="secondary">
+                            Cancel
+                        </Button>
+
+                    </DialogActions>
+                </Dialog> */}
+                <Card style={{margin: "3px", marginBottom: "40px"}} className={classes.card}>
+                    {/* <CardMedia
+                    className={classes.media}
+                    image="/static/images/cards/contemplative-reptile.jpg"
+                    title="Contemplative Reptile"
+                    /> */}
+                    <CardContent>
+                        
+                        <TextField value={course.title} onChange={this.handleCourseChange.bind(this)} name="title" className={classes.textField} label="Title" type="text" placeholder="Title"></TextField>
+                        <TextField value={course.author} onChange={this.handleCourseChange.bind(this)} name="author" className={classes.textField} label="Author" type="text" placeholder="Author"></TextField>
+
+                        {/* <FormControl fullWidth margin="normal"> */}
+                        <TextField value={course.url}  onChange={this.handleCourseChange.bind(this)} name="url" className={classes.textField} label="Link" type="url" placeholder="http://"></TextField>
+
+                        <FormControl margin="normal" fullWidth>
+                            <TextField
+                            value={course.description} 
+                            onChange={this.handleCourseChange.bind(this)}
+                            label="Description" 
+                            name="description"
+                            className={classes.textField}
+                            multiline
+                            fullWidth
+                            // value={this.state.profile.summary}
+                            margin="normal"
+                            />
+                        </FormControl>
+                    </CardContent>
+                    <CardActions>
+                    <div className={classes.wrapper}>
+                        <Button className={addBtnClassName} variant="contained" disabled={loading} onClick={this.handleCourseAdd.bind(this)} size="small" color="primary">
+                            Add Course
+                        </Button>
+                        {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
+                    </div>
+                    <Button onClick={this.props.handleCancel.bind(this)} size="small" color="primary">
+                        Cancel
+                    </Button>
+                    </CardActions>
+                </Card>
+            </Collapse>
         );
     }
 }
@@ -350,10 +430,7 @@ class RecommendationCard extends Component {
 
     render() {
 
-        const { classes, recommendation} = this.props;
-
-        console.log(recommendation)
-        
+        const { classes, recommendation } = this.props;
 
         return (
             <Card className={classes.card}>

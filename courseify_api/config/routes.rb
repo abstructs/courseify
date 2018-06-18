@@ -1,11 +1,11 @@
 Rails.application.routes.draw do
-  resources :courses
   namespace :api do
     namespace :v1 do
       resources :videos
       resources :users do
         get :followers, :following
       end
+      resources :courses
       resources :follows, param: :user_id
       resources :recommendations
       post 'users/user_token' => 'user_token#create'
