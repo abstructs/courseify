@@ -8,7 +8,7 @@ import $ from 'jquery';
 import PropTypes from 'prop-types';
 import swal from 'sweetalert';
 import bookImage from '../images/book.jpeg';
-import { Grid, List, ListItem, ListItemIcon, ListItemText, Divider, ListSubheader, CardHeader, CardMedia, CardContent, Typography, CardActions, Collapse, Card, withStyles, Button, IconButton, Avatar, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails } from '@material-ui/core';
+import { Grid, List, ListItem, ListItemIcon, ListItemText, Divider, ListSubheader, CardHeader, CardMedia, CardContent, Typography, CardActions, Collapse, Card, withStyles, Button, IconButton, Avatar, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Paper, Input, FormControl, TextField } from '@material-ui/core';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
@@ -25,14 +25,19 @@ const styles = theme => ({
     },
     card: {
         // maxWidth: 800,
-        marginTop: "40px"
+        marginBottom: "40px"
     },
     media: {
-      height: 0,
-      paddingTop: '56.25%', // 16:9
+        height: 0,
+        paddingTop: '56.25%', // 16:9
     },
     actions: {
-      display: 'flex',
+        display: 'flex',
+    },
+    textField: {
+        marginLeft: theme.spacing.unit,
+        marginRight: theme.spacing.unit,
+        // width: 200,  
     },
     // expand: {
     //   transform: 'rotate(0deg)',
@@ -54,7 +59,8 @@ class RecommendationContainer extends Component {
         super(props);
 
         this.state = {
-            recommendations: []
+            recommendations: [],
+            expanded: false
         }
     }
 
@@ -101,6 +107,10 @@ class RecommendationContainer extends Component {
         // e.stopPropagation();
         // console.log("update")
         // return false;
+    }
+
+    handleExpandClick(e) {
+        this.setState({ expanded: !this.state.expanded});
     }
 
     handleDelete(e) {
@@ -170,11 +180,67 @@ class RecommendationContainer extends Component {
                         </List>
                     </Grid>
                     <Grid item xs={6}>
+                        <Grid container spacing={40}>
+                            <Grid item xs={12}>
+                                <Typography variant="display1" align="left" style={{marginTop: "50px"}} color="text-secondary">
+                                    Courses
+                                </Typography>
+                                <Typography variant="caption" align="left" style={{marginTop: "5px"}} color="text-secondary">
+                                    See what people are recommending.
+                                </Typography>
+                                <Button onClick={this.handleExpandClick.bind(this)}  color="primary" style={{float: "right"}}>
+                                    Add A Course
+                                </Button>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
+
+                                    <Card style={{margin: "3px", marginBottom: "40px"}} className={classes.card}>
+                                        {/* <CardMedia
+                                        className={classes.media}
+                                        image="/static/images/cards/contemplative-reptile.jpg"
+                                        title="Contemplative Reptile"
+                                        /> */}
+                                        <CardContent>
+                                            
+                                            <TextField name="title" className={classes.textField} label="Title" type="text" placeholder="Title"></TextField>
+                                            <TextField name="author" className={classes.textField} label="Author" type="text" placeholder="Author"></TextField>
+
+                                            {/* <FormControl fullWidth margin="normal"> */}
+                                            <TextField name="url" className={classes.textField} label="Link" type="url" placeholder="http://"></TextField>
+
+                                            <FormControl margin="normal" fullWidth>
+                                                <TextField
+                                                // onChange={this.handleChange.bind(this)}
+                                                label="Summary" 
+                                                name="summary"
+                                                className={classes.textField}
+                                                multiline
+                                                fullWidth
+                                                // value={this.state.profile.summary}
+                                                margin="normal"
+                                                />
+                                            </FormControl>
+                                        </CardContent>
+                                        <CardActions>
+                                        <Button size="small" color="primary">
+                                            Add
+                                        </Button>
+                                        <Button size="small" color="primary">
+                                            Cancel
+                                        </Button>
+                                        </CardActions>
+                                    </Card>
+
+                                </Collapse>
+                            </Grid>
+                        </Grid>
                         {this.state.recommendations.map(recommendation => {
                             return <RecommendationCard classes={classes} recommendation={recommendation} />;
                         })}
                     </Grid>
                     <Grid item xs={2} style={{width: "100%"}}>
+
                         <ExpansionPanel>
                             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                             <Typography className={classes.heading}>Top Authors</Typography>
