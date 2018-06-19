@@ -8,7 +8,7 @@ import $ from 'jquery';
 import PropTypes from 'prop-types';
 import swal from 'sweetalert';
 import bookImage from '../images/book.jpeg';
-import { Grid, List, ListItem, ListItemIcon, ListItemText, Divider, ListSubheader, CardHeader, CardMedia, CardContent, Typography, CardActions, Collapse, Card, withStyles, Button, IconButton, Avatar, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Paper, Input, FormControl, TextField, CircularProgress, Dialog, DialogTitle, DialogActions } from '@material-ui/core';
+import { Grid, List, ListItem, ListItemIcon, ListItemText, Divider, ListSubheader, CardHeader, CardMedia, CardContent, Typography, CardActions, Collapse, Card, withStyles, Button, IconButton, Avatar, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Paper, Input, FormControl, TextField, CircularProgress, Dialog, DialogTitle, DialogActions, Fade } from '@material-ui/core';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
@@ -16,6 +16,8 @@ import DoneIcon from '@material-ui/icons/Done';
 import classNames from 'classnames';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import green from '@material-ui/core/colors/green';
+import EditIcon from '@material-ui/icons/Create';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
@@ -78,16 +80,16 @@ class RecommendationContainer extends Component {
         super(props);
 
         this.state = {
-            recommendations: [],
+            courses: [],
             expanded: false
         }
     }
 
     componentWillMount() {
-        axios.get('http://localhost:3000/api/v1/recommendations')
+        axios.get('http://localhost:3000/api/v1/courses')
         .then(res => {
-            const { recommendations } = res.data;
-            this.setState({ recommendations });
+            const { courses } = res.data;
+            this.setState({ courses });
         })
         // this.setState({
         //     ...this.props.recommendation
@@ -103,30 +105,30 @@ class RecommendationContainer extends Component {
         this.setState({[name]: value});
     }
 
-    handleUpdate(e) {
-        const new_data = {
-            title: this.state.title,
-            author: this.state.author,
-            description: this.state.description,
-            url: this.state.url
-        }
+    // handleUpdate(e) {
+    //     const new_data = {
+    //         title: this.state.title,
+    //         author: this.state.author,
+    //         description: this.state.description,
+    //         url: this.state.url
+    //     }
         
-        axios.put(`http://localhost:3000/api/v1/recommendations/${this.state.id}`, new_data)
-        .then(res => this.setState({ ...new_data }))
-        .then(_ => 
-            swal({
-                    title: "Success",
-                    text: "Update totally went through :)",
-                    icon: "success",
-                    timer: 3000
-            })
-        )
-        .then(_ => $(`#recommendation-modal-${this.state.id}`).modal('hide'));
-        // e.preventDefault();
-        // e.stopPropagation();
-        // console.log("update")
-        // return false;
-    }
+    //     axios.put(`http://localhost:3000/api/v1/recommendations/${this.state.id}`, new_data)
+    //     .then(res => this.setState({ ...new_data }))
+    //     .then(_ => 
+    //         swal({
+    //                 title: "Success",
+    //                 text: "Update totally went through :)",
+    //                 icon: "success",
+    //                 timer: 3000
+    //         })
+    //     )
+    //     .then(_ => $(`#recommendation-modal-${this.state.id}`).modal('hide'));
+    //     // e.preventDefault();
+    //     // e.stopPropagation();
+    //     // console.log("update")
+    //     // return false;
+    // }
 
     handleCancel(e) {
         this.setState({ expanded: false });
@@ -136,40 +138,42 @@ class RecommendationContainer extends Component {
         this.setState({ expanded: !this.state.expanded});
     }
 
-    handleDelete(e) {
-        swal({
-            title: "Are you sure?",
-            text: "Once it's gone... It's gone.",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true
-        })
-        .then(willDelete => {
-            if(willDelete) {
-                axios.delete(`http://localhost:3000/api/v1/recommendations/${this.state.id}`)
-                .then(res => {
-                    swal("Poof! It's been deleted", {
-                        icon: "success",
-                    })
-                    .then(_ => $(`#recommendation-modal-${this.state.id}`).modal('hide'))
-                    .then(_ => { 
-                        this.props.incrementRecommendations(-1);
-                        this.setState({ deleted: true });
-                    })
-                    .catch(err => console.error(err.response.data) /* handle err */);
-                })
-            } else { 
-                swal("It's all good, it's safe!");
-            }
-        })
-        console.log("run")
+    // handleDelete(e) {
+    //     swal({
+    //         title: "Are you sure?",
+    //         text: "Once it's gone... It's gone.",
+    //         icon: "warning",
+    //         buttons: true,
+    //         dangerMode: true
+    //     })
+    //     .then(willDelete => {
+    //         if(willDelete) {
+    //             axios.delete(`http://localhost:3000/api/v1/recommendations/${this.state.id}`)
+    //             .then(res => {
+    //                 swal("Poof! It's been deleted", {
+    //                     icon: "success",
+    //                 })
+    //                 .then(_ => $(`#recommendation-modal-${this.state.id}`).modal('hide'))
+    //                 .then(_ => { 
+    //                     this.props.incrementRecommendations(-1);
+    //                     this.setState({ deleted: true });
+    //                 })
+    //                 .catch(err => console.error(err.response.data) /* handle err */);
+    //             })
+    //         } else { 
+    //             swal("It's all good, it's safe!");
+    //         }
+    //     })
+    //     console.log("run")
 
-    }
+    // }
 
     render() {
-        if(this.state.deleted) return <div></div>;
+        // if(this.state.deleted) return <div></div>;
         const { classes } = this.props;
-        const { course } = this.state;
+        const isLoggedIn = Auth().isAuthenticated();
+        const current_user = isLoggedIn ? Auth().paraseJwt().sub.user : {};
+
         // onClick={this.handleDropdown.bind(this)} 
         return (
             <div className={classes.root}>
@@ -212,16 +216,16 @@ class RecommendationContainer extends Component {
                                 <Typography variant="caption" align="left" style={{marginTop: "5px"}} color="text-secondary">
                                     See what people are recommending.
                                 </Typography>
-                                <Button onClick={this.handleExpandClick.bind(this)}  color="primary" style={{float: "right"}}>
-                                    Add A Course
-                                </Button>
+                                <Fade in={!this.state.expanded}>
+                                    <Button onClick={this.handleExpandClick.bind(this)} disabled={this.state.expanded} color="primary" style={{float: "right"}}>Add A Course</Button>
+                                </Fade>
                             </Grid>
                             <Grid item xs={12}>
                                 <CourseAddExpansion handleCancel={this.handleCancel.bind(this)} classes={classes} expanded={this.state.expanded} />
                             </Grid>
                         </Grid>
-                        {this.state.recommendations.map(recommendation => {
-                            return <RecommendationCard classes={classes} recommendation={recommendation} />;
+                        {this.state.courses.map(course => {
+                            return <RecommendationCard current_user={current_user} classes={classes} recommendation={course} />;
                         })}
                     </Grid>
                     <Grid item xs={2} style={{width: "100%"}}>
@@ -385,7 +389,9 @@ class CourseAddExpansion extends Component {
                     title="Contemplative Reptile"
                     /> */}
                     <CardContent>
-                        
+                        <Typography variant="display1" color="text-secondary">
+                            Add A Course
+                        </Typography>
                         <TextField value={course.title} onChange={this.handleCourseChange.bind(this)} name="title" className={classes.textField} label="Title" type="text" placeholder="Title"></TextField>
                         <TextField value={course.author} onChange={this.handleCourseChange.bind(this)} name="author" className={classes.textField} label="Author" type="text" placeholder="Author"></TextField>
 
@@ -425,15 +431,64 @@ class CourseAddExpansion extends Component {
 
 class RecommendationCard extends Component {
     constructor(props) {
-        super(props)
+        super(props);
+
+        this.state = {
+            dialog_open: false,
+            expanded: false,
+            edit: false
+        }
+    }
+
+    handleEditExpand(e) {
+        this.setState({ expanded: !this.state.expanded });
+    }
+
+    handleDeleteClick(e) {
+
+        this.setState({ dialog_open: true });
+        
+    }
+
+    handleDelete(e) {
+        axios.delete(`http://localhost:3000/api/v1/courses/${this.props.recommendation.id}`)
+        .then(res => {
+            this.handleCloseDialog();
+        })
+    }
+
+    handleCancel(e) {
+        this.setState({ dialog_open: false }, _ => this.handleCloseDialog());
+    }
+
+    handleCloseDialog() {
+        this.setState({ dialog_open: false });
+    }
+
+    handleOpenDialog(e) {
+        this.setState({ dialog_open: true });
     }
 
     render() {
 
-        const { classes, recommendation } = this.props;
+        const { classes, recommendation, current_user } = this.props;
+
+
+        // console.log(Auth().paraseJwt().sub.id)
 
         return (
             <Card className={classes.card}>
+                <Dialog open={this.state.dialog_open} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+                    <DialogTitle id="alert-dialog-title">{"Are you sure you want to remove this course?"}</DialogTitle>
+                    <DialogActions>
+                        <Button onClick={this.handleDelete.bind(this)} color="primary" autoFocus>
+                            Yes, remove it
+                        </Button>
+                        <Button onClick={this.handleCancel.bind(this)}>
+                            Cancel
+                        </Button>
+                    </DialogActions>
+                </Dialog>
                 <CardHeader
                     // style={{paddingBottom: "0px"}}
                     avatar={
@@ -449,6 +504,50 @@ class RecommendationCard extends Component {
                     title={`${recommendation.title}`}
                     subheader={`by ${recommendation.author}`}
                 />
+
+                {/* { this.state.edit ?
+                    <CourseEditContent classes={classes} recommendation={recommendation} />
+                    :
+                    <CourseInfoContent classes={classes} recommendation={recommendation} />
+                } */}
+
+                <CourseInfoContent classes={classes} recommendation={recommendation} />
+
+                <CardActions className={classes.actions} disableActionSpacing>
+                    <IconButton aria-label="Add to favorites">
+                        <FavoriteIcon />
+                    </IconButton>
+                    <IconButton aria-label="Share">
+                        <ShareIcon />
+                    </IconButton>
+                    {
+                        current_user.id === recommendation.user_id && 
+                        <div>
+                            <IconButton onClick={this.handleEditExpand.bind(this)} aria-label="Edit">
+                                <EditIcon />
+                            </IconButton>
+                            <IconButton onClick={this.handleDeleteClick.bind(this)}  aria-label="Delete">
+                                <DeleteIcon />
+                            </IconButton>
+                        </div>
+                    }
+
+                </CardActions>
+                <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
+                    <CourseEditContent handleEditExpand={this.handleEditExpand.bind(this)} classes={classes} recommendation={recommendation} />
+                </Collapse>
+            </Card>
+        );
+    }
+}
+
+class CourseInfoContent extends Component {
+    render() {
+        const { classes } = this.props;
+        const { recommendation } = this.props;
+
+        return (
+            <div>
                 <CardMedia
                     className={classes.media}
                     image={bookImage}
@@ -462,25 +561,116 @@ class RecommendationCard extends Component {
                         <AddCircleIcon style={{marginRight: "10px"}} />
                         Take Course
                     </Button>
-                    {/* <Typography style={{paddingTop: "10px", marginBottom: "20px"}} color="textSecondary" component="subheading" gutterBottom>
-                        27 people recommend this
-                    </Typography> */}
+                    {/* {/* <Typography style={{paddingTop: "10px", marginBottom: "20px"}} color="textSecondary" component="subheading" gutterBottom> */}
+                        {/* // 27 people recommend this */}
+                    {/* // </Typography> */}
                 </CardContent>
-                <CardActions className={classes.actions} disableActionSpacing>
-                    <IconButton aria-label="Add to favorites">
-                        <FavoriteIcon />
-                    </IconButton>
-                    <IconButton aria-label="Share">
-                        <ShareIcon />
-                    </IconButton>
-                </CardActions>
-            </Card>
+            </div>
+        );
+    }
+}
+
+class CourseEditContent extends Component {
+    constructor(props) {
+        super(props);
+
+        console.log(props)
+
+        this.state = {
+            ...props.recommendation
+        }
+
+        
+    }
+
+    handleChange(event) {
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+
+        this.setState({
+            [name]: value
+        });
+    }
+
+    handleSave(event) {
+        console.log(this.state)
+        axios.put(`http://localhost:3000/api/v1/courses/${this.state.id}`, { ... this.state })
+        .then(res => {
+            this.props.handleEditExpand();
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }
+
+    handleCancel(event) {
+        this.props.handleEditExpand();
+    }
+
+    render() {
+        const { classes } = this.props;
+
+        return (
+            <CardContent>
+                <FormControl className={classes.formControl}>
+                    <TextField
+                    className={classes.textField}
+                    onChange={this.handleChange.bind(this)}
+                    type="text"
+                    id="title"
+                    name="title"
+                    label="Title"
+                    value={this.state.title}
+                    />
+                </FormControl>
+                <FormControl className={classes.formControl}>
+                    <TextField
+                    className={classes.textField}
+                    onChange={this.handleChange.bind(this)}
+                    type="text"
+                    id="author"
+                    name="author"
+                    label="Author"
+                    value={this.state.author}
+                    />
+                </FormControl>
+                <FormControl className={classes.formControl}>
+                    <TextField
+                    className={classes.textField}
+                    onChange={this.handleChange.bind(this)}
+                    type="url"
+                    id="url"
+                    label="Link"
+                    name="url"
+                    value={this.state.url}
+                    margin="normal"
+                    />
+                </FormControl>
+                <FormControl className={classes.formControl} fullWidth>
+                    <TextField
+                    className={classes.textField}
+                    onChange={this.handleChange.bind(this)}
+                    type="text"
+                    id="description"
+                    label="Description"
+                    name="description"
+                    value={this.state.description}
+                    margin="normal"
+                    multiline
+                    />
+                </FormControl>
+                <div style={{marginTop: "20px"}}>
+                    <Button onClick={this.handleSave.bind(this)} variant="contained" color="primary" className={classes.button}>Save</Button>
+                    <Button onClick={this.handleCancel.bind(this)}>Cancel</Button>
+                </div>
+            </CardContent>
         );
     }
 }
 
 RecommendationContainer.propTypes = {
-    classes: PropTypes.object.isRequired,
-  };
+    classes: PropTypes.object.isRequired
+};
 
 export default withStyles(styles)(RecommendationContainer);
