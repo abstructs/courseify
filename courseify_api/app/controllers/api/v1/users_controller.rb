@@ -102,7 +102,6 @@ class Api::V1::UsersController < ApplicationController
       recommendationsCount: user.recommendations.count,
       followerCount: user.followers.count,
       followingCount: user.following.count,
-      follow_info: { is_following: false }
     }
   end
 

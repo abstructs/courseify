@@ -14,6 +14,12 @@ class Api::V1::RecommendationsController < ApplicationController
     render json: @recommendation
   end
 
+  # def search
+  #   # query = 
+
+  #   puts Recommendation.find_by params[:by]: params[:query]
+  # end
+
   # POST /recommendations
   def create
     @recommendation = current_user.recommendations.new(recommendation_params)
@@ -48,6 +54,6 @@ class Api::V1::RecommendationsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def recommendation_params
-      params.require(:recommendation).permit(:title, :url, :description, :author)
+      params.permit(:course_id)
     end
 end

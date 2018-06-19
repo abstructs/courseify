@@ -6,7 +6,7 @@ class Api::V1::CoursesController < ApplicationController
   def index
     @courses = Course.all
 
-    render json: { courses: @courses }
+    render json: { courses: @courses.to_json(include: :recommendations) }
   end
 
   # GET /courses/1
@@ -30,9 +30,9 @@ class Api::V1::CoursesController < ApplicationController
 
   # PATCH/PUT /courses/1
   def update
-    puts "\n\n\n"
-    puts course_params
-    puts "\n\n\n"
+    # puts "\n\n\n"
+    # puts course_params
+    # puts "\n\n\n"
     if @course.update(course_params)
       render json: @course
     else

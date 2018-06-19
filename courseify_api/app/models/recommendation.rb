@@ -1,8 +1,5 @@
 class Recommendation < ApplicationRecord
   belongs_to :user
-
-  validates :title, presence: true
-  validates :url, presence: true
-  validates :author, presence: true
+  belongs_to :course
   # validates :, prescence: true
 end

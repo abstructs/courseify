@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_18_052637) do
+ActiveRecord::Schema.define(version: 2018_06_19_170414) do
 
   create_table "courses", force: :cascade do |t|
     t.string "title"
@@ -34,13 +34,12 @@ ActiveRecord::Schema.define(version: 2018_06_18_052637) do
   end
 
   create_table "recommendations", force: :cascade do |t|
-    t.string "title"
-    t.string "url"
-    t.text "description"
     t.integer "user_id"
-    t.string "author"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "course_id"
+    t.index ["course_id", "user_id"], name: "index_recommendations_on_course_id_and_user_id", unique: true
+    t.index ["course_id"], name: "index_recommendations_on_course_id"
     t.index ["user_id"], name: "index_recommendations_on_user_id"
   end
 

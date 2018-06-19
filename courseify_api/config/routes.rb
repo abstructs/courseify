@@ -11,6 +11,7 @@ Rails.application.routes.draw do
       post 'users/user_token' => 'user_token#create'
       get '/profile' => 'users#profile'
       get '/profile/:user_id/recommendations' => 'users#profile_recommendations'
+      get '/courses/search' => 'recommendations#search'
     end
   end
   # devise_for :users, controllers: {

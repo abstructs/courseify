@@ -85,20 +85,20 @@ class CourseContainer extends Component {
 
         this.state = {
             courses: [],
-            expanded: false
+            expanded: false,
+            loading: true
         }
     }
 
     componentWillMount() {
-        axios.get('http://localhost:3000/api/v1/courses')
-        .then(res => {
-            const { courses } = res.data;
-            this.setState({ courses });
-        })
-        // this.setState({
-        //     ...this.props.recommendation
-        // })
-        // console.log(this.props.recommendation);
+        setTimeout(_ => {
+            axios.get('http://localhost:3000/api/v1/courses')
+            .then(res => {
+                const courses = JSON.parse(res.data.courses);
+                
+                this.setState({ courses, loading: false });
+            });
+        }, 1000);
     }
 
     handleCourseChange(event) {  
@@ -177,6 +177,7 @@ class CourseContainer extends Component {
         const { classes } = this.props;
         const isLoggedIn = Auth().isAuthenticated();
         const current_user = isLoggedIn ? Auth().paraseJwt().sub.user : {};
+        const { loading, courses } = this.state;
 
         // onClick={this.handleDropdown.bind(this)} 
         return (
@@ -228,9 +229,15 @@ class CourseContainer extends Component {
                                 <CourseAddExpansion handleCancel={this.handleCancel.bind(this)} classes={classes} expanded={this.state.expanded} />
                             </Grid>
                         </Grid>
-                        {this.state.courses.map(course => {
-                            return <CourseCard key={course.id} current_user={current_user} classes={classes} course={course} />;
-                        })}
+                        {loading ?
+                                <Grid container spacing={0} justify="center">
+                                    <CircularProgress />
+                                </Grid>
+                            :
+                                this.state.courses.map(course => {
+                                    return <CourseCard key={course.id} current_user={current_user} classes={classes} course={course} />
+                                })
+                        }
                     </Grid>
                     <Grid item xs={2} style={{width: "100%"}}>
 
@@ -481,6 +488,17 @@ class CourseCard extends Component {
         .then(res => {
             const { course } = res.data;
             this.setState({ course, refreshing: false });
+            
+        })
+    }
+
+    handleRecommendClick() {
+        axios.post('http://localhost:3000/api/v1/recommendations', { course_id: this.state.course.id })
+        .then(res => {
+            console.log("success")
+        })
+        .catch(err => {
+            console.log(err);
         })
     }
 
@@ -535,7 +553,7 @@ class CourseCard extends Component {
                 <CourseInfoContent classes={classes} course={course} />
 
                 <CardActions className={classes.actions} disableActionSpacing>
-                    <IconButton aria-label="Add to favorites">
+                    <IconButton onClick={this.handleRecommendClick.bind(this)} aria-label="Recommend this course">
                         <FavoriteIcon />
                     </IconButton>
                     <IconButton aria-label="Share">
