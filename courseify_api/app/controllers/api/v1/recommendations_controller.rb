@@ -1,5 +1,5 @@
 class Api::V1::RecommendationsController < ApplicationController
-  before_action :set_recommendation, only: [:show, :update, :destroy]
+  before_action :set_recommendation, only: [:show, :update]
   before_action :authenticate_user, only: [:create]
 
   # GET /recommendations
@@ -43,6 +43,7 @@ class Api::V1::RecommendationsController < ApplicationController
 
   # DELETE /recommendations/1
   def destroy
+    @recommendation = current_user.recommendations.find_by(recommendation_params)
     @recommendation.destroy
   end
 

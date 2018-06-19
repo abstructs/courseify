@@ -444,13 +444,18 @@ class CourseCard extends Component {
     constructor(props) {
         super(props);
 
+        const current_user_recommended = props.course.recommendations.filter(recommendation => {
+            return recommendation.user_id == props.current_user.id
+        }).length != 0; 
+
         this.state = {
             dialog_open: false,
             expanded: false,
             edit: false,
             refreshing: false,
             deleted: false,
-            course: props.course
+            course: props.course,
+            current_user_recommended
         }
     }
 
@@ -486,16 +491,25 @@ class CourseCard extends Component {
     refresh() {
         axios.get(`http://localhost:3000/api/v1/courses/${this.state.course.id}`)
         .then(res => {
-            const { course } = res.data;
+            const course = JSON.parse(res.data.course);
             this.setState({ course, refreshing: false });
-            
         })
     }
 
     handleRecommendClick() {
         axios.post('http://localhost:3000/api/v1/recommendations', { course_id: this.state.course.id })
         .then(res => {
-            console.log("success")
+            this.setState({ current_user_recommended: true, refreshing: true}, _ => setTimeout(_ => this.refresh(), 500));
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }
+
+    handleUnrecommendClick() {
+        axios.delete('http://localhost:3000/api/v1/recommendations', { course_id: this.state.course.id })
+        .then(res => {
+            this.setState({ current_user_recommended: false, refreshing: true}, _ => setTimeout(_ => this.refresh(), 500));
         })
         .catch(err => {
             console.log(err);
@@ -511,8 +525,8 @@ class CourseCard extends Component {
     render() {
 
         const { classes, current_user } = this.props;
-        const { course, refreshing, deleted } = this.state;
-
+        const { course, refreshing, deleted, current_user_recommended } = this.state;
+        
         if(deleted) {
             return (
                 <div>
@@ -553,19 +567,22 @@ class CourseCard extends Component {
                 <CourseInfoContent classes={classes} course={course} />
 
                 <CardActions className={classes.actions} disableActionSpacing>
-                    <IconButton onClick={this.handleRecommendClick.bind(this)} aria-label="Recommend this course">
+                    <IconButton color={current_user_recommended ? "secondary" : ""} 
+                    onClick={current_user_recommended ? this.handleUnrecommendClick.bind(this) : this.handleRecommendClick.bind(this)} 
+                    aria-label="Recommend this course"
+                    disabled={refreshing}>
                         <FavoriteIcon />
                     </IconButton>
-                    <IconButton aria-label="Share">
+                    <IconButton disabled={refreshing} aria-label="Share">
                         <ShareIcon />
                     </IconButton>
                     {
                         current_user.id === course.user_id && 
                         <div>
-                            <IconButton onClick={this.handleEditExpand.bind(this)} aria-label="Edit">
-                                <EditIcon color={this.state.expanded ? 'secondary' : ''} />
+                            <IconButton disabled={refreshing} onClick={this.handleEditExpand.bind(this)} aria-label="Edit">
+                                <EditIcon color={this.state.expanded ? 'secondary' : ''} disabled={refreshing} />
                             </IconButton>
-                            <IconButton onClick={this.handleDeleteClick.bind(this)}  aria-label="Delete">
+                            <IconButton disabled={refreshing} onClick={this.handleDeleteClick.bind(this)}  aria-label="Delete">
                                 <DeleteIcon />
                             </IconButton>
                         </div>
@@ -583,6 +600,9 @@ class CourseCard extends Component {
 }
 
 class CourseInfoContent extends Component {
+    constructor(props) {
+        super(props);
+    }
     render() {
         const { classes } = this.props;
         const { course } = this.props;
@@ -602,9 +622,9 @@ class CourseInfoContent extends Component {
                         <AddCircleIcon style={{marginRight: "10px"}} />
                         Take Course
                     </Button>
-                    {/* {/* <Typography style={{paddingTop: "10px", marginBottom: "20px"}} color="textSecondary" component="subheading" gutterBottom> */}
-                        {/* // 27 people recommend this */}
-                    {/* // </Typography> */}
+                    <Typography style={{paddingTop: "10px", marginBottom: "20px"}} color="textSecondary" component="subheading" gutterBottom>
+                        {course.recommendations.length == 1 ? `${course.recommendations.length} person recommends this` : `${course.recommendations.length} people recommend this`}
+                    </Typography>
                 </CardContent>
             </div>
         );

@@ -12,6 +12,7 @@ Rails.application.routes.draw do
       get '/profile' => 'users#profile'
       get '/profile/:user_id/recommendations' => 'users#profile_recommendations'
       get '/courses/search' => 'recommendations#search'
+      delete '/recommendations' => 'recommendations#destroy'
     end
   end
   # devise_for :users, controllers: {

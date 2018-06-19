@@ -11,7 +11,7 @@ class Api::V1::CoursesController < ApplicationController
 
   # GET /courses/1
   def show
-    render json: { course: @course }
+    render json: { course: @course.to_json(include: :recommendations) }
   end
 
   # POST /courses
