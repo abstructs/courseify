@@ -18,6 +18,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import green from '@material-ui/core/colors/green';
 import EditIcon from '@material-ui/icons/Create';
 import DeleteIcon from '@material-ui/icons/Delete';
+import SimpleSnackbar from '../Helpers/SimpleSnackbar';
 
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
@@ -228,7 +229,7 @@ class CourseContainer extends Component {
                             </Grid>
                         </Grid>
                         {this.state.courses.map(course => {
-                            return <CourseCard current_user={current_user} classes={classes} course={course} />;
+                            return <CourseCard key={course.id} current_user={current_user} classes={classes} course={course} />;
                         })}
                     </Grid>
                     <Grid item xs={2} style={{width: "100%"}}>
@@ -494,10 +495,16 @@ class CourseCard extends Component {
         const { classes, current_user } = this.props;
         const { course, refreshing, deleted } = this.state;
 
-        if(deleted) return <div></div>;
+        if(deleted) {
+            return (
+                <div>
+                </div>
+            );
+        }
 
         return (
             <Card className={classes.card}>
+                {/* <SimpleSnackbar message={"hi"} /> */}
                 <Dialog open={this.state.dialog_open} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
                     <DialogTitle id="alert-dialog-title">{"Are you sure you want to remove this course?"}</DialogTitle>
                     <DialogActions>
@@ -525,12 +532,6 @@ class CourseCard extends Component {
                     subheader={`by ${course.author}`}
                 />
 
-                {/* { this.state.edit ?
-                    <CourseEditContent classes={classes} recommendation={recommendation} />
-                    :
-                    <CourseInfoContent classes={classes} recommendation={recommendation} />
-                } */}
-
                 <CourseInfoContent classes={classes} course={course} />
 
                 <CardActions className={classes.actions} disableActionSpacing>
@@ -544,7 +545,7 @@ class CourseCard extends Component {
                         current_user.id === course.user_id && 
                         <div>
                             <IconButton onClick={this.handleEditExpand.bind(this)} aria-label="Edit">
-                                <EditIcon />
+                                <EditIcon color={this.state.expanded ? 'secondary' : ''} />
                             </IconButton>
                             <IconButton onClick={this.handleDeleteClick.bind(this)}  aria-label="Delete">
                                 <DeleteIcon />

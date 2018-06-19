@@ -38,6 +38,25 @@ const blueTheme = createMuiTheme({
   },
 });
 
+const pinkTheme = createMuiTheme({
+  palette: {
+    primary: {
+      light: '#e35183',
+      main: '#ad1457',
+      dark: '#78002e',
+      contrastText: '#ffffff',
+    },
+    secondary: {
+      light: '#9a67ea',
+      main: '#673ab7',
+      dark: '#320b86',
+      contrastText: '#ffffff'
+    },
+  },
+});
+
+
+
 const darkTheme = createMuiTheme({
   palette: {
     primary: {
@@ -80,7 +99,7 @@ const darkTheme = createMuiTheme({
 
 const Main = () => (
   <Router>
-    <MuiThemeProvider theme={darkTheme}>
+    <MuiThemeProvider theme={pinkTheme}>
       <Navbar />
       <Route exact path="/" component={HomeContainer}/>
       <Route path="/videos" component={VideosContainer}/>

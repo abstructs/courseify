@@ -52,6 +52,10 @@ footer a, p a {
   background-color: #ff6000 !important;
 }
 
+body {
+  background-color: #eceff1;
+}
+
 /* .swal-button--cofn {
   padding: 7px 19px;
   border-radius: 2px;
