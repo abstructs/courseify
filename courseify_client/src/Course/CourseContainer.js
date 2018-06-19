@@ -8,7 +8,7 @@ import $ from 'jquery';
 import PropTypes from 'prop-types';
 import swal from 'sweetalert';
 import bookImage from '../images/book.jpeg';
-import { Grid, List, ListItem, ListItemIcon, ListItemText, Divider, ListSubheader, CardHeader, CardMedia, CardContent, Typography, CardActions, Collapse, Card, withStyles, Button, IconButton, Avatar, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Paper, Input, FormControl, TextField, CircularProgress, Dialog, DialogTitle, DialogActions, Fade } from '@material-ui/core';
+import { Grid, List, ListItem, ListItemIcon, ListItemText, Divider, ListSubheader, CardHeader, CardMedia, CardContent, Typography, CardActions, Collapse, Card, withStyles, Button, IconButton, Avatar, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Paper, Input, FormControl, TextField, CircularProgress, Dialog, DialogTitle, DialogActions, Fade, LinearProgress } from '@material-ui/core';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
@@ -25,6 +25,9 @@ axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization
 const styles = theme => ({
     root: {
         flexGrow: 1
+    },
+    progress: {
+        margin: theme.spacing.unit * 2
     },
     card: {
         // maxWidth: 800,
@@ -75,7 +78,7 @@ const styles = theme => ({
     },
   });
 
-class RecommendationContainer extends Component {
+class CourseContainer extends Component {
     constructor(props) {
         super(props);
 
@@ -97,7 +100,7 @@ class RecommendationContainer extends Component {
         // console.log(this.props.recommendation);
     }
 
-    handleRecommendationChange(event) {  
+    handleCourseChange(event) {  
         const target = event.target;
         const value = target.value;
         const name = target.name;
@@ -225,7 +228,7 @@ class RecommendationContainer extends Component {
                             </Grid>
                         </Grid>
                         {this.state.courses.map(course => {
-                            return <RecommendationCard current_user={current_user} classes={classes} recommendation={course} />;
+                            return <CourseCard current_user={current_user} classes={classes} course={course} />;
                         })}
                     </Grid>
                     <Grid item xs={2} style={{width: "100%"}}>
@@ -429,14 +432,17 @@ class CourseAddExpansion extends Component {
     }
 }
 
-class RecommendationCard extends Component {
+class CourseCard extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
             dialog_open: false,
             expanded: false,
-            edit: false
+            edit: false,
+            refreshing: false,
+            deleted: false,
+            course: props.course
         }
     }
 
@@ -445,16 +451,16 @@ class RecommendationCard extends Component {
     }
 
     handleDeleteClick(e) {
-
         this.setState({ dialog_open: true });
-        
     }
 
     handleDelete(e) {
-        axios.delete(`http://localhost:3000/api/v1/courses/${this.props.recommendation.id}`)
+        axios.delete(`http://localhost:3000/api/v1/courses/${this.state.course.id}`)
         .then(res => {
-            this.handleCloseDialog();
-        })
+            this.setState({ refreshing: true, dialog_open: false }, _ => setTimeout(_ => {
+                this.setState({ deleted: true})
+            }, 1000));
+        });
     }
 
     handleCancel(e) {
@@ -469,12 +475,26 @@ class RecommendationCard extends Component {
         this.setState({ dialog_open: true });
     }
 
+    refresh() {
+        axios.get(`http://localhost:3000/api/v1/courses/${this.state.course.id}`)
+        .then(res => {
+            const { course } = res.data;
+            this.setState({ course, refreshing: false });
+        })
+    }
+
+    handleEditCallback() {
+        this.setState({ expanded: false, refreshing: true }, _ => setTimeout(_ => {
+            this.refresh();
+        }, 1000));
+    }
+
     render() {
 
-        const { classes, recommendation, current_user } = this.props;
+        const { classes, current_user } = this.props;
+        const { course, refreshing, deleted } = this.state;
 
-
-        // console.log(Auth().paraseJwt().sub.id)
+        if(deleted) return <div></div>;
 
         return (
             <Card className={classes.card}>
@@ -501,8 +521,8 @@ class RecommendationCard extends Component {
                     //     <MoreVertIcon />
                     // </IconButton>
                     // }
-                    title={`${recommendation.title}`}
-                    subheader={`by ${recommendation.author}`}
+                    title={`${course.title}`}
+                    subheader={`by ${course.author}`}
                 />
 
                 {/* { this.state.edit ?
@@ -511,7 +531,7 @@ class RecommendationCard extends Component {
                     <CourseInfoContent classes={classes} recommendation={recommendation} />
                 } */}
 
-                <CourseInfoContent classes={classes} recommendation={recommendation} />
+                <CourseInfoContent classes={classes} course={course} />
 
                 <CardActions className={classes.actions} disableActionSpacing>
                     <IconButton aria-label="Add to favorites">
@@ -521,7 +541,7 @@ class RecommendationCard extends Component {
                         <ShareIcon />
                     </IconButton>
                     {
-                        current_user.id === recommendation.user_id && 
+                        current_user.id === course.user_id && 
                         <div>
                             <IconButton onClick={this.handleEditExpand.bind(this)} aria-label="Edit">
                                 <EditIcon />
@@ -533,8 +553,10 @@ class RecommendationCard extends Component {
                     }
 
                 </CardActions>
+                {refreshing && <LinearProgress />}
+
                 <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
-                    <CourseEditContent handleEditExpand={this.handleEditExpand.bind(this)} classes={classes} recommendation={recommendation} />
+                    <CourseEditContent handleEditCallback={this.handleEditCallback.bind(this)} handleEditExpand={this.handleEditExpand.bind(this)} classes={classes} course={course} />
                 </Collapse>
             </Card>
         );
@@ -544,7 +566,7 @@ class RecommendationCard extends Component {
 class CourseInfoContent extends Component {
     render() {
         const { classes } = this.props;
-        const { recommendation } = this.props;
+        const { course } = this.props;
 
         return (
             <div>
@@ -555,9 +577,9 @@ class CourseInfoContent extends Component {
                 />
                 <CardContent>
                     <Typography component="p" style={{marginBottom: "20px"}} gutterBottom> 
-                        {recommendation.description}
+                        {course.description}
                     </Typography>
-                    <Button target="_blank" href={`http://${recommendation.url}`} variant="contained" color="primary" style={{float: "right"}}>
+                    <Button target="_blank" href={`http://${course.url}`} variant="contained" color="primary" style={{float: "right"}}>
                         <AddCircleIcon style={{marginRight: "10px"}} />
                         Take Course
                     </Button>
@@ -574,10 +596,10 @@ class CourseEditContent extends Component {
     constructor(props) {
         super(props);
 
-        console.log(props)
+        // console.log(props)
 
         this.state = {
-            ...props.recommendation
+            ...props.course
         }
 
         
@@ -593,11 +615,11 @@ class CourseEditContent extends Component {
         });
     }
 
-    handleSave(event) {
-        console.log(this.state)
+    handleSave(e) {
         axios.put(`http://localhost:3000/api/v1/courses/${this.state.id}`, { ... this.state })
         .then(res => {
-            this.props.handleEditExpand();
+            
+            this.props.handleEditCallback();
         })
         .catch(err => {
             console.log(err);
@@ -669,8 +691,8 @@ class CourseEditContent extends Component {
     }
 }
 
-RecommendationContainer.propTypes = {
+CourseContainer.propTypes = {
     classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(RecommendationContainer);
+export default withStyles(styles)(CourseContainer);

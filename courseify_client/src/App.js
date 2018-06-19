@@ -9,7 +9,7 @@ import HomeContainer from './Home/HomeContainer';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import ProfileContainer from './Profile/ProfileContainer';
-import RecommendationContainer from './Recommendation/RecommendationContainer';
+import CourseContainer from './Course/CourseContainer';
 import {
   BrowserRouter as Router,
   Route,
@@ -86,7 +86,7 @@ const Main = () => (
       <Route path="/videos" component={VideosContainer}/>
       {/* <Route path="/recommend" component={RecommendationContainer}/> */}
       <Route path="/profile" component={ProfileContainer}/>
-      <Route path="/recommendations" component={RecommendationContainer}/>
+      <Route path="/courses" component={CourseContainer}/>
       <Route path="/people" component={ProfileContainer}>
         <Route path="/:username" component={ProfileContainer} />
       </Route>

@@ -67,7 +67,7 @@ class Navbar extends Component {
                         >
                         <Button style={{ marginLeft: "5px", marginRight: "5px" }} size="medium" button="true" href="/profile">Profile</Button>
                         <br/>
-                        <Button style={{ marginLeft: "5px", marginRight: "5px" }} size="medium" button="true" href="/recommendations">Recommendations</Button>
+                        <Button style={{ marginLeft: "5px", marginRight: "5px" }} size="medium" button="true" href="/courses">Courses</Button>
                             {/* <MenuItem onClick={this.handleClose}>My account</MenuItem> */}
                             
                             {/* <Button style={{ marginLeft: "5px", marginRight: "5px" }} size="medium" button href="/logout" onClick={this.handleClose}>Logout</Button> */}
