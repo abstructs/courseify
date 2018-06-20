@@ -3,12 +3,19 @@ import '../App.css';
 import axios from 'axios';
 import Auth from '../Auth';
 import PropTypes from 'prop-types';
-import { Grid, List, ListItem, ListItemText, Divider, ListSubheader, Typography, withStyles, Button, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, CircularProgress, Fade } from '@material-ui/core';
+import { Grid, List, ListItem, ListItemText, Divider, ListSubheader, Typography, withStyles, Button, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, CircularProgress, Fade, Snackbar, Icon, SnackbarContent } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import green from '@material-ui/core/colors/green';
 import CourseCard from './CourseCard';
 import CourseAddExpansion from './CourseAddExpansion';
-import SimpleSnackbar from '../Helpers/SimpleSnackbar';
+import CloseIcon from '@material-ui/icons/Close';
+import IconButton from '@material-ui/core/IconButton';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import ErrorIcon from '@material-ui/icons/Error';
+import InfoIcon from '@material-ui/icons/Info';
+import amber from '@material-ui/core/colors/amber';
+import WarningIcon from '@material-ui/icons/Warning';
+import classNames from 'classnames';
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
 
@@ -66,7 +73,37 @@ const styles = theme => ({
     avatar: {
     //   backgroundColor: red[500],
     },
-});
+    success: {
+        backgroundColor: green[600],
+    },
+    error: {
+        backgroundColor: theme.palette.error.dark,
+    },
+    info: {
+        backgroundColor: theme.palette.primary.dark,
+    },
+    warning: {
+        backgroundColor: amber[700],
+    },
+    icon: {
+        fontSize: 20,
+    },
+    iconVariant: {
+        opacity: 0.9,
+        marginRight: theme.spacing.unit,
+    },
+    message: {
+        display: 'flex',
+        alignItems: 'center',
+    },
+})
+
+const variantIcon = {
+    success: CheckCircleIcon,
+    warning: WarningIcon,
+    error: ErrorIcon,
+    info: InfoIcon,
+};
 
 class CourseContainer extends Component {
     constructor(props) {
@@ -75,8 +112,44 @@ class CourseContainer extends Component {
         this.state = {
             courses: [],
             expanded: false,
-            loading: true
+            loading: true,
+            message_info: {}
         }
+    }
+
+    queue = [];
+
+    showSnackbar = (message, variant) => _ => {
+        this.queue.push({
+            message,
+            key: new Date().getTime(),
+            variant
+        });
+
+        if(this.state.open) {
+            this.setState({ open: false });
+        }
+        else {
+            this.processQueue();
+        }
+    }
+
+    processQueue() {
+        if(this.queue.length > 0) {
+            this.setState({
+                message_info: this.queue.shift(),
+                open: true
+            })
+        }
+    }
+
+    handleSnackbarClose = (event, reason) => {
+        if(reason === 'clickaway') return;
+        this.setState({ open: false });
+    };
+
+    handleSnackbarExited() {
+        this.processQueue();
     }
 
     componentWillMount() {
@@ -108,14 +181,49 @@ class CourseContainer extends Component {
 
     render() {
         // if(this.state.deleted) return <div></div>;
-        const { classes } = this.props;
+        const { classes, } = this.props;
         const isLoggedIn = Auth().isAuthenticated();
         const current_user = isLoggedIn ? Auth().paraseJwt().sub.user : {};
         const { loading, courses } = this.state;
+        const { message, key, variant } = this.state.message_info;
+
+        const Icon = variantIcon[variant];
 
         // onClick={this.handleDropdown.bind(this)} 
         return (
             <div className={classes.root}>
+                {/* <Button onClick={this.handleSnackbarClick("hello").bind(this)}>Hello</Button> */}
+                <Snackbar
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                    onExited={this.handleSnackbarExited.bind(this)}
+                    open={this.state.open}
+                    autoHideDuration={6000}
+                    onClose={this.handleSnackbarClose.bind(this)}
+                    // ContentProps={{
+                    //     'aria-describedby': 'message-id',
+                    // }}
+                >
+                    <SnackbarContent
+                        key={key}
+                        className={classNames(classes[variant])}
+                        message={
+                            <span id="message-id">
+                                <Icon className={classNames(classes.icon, classes.iconVariant)} />
+                                {message}
+                            </span>}
+                        action={[
+                            // <Button key="undo" color="secondary" size="small" onClick={this.handleClose.bind(this)}>
+                            //   UNDO
+                            // </Button>,
+                        <IconButton key="close" aria-label="Close" color="inherit" className={classes.close} onClick={this.handleSnackbarClose.bind(this)}>
+                            <CloseIcon />
+                        </IconButton>
+                    ]}
+                    />
+                </Snackbar>
                 <Grid container spacing={0} justify="space-between">
                     <Grid item md={3}>
                         <List component="nav" subheader={<ListSubheader component="div">Categories</ListSubheader>}>
@@ -149,7 +257,7 @@ class CourseContainer extends Component {
                     <Grid item xs={6}>
                         <Grid container spacing={40}>
                             <Grid item xs={12}>
-                                <SimpleSnackbar />
+                                
                                 <Typography variant="display1" align="left" style={{marginTop: "50px"}} color="textSecondary">
                                     Courses
                                 </Typography>
@@ -170,7 +278,7 @@ class CourseContainer extends Component {
                                 </Grid>
                             :
                                 this.state.courses.map(course => {
-                                    return <CourseCard key={course.id} current_user={current_user} classes={classes} course={course} />
+                                    return <CourseCard key={course.id} showSnackbar={this.showSnackbar.bind(this)} current_user={current_user} classes={classes} course={course} />
                                 })
                         }
                     </Grid>

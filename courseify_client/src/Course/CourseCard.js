@@ -39,6 +39,7 @@ class CourseCard extends Component {
         .then(res => {
             this.setState({ refreshing: true, dialog_open: false }, _ => setTimeout(_ => {
                 this.setState({ deleted: true })
+                this.props.showSnackbar("Successfully deleted course", "success")();
             }, 1000));
         });
     }
@@ -67,7 +68,10 @@ class CourseCard extends Component {
         axios.post('http://localhost:3000/api/v1/recommendations', { course_id: this.state.course.id })
         .then(res => {
             console.log('recommend')
-            this.setState({ current_user_recommended: true, refreshing: true }, _ => setTimeout(_ => this.refresh(), 500));
+            this.setState({ current_user_recommended: true, refreshing: true }, _ => setTimeout(_ => { 
+                this.refresh();
+                this.props.showSnackbar("Successfully recommended course", "success")();
+            }, 500));
         })
         .catch(err => {
             console.log(err);
@@ -77,8 +81,10 @@ class CourseCard extends Component {
     handleUnrecommendClick() {
         axios.delete('http://localhost:3000/api/v1/recommendations', { course_id: this.state.course.id })
         .then(res => {
-            console.log('unrecommend')
-            this.setState({ current_user_recommended: false, refreshing: true }, _ => setTimeout(_ => this.refresh(), 500));
+            this.setState({ current_user_recommended: false, refreshing: true }, _ => setTimeout(_ => {
+                this.refresh();
+                this.props.showSnackbar("Successfully unrecommended course", "success")();
+            }, 500));
         })
         .catch(err => {
             console.log(err);
@@ -88,6 +94,7 @@ class CourseCard extends Component {
     handleEditCallback() {
         this.setState({ expanded: false, refreshing: true }, _ => setTimeout(_ => {
             this.refresh();
+            this.props.showSnackbar("Course succesfully edited", "success")();
         }, 1000));
     }
 
