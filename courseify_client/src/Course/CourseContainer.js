@@ -8,13 +8,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import green from '@material-ui/core/colors/green';
 import CourseCard from './CourseCard';
 import CourseAddExpansion from './CourseAddExpansion';
-import CloseIcon from '@material-ui/icons/Close';
-import IconButton from '@material-ui/core/IconButton';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import ErrorIcon from '@material-ui/icons/Error';
-import InfoIcon from '@material-ui/icons/Info';
-import amber from '@material-ui/core/colors/amber';
-import WarningIcon from '@material-ui/icons/Warning';
+import RecommendationDialog from '../Recommendation/RecommendationDialog';
 import classNames from 'classnames';
 import SimpleSnackbar from '../Helpers/SimpleSnackbar';
 
@@ -84,7 +78,8 @@ class CourseContainer extends Component {
         this.state = {
             courses: [],
             expanded: false,
-            loading: true
+            loading: true,
+            recommendationsOpen: false
         }        
     }
 
@@ -129,7 +124,7 @@ class CourseContainer extends Component {
         return (
             <div className={classes.root}>
                 <SimpleSnackbar onRef={ref => this.snackbar = ref} message={this.state.message} />
-                <Grid container spacing={0} justify="space-between">
+                    <Grid container spacing={0} justify="space-between">
                     <Grid item md={3}>
                         <List component="nav" subheader={<ListSubheader component="div">Categories</ListSubheader>}>
                             <Divider />

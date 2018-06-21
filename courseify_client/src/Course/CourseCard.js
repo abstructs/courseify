@@ -11,18 +11,20 @@ import PeopleIcon from '@material-ui/icons/SupervisorAccount';
 import CourseEditContent from './CourseEditContent';
 import PropTypes from 'prop-types';
 import CourseInfoContent from './CourseInfoContent';
+import RecommendationDialog from '../Recommendation/RecommendationDialog';
 
 class CourseCard extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            dialog_open: false,
+            deleteDialogOpen: false,
             expanded: false,
             edit: false,
             refreshing: false,
             deleted: false,
-            course: props.course
+            course: props.course,
+            openRecommendations: false
         }
     }
 
@@ -31,13 +33,13 @@ class CourseCard extends Component {
     }
 
     handleDeleteClick(e) {
-        this.setState({ dialog_open: true });
+        this.setState({ deleteDialogOpen: true });
     }
 
     handleDelete(e) {
         axios.delete(`http://localhost:3000/api/v1/courses/${this.state.course.id}`)
         .then(res => {
-            this.setState({ refreshing: true, dialog_open: false }, _ => setTimeout(_ => {
+            this.setState({ refreshing: true, deleteDialogOpen: false }, _ => setTimeout(_ => {
                 this.setState({ deleted: true })
                 this.props.showSnackbar("Successfully deleted course", "success");
             }, 1000));
@@ -45,15 +47,15 @@ class CourseCard extends Component {
     }
 
     handleCancel(e) {
-        this.setState({ dialog_open: false }, _ => this.handleCloseDialog());
+        this.setState({ deleteDialogOpen: false }, _ => this.handleCloseDialog());
     }
 
     handleCloseDialog() {
-        this.setState({ dialog_open: false });
+        this.setState({ deleteDialogOpen: false });
     }
 
     handleOpenDialog(e) {
-        this.setState({ dialog_open: true });
+        this.setState({ deleteDialogOpen: true });
     }
 
     refresh() {
@@ -98,8 +100,13 @@ class CourseCard extends Component {
         }, 1000));
     }
 
-    handleShowRecommendation() {
+    handleShowRecommendations() {
+        this.setState({ openRecommendations: true });
 
+    }
+
+    handleRecommendationsClose() {
+        this.setState({ openRecommendations: false });
     }
  
     render() {
@@ -120,7 +127,8 @@ class CourseCard extends Component {
         return (
             <Card className={classes.card}>
                 {/* <SimpleSnackbar message={"hi"} /> */}
-                <Dialog open={this.state.dialog_open} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+                <RecommendationDialog recommendations={course.recommendations} onClose={this.handleRecommendationsClose.bind(this)} course_id={course.id} open={this.state.openRecommendations} />
+                <Dialog open={this.state.deleteDialogOpen} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
                     <DialogTitle id="alert-dialog-title">{"Are you sure you want to remove this course?"}</DialogTitle>
                     <DialogActions>
                         <Button onClick={this.handleDelete.bind(this)} color="primary" autoFocus>
@@ -159,8 +167,8 @@ class CourseCard extends Component {
                     <IconButton disabled={refreshing} aria-label="Share">
                         <ShareIcon />
                     </IconButton>
-                    <IconButton disabled={refreshing} onClick={this.handleShowRecommendation.bind(this)}  aria-label="Delete">
-                        <PeopleIcon />
+                    <IconButton disabled={refreshing} onClick={this.handleShowRecommendations.bind(this)}  aria-label="Delete">
+                        <PeopleIcon color={this.state.openRecommendations ? "secondary" : "inherit"} />
                     </IconButton>
                     {
                         current_user.id === course.user_id && 
@@ -169,7 +177,7 @@ class CourseCard extends Component {
                                 <EditIcon color={this.state.expanded ? "secondary" : "inherit"} disabled={refreshing} />
                             </IconButton>
                             <IconButton disabled={refreshing} onClick={this.handleDeleteClick.bind(this)}  aria-label="Delete">
-                                <DeleteIcon />
+                                <DeleteIcon color={this.state.deleteDialogOpen ? "secondary" : "inherit"} />
                             </IconButton>
                         </div>
                     }

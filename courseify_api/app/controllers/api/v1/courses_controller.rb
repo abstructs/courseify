@@ -6,12 +6,12 @@ class Api::V1::CoursesController < ApplicationController
   def index
     @courses = Course.all
 
-    render json: { courses: @courses.to_json(include: :recommendations) }
+    render json: { courses: as_json(@courses) } 
   end
 
   # GET /courses/1
   def show
-    render json: { course: @course.to_json(include: :recommendations), current_user_recommended: current_user.recommendations.include?(@course) }
+    render json: { course: as_json(@course), current_user_recommended: current_user.recommendations.include?(@course) }
   end
 
   # POST /courses
@@ -55,4 +55,21 @@ class Api::V1::CoursesController < ApplicationController
     def course_params
       params.permit(:title, :url, :description, :author)
     end
+
+    def as_json(course)
+      course.to_json(include: { 
+                                recommendations: { 
+                                  include: { 
+                                    user: { 
+                                      only: [:id, :email] 
+                                    } 
+                                  } 
+                                }
+                              }
+                )
+    end
+
+    # def as_json
+    #   {}
+    # end
 end
