@@ -30,7 +30,6 @@ class CourseEditContent extends Component {
     handleSave(e) {
         axios.put(`http://localhost:3000/api/v1/courses/${this.state.id}`, { ... this.state })
         .then(res => {
-            
             this.props.handleEditCallback();
         })
         .catch(err => {

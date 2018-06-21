@@ -16,6 +16,7 @@ import InfoIcon from '@material-ui/icons/Info';
 import amber from '@material-ui/core/colors/amber';
 import WarningIcon from '@material-ui/icons/Warning';
 import classNames from 'classnames';
+import SimpleSnackbar from '../Helpers/SimpleSnackbar';
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
 
@@ -72,84 +73,19 @@ const styles = theme => ({
     // },
     avatar: {
     //   backgroundColor: red[500],
-    },
-    success: {
-        backgroundColor: green[600],
-    },
-    error: {
-        backgroundColor: theme.palette.error.dark,
-    },
-    info: {
-        backgroundColor: theme.palette.primary.dark,
-    },
-    warning: {
-        backgroundColor: amber[700],
-    },
-    icon: {
-        fontSize: 20,
-    },
-    iconVariant: {
-        opacity: 0.9,
-        marginRight: theme.spacing.unit,
-    },
-    message: {
-        display: 'flex',
-        alignItems: 'center',
-    },
-})
-
-const variantIcon = {
-    success: CheckCircleIcon,
-    warning: WarningIcon,
-    error: ErrorIcon,
-    info: InfoIcon,
-};
+    }
+});
 
 class CourseContainer extends Component {
     constructor(props) {
         super(props);
+        // this.snackbar = React.createRef();
 
         this.state = {
             courses: [],
             expanded: false,
-            loading: true,
-            message_info: {}
-        }
-    }
-
-    queue = [];
-
-    showSnackbar = (message, variant) => _ => {
-        this.queue.push({
-            message,
-            key: new Date().getTime(),
-            variant
-        });
-
-        if(this.state.open) {
-            this.setState({ open: false });
-        }
-        else {
-            this.processQueue();
-        }
-    }
-
-    processQueue() {
-        if(this.queue.length > 0) {
-            this.setState({
-                message_info: this.queue.shift(),
-                open: true
-            })
-        }
-    }
-
-    handleSnackbarClose = (event, reason) => {
-        if(reason === 'clickaway') return;
-        this.setState({ open: false });
-    };
-
-    handleSnackbarExited() {
-        this.processQueue();
+            loading: true
+        }        
     }
 
     componentWillMount() {
@@ -179,51 +115,20 @@ class CourseContainer extends Component {
         this.setState({ expanded: !this.state.expanded});
     }
 
+    showSnackbar = (message, variant) => {
+        this.snackbar.handleClick(message, variant);
+        // this.setState({ snackbarClicked: true, message });
+    }
+
     render() {
-        // if(this.state.deleted) return <div></div>;
         const { classes, } = this.props;
         const isLoggedIn = Auth().isAuthenticated();
         const current_user = isLoggedIn ? Auth().paraseJwt().sub.user : {};
         const { loading, courses } = this.state;
-        const { message, key, variant } = this.state.message_info;
 
-        const Icon = variantIcon[variant];
-
-        // onClick={this.handleDropdown.bind(this)} 
         return (
             <div className={classes.root}>
-                {/* <Button onClick={this.handleSnackbarClick("hello").bind(this)}>Hello</Button> */}
-                <Snackbar
-                    anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'left',
-                    }}
-                    onExited={this.handleSnackbarExited.bind(this)}
-                    open={this.state.open}
-                    autoHideDuration={6000}
-                    onClose={this.handleSnackbarClose.bind(this)}
-                    // ContentProps={{
-                    //     'aria-describedby': 'message-id',
-                    // }}
-                >
-                    <SnackbarContent
-                        key={key}
-                        className={classNames(classes[variant])}
-                        message={
-                            <span id="message-id">
-                                <Icon className={classNames(classes.icon, classes.iconVariant)} />
-                                {message}
-                            </span>}
-                        action={[
-                            // <Button key="undo" color="secondary" size="small" onClick={this.handleClose.bind(this)}>
-                            //   UNDO
-                            // </Button>,
-                        <IconButton key="close" aria-label="Close" color="inherit" className={classes.close} onClick={this.handleSnackbarClose.bind(this)}>
-                            <CloseIcon />
-                        </IconButton>
-                    ]}
-                    />
-                </Snackbar>
+                <SimpleSnackbar onRef={ref => this.snackbar = ref} message={this.state.message} />
                 <Grid container spacing={0} justify="space-between">
                     <Grid item md={3}>
                         <List component="nav" subheader={<ListSubheader component="div">Categories</ListSubheader>}>
@@ -269,7 +174,7 @@ class CourseContainer extends Component {
                                 </Fade>
                             </Grid>
                             <Grid item xs={12}>
-                                <CourseAddExpansion handleCancel={this.handleCancel.bind(this)} classes={classes} expanded={this.state.expanded} />
+                                <CourseAddExpansion showSnackbar={this.showSnackbar.bind(this)} handleCancel={this.handleCancel.bind(this)} classes={classes} expanded={this.state.expanded} />
                             </Grid>
                         </Grid>
                         {loading ?

@@ -55,6 +55,7 @@ class CourseAddExpansion extends Component {
                         axios.post(`http://localhost:3000/api/v1/courses`, { ...course })
                         .then(res => {
                             this.setState({ loading: false, success: true }, resolve);
+                            this.props.showSnackbar("Succesfully added course", "success");
                         })
                         .catch(err => {
                             this.setState(
