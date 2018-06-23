@@ -215,7 +215,7 @@ class CourseCard extends Component {
                         <FavoriteIcon />
                     </IconButton>
                     <IconButton onClick={this.handleShowShare.bind(this)} disabled={refreshing} aria-label="Share">
-                        <ShareIcon />
+                        <ShareIcon color={this.state.openShare ? "secondary" : "default"}  />
                     </IconButton>
                     <IconButton disabled={refreshing} onClick={this.handleShowRecommendations.bind(this)}  aria-label="Delete">
                         <PeopleIcon color={this.state.openRecommendations ? "secondary" : "inherit"} />

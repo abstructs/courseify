@@ -10,7 +10,7 @@ import ProfileInfoContent from './ProfileInfoContent';
 import ProfileEditContent from './ProfileEditContent';
 import ProfileFollowerContent from './ProfileFollowerContent';
 import ProfileFollowingContent from './ProfileFollowingContent';
-import { Grid, withStyles, Card, AppBar, Tabs, Tab, List, ListItem, ListItemIcon, ListItemText, Divider } from '@material-ui/core';
+import { Grid, withStyles, Card, AppBar, Tabs, Tab, List, ListItem, ListItemIcon, ListItemText, Divider, LinearProgress } from '@material-ui/core';
 import PersonIcon from '@material-ui/icons/Person';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 
@@ -60,7 +60,9 @@ class ProfileContainer extends Component {
             tab: 0,
 
             // user info
-            profile_info: {}
+            profile_info: {},
+
+            loading: true
         }
     }
 
@@ -112,7 +114,7 @@ class ProfileContainer extends Component {
         .then(res => {
             const profile_info = res.data.user;
             const new_profile_info = profile_info.is_current_user_profile ? profile_info : [];
-            this.setState({ profile_info, new_profile_info, edit: false });
+            this.setState({ profile_info, new_profile_info, edit: false, loading: false });
         })
         .catch(err => {
             console.log(err);
@@ -133,7 +135,8 @@ class ProfileContainer extends Component {
             new_profile_info: {
                 ...prevState.new_profile_info,
                 [name]: value
-            }
+            },
+            loading: true
         })); 
     }
 
@@ -144,15 +147,15 @@ class ProfileContainer extends Component {
     render() {
         const isLoggedIn = Auth().isAuthenticated();
         const { classes } = this.props;
-        const { profile_info } = this.state;
+        const { profile_info, loading } = this.state;
         
         if(!isLoggedIn && !this.getMatch()) {
             return <Redirect to='/'/>;
         }
 
-        if(Object.keys(this.state.profile_info).length == 0) {
-            return <div>Loading</div>;
-        }
+        // if(Object.keys(this.state.profile_info).length == 0) {
+        //     return <div>Loading</div>;
+        // 
 
         return (
             <div className={classes.root}>
@@ -176,26 +179,31 @@ class ProfileContainer extends Component {
                     </Grid>
                     <Grid item xs={8}>
                         <Card style={{margin: "50px"}} className={classes.card}>
+                            
                             <AppBar position="static">
                                 <Tabs value={this.state.tab} onChange={this.handleTab.bind(this)}>
                                     <Tab value={0} label="Info" />
-                                    <Tab value={1} label={`Following (${this.state.profile_info.followingCount || 0})`} />
-                                    <Tab value={2} label={`Followers (${this.state.profile_info.followerCount || 0})`} />
+                                    <Tab value={1} label={`Following (${!loading && profile_info.followingCount || 0})`} />
+                                    <Tab value={2} label={`Followers (${!loading && profile_info.followerCount || 0})`} />
                                 </Tabs>
                             </AppBar>
                             {(() => {
-                                switch(this.state.tab) {
-                                    case 0:
-                                        return !this.state.edit 
-                                        ? <ProfileInfoContent toggleEdit={this.toggleEdit.bind(this)} toggleCurrentUserIsFollowing={this.toggleCurrentUserIsFollowing.bind(this)} incrementFollowers={this.incrementFollowers.bind(this)}  profile={profile_info} classes={classes} /> 
-                                        : <ProfileEditContent refreshUserInfo={this.refreshUserInfo.bind(this)} profile={profile_info} classes={classes} toggleEdit={this.toggleEdit.bind(this)} />;
-                                    case 1:
-                                        return <ProfileFollowingContent profile={profile_info} classes={classes} />;
-                                    case 2:
-                                        return <ProfileFollowerContent profile={profile_info} classes={classes} />;
+                                if(!loading) {
+                                    switch(this.state.tab) {
+                                        case 0:
+                                            return !this.state.edit 
+                                            ? <ProfileInfoContent toggleEdit={this.toggleEdit.bind(this)} toggleCurrentUserIsFollowing={this.toggleCurrentUserIsFollowing.bind(this)} incrementFollowers={this.incrementFollowers.bind(this)}  profile={profile_info} classes={classes} /> 
+                                            : <ProfileEditContent refreshUserInfo={this.refreshUserInfo.bind(this)} profile={profile_info} classes={classes} toggleEdit={this.toggleEdit.bind(this)} />;
+                                        case 1:
+                                            return <ProfileFollowingContent profile={profile_info} classes={classes} />;
+                                        case 2:
+                                            return <ProfileFollowerContent profile={profile_info} classes={classes} />;
+                                    }
                                 }
                             })()}
+                            {loading && <LinearProgress />}
                         </Card>
+                        
                     </Grid>
                     
                 </Grid>
