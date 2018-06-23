@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import '../App.css';
 import axios from 'axios';
-import { CardHeader, CardActions, Collapse, Card, Button, IconButton, Avatar, Dialog, DialogTitle, DialogActions, LinearProgress } from '@material-ui/core';
+import { CardHeader, CardActions, Collapse, Card, Button, IconButton, Avatar, Dialog, DialogTitle, DialogActions, LinearProgress, DialogContent, TextField, DialogContentText } from '@material-ui/core';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import DoneIcon from '@material-ui/icons/Done';
@@ -24,7 +24,8 @@ class CourseCard extends Component {
             refreshing: false,
             deleted: false,
             course: props.course,
-            openRecommendations: false
+            openRecommendations: false,
+            openShare: false
         }
     }
 
@@ -108,6 +109,24 @@ class CourseCard extends Component {
     handleRecommendationsClose() {
         this.setState({ openRecommendations: false });
     }
+
+    handleShowShare() {
+        this.setState({ openShare: true });
+    }
+
+    handleShareClose() {
+        this.setState({ openShare: false });
+    }
+    handleShareFocus(event) {
+        event.target.select();
+    }
+
+    handleCopy() {
+        const copied = document.execCommand('copy');
+        if(copied) {
+            this.props.showSnackbar("Copied to clipboard", "success");
+        }
+    }
  
     render() {
         const { classes, current_user } = this.props;
@@ -139,6 +158,37 @@ class CourseCard extends Component {
                         </Button>
                     </DialogActions>
                 </Dialog>
+                <Dialog
+                    style={{minWidth: "400px"}}
+                    open={this.state.openShare}
+                    // onClose={this.handleClose}
+                    aria-labelledby="form-dialog-title"
+                    >
+                    <DialogTitle id="form-dialog-title">Share this course with a friend</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Copy the link below
+                        </DialogContentText>
+                        <TextField
+                        autoFocus
+                        onFocus={this.handleShareFocus.bind(this)}
+                        margin="normal"
+                        id="link"
+                        value="http://localhost:3001/courses"
+                        label="Copy Link"
+                        type="text"
+                        fullWidth
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleShareClose.bind(this)} color="primary">
+                            Close
+                        </Button>
+                        <Button onClick={this.handleCopy.bind(this)} color="primary">
+                            Copy Link
+                        </Button>
+                    </DialogActions>
+                </Dialog>
                 <CardHeader
                     // style={{paddingBottom: "0px"}}
                     avatar={
@@ -164,7 +214,7 @@ class CourseCard extends Component {
                     disabled={refreshing}>
                         <FavoriteIcon />
                     </IconButton>
-                    <IconButton disabled={refreshing} aria-label="Share">
+                    <IconButton onClick={this.handleShowShare.bind(this)} disabled={refreshing} aria-label="Share">
                         <ShareIcon />
                     </IconButton>
                     <IconButton disabled={refreshing} onClick={this.handleShowRecommendations.bind(this)}  aria-label="Delete">
