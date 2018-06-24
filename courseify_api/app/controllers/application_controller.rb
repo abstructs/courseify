@@ -4,7 +4,8 @@ class ApplicationController < ActionController::API
     private
 
     def error_messages(entity, type="danger")
-        entity.errors.full_messages.map { |txt| { text: txt, type: type } }
+        puts entity.errors
+        entity.errors.full_messages.map { |txt| { text: txt, type: type, class_name: entity.class.name } }
     end
 
     def create_message(text, type="success")

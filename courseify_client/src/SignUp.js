@@ -75,23 +75,23 @@ class SignUp extends Component {
         }
         
         axios.post("http://localhost:3000/api/v1/users/", payload)
-        // .then(res => Auth().authenticate(payload.user))
-        // .then(res => localStorage.setItem('token', res.data.jwt))
-        // .then(res => this.setState({redirect: true}))
+        .then(res => Auth().authenticate(payload.user))
+        .then(_ => this.setState({redirect: true}))
         .catch(err => {
-            const messages = err.response.data.messages;
+            // const messages = err.response.data.messages;
+            console.log(err.response)
             // const errors = err.response.data.errors;
             // const emailErrors = errors.email || [];
             // const passwordErrors = errors.password || [];
             // console.log(err.response);
             // console.log(emailErrors)
-            this.setState({
+            // this.setState({
                 // errors: {
                 //     emailErrors,
                 //     passwordErrors
                 // },
-                messages
-            })
+                // messages
+            // })
         });
     }
 
@@ -117,17 +117,17 @@ class SignUp extends Component {
                     <Grid item xs={12} align="center">
                         {/* <Paper align="center"> */}
                             <FormControl margin="normal" fullWidth>
-                                <TextField name="email" onChange={this.handleInputChange.bind(this)} fullWidth={true} className={classes.textField} label="Email" type="email" placeholder="Email"></TextField>
+                                <TextField value={this.state.email} name="email" onChange={this.handleInputChange.bind(this)} fullWidth={true} className={classes.textField} label="Email" type="email" placeholder="Email"></TextField>
                             </FormControl>
                             {/* <FormControl>
                                 <TextField className={classes.textField} label="Email" type="text" placeholder="Email"></TextField>
                             </FormControl>
                             <br/> */}
                             <FormControl margin="normal" fullWidth>
-                                <TextField name="password" onChange={this.handleInputChange.bind(this)} fullWidth className={classes.textField} label="Password" type="password" placeholder="Password"></TextField>
+                                <TextField value={this.state.password} name="password" onChange={this.handleInputChange.bind(this)} fullWidth className={classes.textField} label="Password" type="password" placeholder="Password"></TextField>
                             </FormControl>
                             <FormControl margin="normal" fullWidth>
-                                <TextField name="passwordConfirmation" className={classes.textField} label="Password Confirmation" type="password" placeholder="Password Confirmation"></TextField>
+                                <TextField value={this.state.passwordConfirmation} name="passwordConfirmation" onChange={this.handleInputChange.bind(this)} className={classes.textField} label="Password Confirmation" type="password" placeholder="Password Confirmation"></TextField>
                             </FormControl>
                         {/* </Paper> */}
                     </Grid>
