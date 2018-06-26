@@ -124,7 +124,7 @@ class CourseContainer extends Component {
         return (
             <div className={classes.root}>
                 <SimpleSnackbar onRef={ref => this.snackbar = ref} message={this.state.message} />
-                    <Grid container spacing={0} justify="space-between">
+                <Grid container spacing={0} justify="space-between">
                     <Grid item md={3}>
                         <List component="nav" subheader={<ListSubheader component="div">Categories</ListSubheader>}>
                             <Divider />

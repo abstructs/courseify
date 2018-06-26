@@ -76,7 +76,7 @@ class Api::V1::UsersController < ApplicationController
       render status: 200
     else
       # render json: { messages: error_messages(@user, "danger") }, status: 400
-      render json: @user.errors.as_json(full_messages: true)
+      render json: { errors: @user.errors.as_json(full_messages: true) }, status: 400
     end
   end
 

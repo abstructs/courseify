@@ -4,8 +4,9 @@ import axios from 'axios';
 import { Redirect } from 'react-router';
 import Auth from './Auth';
 import Alert from './Alert';
-import { Grid, Paper, withStyles, Typography, TextField, FormControl, Button } from '@material-ui/core';
+import { Grid, Paper, withStyles, Typography, TextField, FormControl, Button, FormHelperText } from '@material-ui/core';
 import PropTypes from 'prop-types';
+import SimpleSnackbar from './Helpers/SimpleSnackbar';
 
 const styles = theme => ({
     root: {
@@ -34,7 +35,7 @@ class SignUp extends Component {
         this.state = {
             email: "",
             password: "",
-            passwordConfirmation: "",
+            password_confirmation: "",
             errors: {
                 emailErrors: [],
                 passwordErrors: []
@@ -70,7 +71,7 @@ class SignUp extends Component {
             user: {
                 email: this.state.email,
                 password: this.state.password,
-                password_confirmation: this.state.passwordConfirmation
+                password_confirmation: this.state.password_confirmation
             }
         }
         
@@ -78,33 +79,40 @@ class SignUp extends Component {
         .then(res => Auth().authenticate(payload.user))
         .then(_ => this.setState({redirect: true}))
         .catch(err => {
-            // const messages = err.response.data.messages;
-            console.log(err.response)
-            // const errors = err.response.data.errors;
-            // const emailErrors = errors.email || [];
-            // const passwordErrors = errors.password || [];
-            // console.log(err.response);
-            // console.log(emailErrors)
-            // this.setState({
-                // errors: {
-                //     emailErrors,
-                //     passwordErrors
-                // },
-                // messages
-            // })
+            this.setState({ errors: { ...err.response.data.errors }}, this.showSnackbar("Something went wrong, double check those fields!", "error"));
         });
     }
 
+    shouldMarkError(paramName) {
+        const errors = this.state.errors[paramName] || [];
+        return errors.length != 0;
+    }
+
+    showSnackbar = (message, variant) => {
+        this.snackbar.handleClick(message, variant);
+        // this.setState({ snackbarClicked: true, message });
+    }
+
     render() {
-        const { redirect } = this.state;
+        const { redirect, errors } = this.state;
         const { classes } = this.props;
+
+        const shouldMarkError = {
+            email: this.shouldMarkError("email"),
+            password: this.shouldMarkError("password"),
+            password_confirmation: this.shouldMarkError("password_confirmation"),
+        }
 
         if (redirect) {
             return <Redirect to='/' />;
         }
 
+        console.log(this.shouldMarkError("email"));
+        console.log(this.shouldMarkError("password"));
+
         return (
             <div className={classes.root}>
+                <SimpleSnackbar onRef={ref => this.snackbar = ref} message={this.state.message} />
                 <Grid container spacing={24}>
                     <Grid item xs={12} align="center">
                         <Typography align="center" style={{color: "black", marginTop: "50px", marginBottom: "20px"}} variant="display2">
@@ -116,18 +124,21 @@ class SignUp extends Component {
                     </Grid>
                     <Grid item xs={12} align="center">
                         {/* <Paper align="center"> */}
-                            <FormControl margin="normal" fullWidth>
-                                <TextField value={this.state.email} name="email" onChange={this.handleInputChange.bind(this)} fullWidth={true} className={classes.textField} label="Email" type="email" placeholder="Email"></TextField>
+                            <FormControl error={shouldMarkError.email} margin="normal" fullWidth>
+                                <TextField error={shouldMarkError.email} value={this.state.email} name="email" onChange={this.handleInputChange.bind(this)} fullWidth={true} className={classes.textField} label="Email" type="email" placeholder="Email"></TextField>
+                                <FormHelperText className={classes.textField}>{shouldMarkError.email ? errors.email[0] : ""}</FormHelperText>
                             </FormControl>
                             {/* <FormControl>
                                 <TextField className={classes.textField} label="Email" type="text" placeholder="Email"></TextField>
                             </FormControl>
                             <br/> */}
-                            <FormControl margin="normal" fullWidth>
-                                <TextField value={this.state.password} name="password" onChange={this.handleInputChange.bind(this)} fullWidth className={classes.textField} label="Password" type="password" placeholder="Password"></TextField>
+                            <FormControl error={shouldMarkError.password} margin="normal" fullWidth>
+                                <TextField error={shouldMarkError.password} value={this.state.password} name="password" onChange={this.handleInputChange.bind(this)} fullWidth className={classes.textField} label="Password" type="password" placeholder="Password"></TextField>
+                                <FormHelperText className={classes.textField}>{shouldMarkError.password ? errors.password[0] : ""}</FormHelperText>
                             </FormControl>
-                            <FormControl margin="normal" fullWidth>
-                                <TextField value={this.state.passwordConfirmation} name="passwordConfirmation" onChange={this.handleInputChange.bind(this)} className={classes.textField} label="Password Confirmation" type="password" placeholder="Password Confirmation"></TextField>
+                            <FormControl error={shouldMarkError.password_confirmation} margin="normal" fullWidth>
+                                <TextField error={shouldMarkError.password_confirmation} value={this.state.password_confirmation} name="password_confirmation" onChange={this.handleInputChange.bind(this)} className={classes.textField} label="Password Confirmation" type="password" placeholder="Password Confirmation"></TextField>
+                                <FormHelperText className={classes.textField}>{shouldMarkError.password_confirmation ? errors.password_confirmation[0] : ""}</FormHelperText>
                             </FormControl>
                         {/* </Paper> */}
                     </Grid>
@@ -135,22 +146,6 @@ class SignUp extends Component {
                         Sign Up
                     </Button>
                 </Grid>
-            {/* {this.state.errors.emailErrors.map(errMsg => {
-                return (
-                    <div className="alert alert-danger m-0 border-0" role="alert">
-                        {"Email " + errMsg}
-                    </div>
-            )})}
-            {this.state.errors.passwordErrors.map(errMsg => {
-                    return (
-                        <div className="alert alert-danger m-0 border-0" role="alert">
-                            {"Password " + errMsg}
-                        </div>
-                    );
-            })} */}
-            {/* {this.state.messages.map(message => {
-                return <Alert message={message} />;
-            })}*/}
         </div>
         );
     }
