@@ -4,16 +4,15 @@ import axios from 'axios';
 // import { Redirect, matchPath } from 'react-router';
 // import teacherImage from './images/laptop.jpeg';
 import PropTypes from 'prop-types';
-import { CardContent, Button, FormControl, TextField } from '@material-ui/core';
+import { CardContent, Button, FormControl, TextField, FormHelperText } from '@material-ui/core';
 
 class CourseEditContent extends Component {
     constructor(props) {
         super(props);
 
-        // console.log(props)
-
         this.state = {
-            ...props.course
+            ...props.course,
+            errors: {}
         }        
     }
 
@@ -28,26 +27,46 @@ class CourseEditContent extends Component {
     }
 
     handleSave(e) {
-        axios.put(`http://localhost:3000/api/v1/courses/${this.state.id}`, { ... this.state })
-        .then(res => {
-            this.props.handleEditCallback();
-        })
-        .catch(err => {
-            console.log(err);
-        })
+        this.props.handleEditLoading();
+
+        setTimeout(() => {
+            axios.put(`http://localhost:3000/api/v1/courses/${this.state.id}`, { ... this.state })
+            .then(res => {
+                this.props.handleEditSuccess();
+            })
+            .catch(err => {
+                const { errors } = err.response.data;
+                console.log(errors)
+                this.setState({ errors }, _ => this.props.handleEditError(errors));
+            });
+        }, 500); 
     }
 
     handleCancel(event) {
         this.props.handleEditExpand();
     }
 
+    shouldMarkError(paramName) {
+        const errors = this.state.errors[paramName] || [];
+        return errors.length != 0;
+    }
+
     render() {
         const { classes } = this.props;
+        const { errors } = this.state;
+
+        const shouldMarkError = {
+            title: this.shouldMarkError("title"),
+            author: this.shouldMarkError("author"),
+            url: this.shouldMarkError("url"),
+            description: this.shouldMarkError("description")
+        }
 
         return (
             <CardContent>
-                <FormControl className={classes.formControl}>
+                <FormControl error={shouldMarkError.title} className={classes.formControl}>
                     <TextField
+                    error={shouldMarkError.title}
                     className={classes.textField}
                     onChange={this.handleChange.bind(this)}
                     type="text"
@@ -56,9 +75,11 @@ class CourseEditContent extends Component {
                     label="Title"
                     value={this.state.title}
                     />
+                    <FormHelperText className={classes.textField}>{shouldMarkError.title && errors.title[0]}</FormHelperText>
                 </FormControl>
-                <FormControl className={classes.formControl}>
+                <FormControl error={shouldMarkError.author} className={classes.formControl}>
                     <TextField
+                    error={shouldMarkError.author}
                     className={classes.textField}
                     onChange={this.handleChange.bind(this)}
                     type="text"
@@ -67,9 +88,11 @@ class CourseEditContent extends Component {
                     label="Author"
                     value={this.state.author}
                     />
+                    <FormHelperText className={classes.textField}>{shouldMarkError.author && errors.author[0]}</FormHelperText>
                 </FormControl>
-                <FormControl className={classes.formControl}>
+                <FormControl error={shouldMarkError.url} className={classes.formControl}>
                     <TextField
+                    error={shouldMarkError.url}
                     className={classes.textField}
                     onChange={this.handleChange.bind(this)}
                     type="url"
@@ -79,9 +102,11 @@ class CourseEditContent extends Component {
                     value={this.state.url}
                     margin="normal"
                     />
+                    <FormHelperText className={classes.textField}>{shouldMarkError.url && errors.url[0]}</FormHelperText>
                 </FormControl>
-                <FormControl className={classes.formControl} fullWidth>
+                <FormControl error={shouldMarkError.description} className={classes.formControl} fullWidth>
                     <TextField
+                    error={shouldMarkError.description}
                     className={classes.textField}
                     onChange={this.handleChange.bind(this)}
                     type="text"
@@ -92,6 +117,7 @@ class CourseEditContent extends Component {
                     margin="normal"
                     multiline
                     />
+                    <FormHelperText className={classes.textField}>{shouldMarkError.description && errors.description[0]}</FormHelperText>
                 </FormControl>
                 <div style={{marginTop: "20px"}}>
                     <Button onClick={this.handleSave.bind(this)} variant="contained" color="primary" className={classes.button}>Save</Button>

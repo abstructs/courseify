@@ -99,7 +99,7 @@ const darkTheme = createMuiTheme({
 
 const Main = () => (
   <Router>
-    <MuiThemeProvider theme={pinkTheme}>
+    <MuiThemeProvider theme={darkTheme}>
       <Navbar />
       <Route exact path="/" component={HomeContainer}/>
       <Route path="/videos" component={VideosContainer}/>

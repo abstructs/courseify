@@ -94,16 +94,27 @@ class CourseCard extends Component {
         })
     }
 
-    handleEditCallback() {
+    handleEditLoading() {
+        console.log("loading")
+        this.setState({ expanded: false, refreshing: true }, _ => setTimeout(1000));
+    }
+
+    handleEditSuccess() {
+        console.log("success")
         this.setState({ expanded: false, refreshing: true }, _ => setTimeout(_ => {
             this.refresh();
             this.props.showSnackbar("Course succesfully edited", "success");
         }, 1000));
     }
 
+    handleEditError(errors) {
+        this.setState({ expanded: true, refreshing: false }, _ => {
+            this.props.showSnackbar("Something went wrong, double check your work!", "error");
+        });
+    }
+
     handleShowRecommendations() {
         this.setState({ openRecommendations: true });
-
     }
 
     handleRecommendationsClose() {
@@ -133,7 +144,7 @@ class CourseCard extends Component {
         const { course, refreshing, deleted } = this.state;
 
         const current_user_recommended = this.state.course.recommendations.filter(recommendation => {
-            return recommendation.user_id == this.props.current_user.id
+            return recommendation.user_id == this.props.current_user.id;
         }).length != 0;
         
         if(deleted) {
@@ -235,8 +246,8 @@ class CourseCard extends Component {
                 </CardActions>
                 {refreshing && <LinearProgress />}
 
-                <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
-                    <CourseEditContent handleEditCallback={this.handleEditCallback.bind(this)} handleEditExpand={this.handleEditExpand.bind(this)} classes={classes} course={course} />
+                <Collapse in={this.state.expanded} timeout="auto">
+                    <CourseEditContent handleEditError={this.handleEditError.bind(this)} handleEditLoading={this.handleEditLoading.bind(this)} handleEditSuccess={this.handleEditSuccess.bind(this)} handleEditExpand={this.handleEditExpand.bind(this)} classes={classes} course={course} />
                 </Collapse>
             </Card>
         );

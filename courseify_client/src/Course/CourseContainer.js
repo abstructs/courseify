@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { Grid, List, ListItem, ListItemText, Divider, ListSubheader, Typography, withStyles, Button, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, CircularProgress, Fade, Snackbar, Icon, SnackbarContent } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import green from '@material-ui/core/colors/green';
+import red from '@material-ui/core/colors/green';
 import CourseCard from './CourseCard';
 import CourseAddExpansion from './CourseAddExpansion';
 import RecommendationDialog from '../Recommendation/RecommendationDialog';
@@ -42,6 +43,12 @@ const styles = theme => ({
         '&:hover': {
           backgroundColor: green[700],
         },
+    },
+    buttonError: {
+        backgroundColor: theme.palette.error.dark,
+        // '&:hover': {
+        //   backgroundColor: red[222],
+        // },
     },
     wrapper: {
         margin: theme.spacing.unit,
@@ -164,13 +171,14 @@ class CourseContainer extends Component {
                                 <Typography variant="caption" align="left" style={{marginTop: "5px"}} color="textSecondary">
                                     See what people are recommending.
                                 </Typography>
-                                <Fade in={!this.state.expanded}>
+                                <Fade in={!loading && !this.state.expanded}>
                                     <Button onClick={this.handleExpandClick.bind(this)} disabled={this.state.expanded} color="primary" style={{float: "right"}}>Add A Course</Button>
                                 </Fade>
                             </Grid>
-                            <Grid item xs={12}>
-                                <CourseAddExpansion showSnackbar={this.showSnackbar.bind(this)} handleCancel={this.handleCancel.bind(this)} classes={classes} expanded={this.state.expanded} />
-                            </Grid>
+                            
+                                <Grid item xs={12}>
+                                    <CourseAddExpansion showSnackbar={this.showSnackbar.bind(this)} handleCancel={this.handleCancel.bind(this)} classes={classes} expanded={this.state.expanded} />
+                                </Grid>
                         </Grid>
                         {loading ?
                                 <Grid container spacing={0} justify="center">

@@ -24,7 +24,7 @@ class Api::V1::CoursesController < ApplicationController
     if @course.save
       render json: @course, status: :created
     else
-      render json: @course.errors, status: :unprocessable_entity
+      render json: { errors: @course.errors }, status: :unprocessable_entity
     end
   end
 
@@ -36,7 +36,7 @@ class Api::V1::CoursesController < ApplicationController
     if @course.update(course_params)
       render json: @course
     else
-      render json: @course.errors, status: :unprocessable_entity
+      render json: { errors: @course.errors }, status: :unprocessable_entity
     end
   end
 
