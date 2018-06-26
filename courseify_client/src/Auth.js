@@ -4,7 +4,7 @@ const Auth = () => ({
     isAuthenticated: () => {
       const token = localStorage.getItem('token');
       const current_time = new Date().getTime() / 1000;
-      return token && Auth().paraseJwt(token).exp > current_time;
+      return token && token != "undefined" && Auth().paraseJwt().exp > current_time;
     },
 
     // auth should be in the form "auth": { "email": ___, "password": ___ }
@@ -22,8 +22,8 @@ const Auth = () => ({
     },
 
     paraseJwt: () => {
-      var token = localStorage.getItem("token");
-      if(!token) {
+      const token = localStorage.getItem("token");
+      if(!token || token == "undefined") {
         return {};
       }
       var base64Url = token.split('.')[1];

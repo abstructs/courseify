@@ -5,7 +5,8 @@ import { Redirect } from 'react-router';
 import Auth from './Auth';
 import PropTypes from 'prop-types';
 // import Alert from './Alert';
-import { Grid, Paper, withStyles, Typography, TextField, FormControl, Button } from '@material-ui/core';
+import { Grid, withStyles, Typography, TextField, FormControl, Button, FormHelperText } from '@material-ui/core';
+import SimpleSnackbar from './Helpers/SimpleSnackbar';
 
 const styles = theme => ({
     root: {
@@ -35,22 +36,9 @@ class LogIn extends Component {
             username: "",
             email: "",
             password: "",
-            errors: {
-                emailErrors: [],
-                passwordErrors: []
-            },
-            messages: [],
+            errors: {},
             redirect: false
         }
-    }
-
-    componentDidMount() {
-        // console.log(this.state)
-        // axios.get("http://localhost:3000/api/v1/videos.json")
-        // .then(response => {
-        //     console.log(response)
-        //     this.setState({videos: response.data})
-        // }).catch(error => console.log(error));
     }
 
     handleInputChange(event) {
@@ -61,46 +49,43 @@ class LogIn extends Component {
         this.setState({
             [name]: value
         });
-
-        // console.log(this.state)
     }
 
     handleSubmit(event) {
         const req = {
-            // "auth": {
-                "email": this.state.email,
-                "password": this.state.password
-            // }
+            "email": this.state.email,
+            "password": this.state.password
         }
     
         Auth().authenticate(req)
         .then(res => {
-            const jwt = res.data.jwt;
-            localStorage.setItem("token", jwt);
-            
-            this.setState({
-                redirect: true
-            });
+            this.setState({ redirect: true });
         })
         .catch(err => {
-            console.log(err.response.data);
-            // const errors = err.response.data.errors;
-            // const emailErrors = errors.email || [];
-            // const passwordErrors = errors.password || [];
-            // console.log(emailErrors)
-            this.setState({
-                messages: err.response.data.messages
-                // errors: {
-                //     emailErrors,
-                //     passwordErrors
-                // }
-            })
+            const { errors } = err.response.data;
+            this.setState({ errors },
+                this.showSnackbar("We couldn't log you in, are you missing something?", "error"));
         });
+    }
+
+    showSnackbar = (message, variant) => {
+        this.snackbar.handleClick(message, variant);
+        // this.setState({ snackbarClicked: true, message });
+    }
+
+    shouldMarkError(paramName) {
+        console.log(this.state.errors)
+        const errors = this.state.errors[paramName] || [];
+        return errors.length != 0;
     }
 
     render() {
         const { classes } = this.props;
-        const { redirect } = this.state;
+        const { redirect, errors } = this.state;
+        const shouldMarkError = {
+            email: this.shouldMarkError("email"),
+            password: this.shouldMarkError("password")
+        }
         
         if (redirect) {
             return <Redirect to='/' />;
@@ -108,6 +93,7 @@ class LogIn extends Component {
 
         return (
         <div className={classes.root}>
+            <SimpleSnackbar onRef={ref => this.snackbar = ref} message={this.state.message} />
             <Grid container spacing={24}>
                 <Grid item xs={12} align="center">
                     <Typography align="center" style={{color: "black", marginTop: "50px", marginBottom: "20px"}} variant="display2">
@@ -122,15 +108,17 @@ class LogIn extends Component {
                 </Grid>
                 <Grid item xs={12} align="center">
                     {/* <Paper align="center"> */}
-                        <FormControl margin="normal" fullWidth>
-                            <TextField name="email" onChange={this.handleInputChange.bind(this)} fullWidth={true} className={classes.textField} label="Email" type="email" placeholder="Email"></TextField>
+                        <FormControl error={shouldMarkError.email} margin="normal" fullWidth>
+                            <TextField error={shouldMarkError.email} name="email" onChange={this.handleInputChange.bind(this)} fullWidth={true} className={classes.textField} label="Email" type="email" placeholder="Email"></TextField>
+                            <FormHelperText className={classes.textField}>{shouldMarkError.email ? errors.email[0] : ""}</FormHelperText>
                         </FormControl>
                         {/* <FormControl>
                             <TextField className={classes.textField} label="Email" type="text" placeholder="Email"></TextField>
                         </FormControl>
                         <br/> */}
-                        <FormControl margin="normal" fullWidth>
-                            <TextField name="password" onChange={this.handleInputChange.bind(this)} fullWidth className={classes.textField} label="Password" type="password" placeholder="Password"></TextField>
+                        <FormControl error={shouldMarkError.password} margin="normal" fullWidth>
+                            <TextField error={shouldMarkError.password} name="password" onChange={this.handleInputChange.bind(this)} fullWidth className={classes.textField} label="Password" type="password" placeholder="Password"></TextField>
+                            <FormHelperText className={classes.textField}>{shouldMarkError.password ? errors.password[0] : ""}</FormHelperText>
                         </FormControl>
                         {/* <FormControl>
                             <TextField className={classes.textField} label="Password Confirmation" type="password" placeholder="Password Confirmation"></TextField>

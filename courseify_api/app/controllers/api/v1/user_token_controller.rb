@@ -1,14 +1,12 @@
 class Api::V1::UserTokenController < Knock::AuthTokenController
     # Exception Handling
-    class InvalidEmail < StandardError
-    end
-
-    class InvalidPassword < StandardError
+    class InvalidInfo < StandardError
+        attr_accessor :errors
     end
 
     skip_before_action :verify_authenticity_token
-    rescue_from InvalidEmail, with: :handleInvalidEmail
-    rescue_from InvalidPassword, with: :handleInvalidPassword
+    rescue_from InvalidInfo, with: :handleInvalidInfo
+    # rescue_from InvalidPassword, with: :handleInvalidPassword
 
 
     def create
@@ -17,20 +15,26 @@ class Api::V1::UserTokenController < Knock::AuthTokenController
     
     private
 
-    def handleInvalidEmail
-        render json: { messages: [{ text: "Email does not exist in our database", type: "danger" }] }, status: 400
+    def handleInvalidInfo(exception)
+        render json: { errors: exception.errors }, status: 400
     end
 
-    def handleInvalidPassword
-        render json: { messages: [{ text: "Password is incorrect", type: "danger" }] }, status: 400
-    end
+    # def handleInvalidPassword
+    #     render json: { errors: { password: "Password is incorrect", type: "danger" }] }, status: 400
+    # end
 
     def authenticate
-        # puts(auth_params)
+        errors = {}
         if !entity.present?
-            raise InvalidEmail
+            errors[:email] = ["Email does not exist in our database"]
         elsif !entity.authenticate(auth_params[:password])
-            raise InvalidPassword
+            errors[:password] = ["Password is incorrect"]
+        end
+
+        if errors.length != 0
+            exception = InvalidInfo.new
+            exception.errors = errors
+            raise exception
         end
     end
 end

@@ -3,7 +3,6 @@ import './App.css';
 import axios from 'axios';
 import { Redirect } from 'react-router';
 import Auth from './Auth';
-import Alert from './Alert';
 import { Grid, Paper, withStyles, Typography, TextField, FormControl, Button, FormHelperText } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import SimpleSnackbar from './Helpers/SimpleSnackbar';
@@ -36,22 +35,9 @@ class SignUp extends Component {
             email: "",
             password: "",
             password_confirmation: "",
-            errors: {
-                emailErrors: [],
-                passwordErrors: []
-            },
-            messages: [],
+            errors: {},
             redirect: false
         }
-    }
-
-    componentDidMount() {
-        console.log(this.state)
-        // axios.get("http://localhost:3000/api/v1/videos.json")
-        // .then(response => {
-        //     console.log(response)
-        //     this.setState({videos: response.data})
-        // }).catch(error => console.log(error));
     }
 
     handleInputChange(event) {
@@ -62,8 +48,6 @@ class SignUp extends Component {
         this.setState({
             [name]: value
         });
-
-        console.log(this.state)
     }
 
     handleSubmit(event) {
@@ -79,7 +63,9 @@ class SignUp extends Component {
         .then(res => Auth().authenticate(payload.user))
         .then(_ => this.setState({redirect: true}))
         .catch(err => {
-            this.setState({ errors: { ...err.response.data.errors }}, this.showSnackbar("Something went wrong, double check those fields!", "error"));
+            const { errors } = err.response.data;
+            this.setState({ errors }, 
+                this.showSnackbar("Something went wrong, double check those fields!", "error"));
         });
     }
 
@@ -107,9 +93,6 @@ class SignUp extends Component {
             return <Redirect to='/' />;
         }
 
-        console.log(this.shouldMarkError("email"));
-        console.log(this.shouldMarkError("password"));
-
         return (
             <div className={classes.root}>
                 <SimpleSnackbar onRef={ref => this.snackbar = ref} message={this.state.message} />
@@ -123,24 +106,18 @@ class SignUp extends Component {
                         </Typography>
                     </Grid>
                     <Grid item xs={12} align="center">
-                        {/* <Paper align="center"> */}
-                            <FormControl error={shouldMarkError.email} margin="normal" fullWidth>
-                                <TextField error={shouldMarkError.email} value={this.state.email} name="email" onChange={this.handleInputChange.bind(this)} fullWidth={true} className={classes.textField} label="Email" type="email" placeholder="Email"></TextField>
-                                <FormHelperText className={classes.textField}>{shouldMarkError.email ? errors.email[0] : ""}</FormHelperText>
-                            </FormControl>
-                            {/* <FormControl>
-                                <TextField className={classes.textField} label="Email" type="text" placeholder="Email"></TextField>
-                            </FormControl>
-                            <br/> */}
-                            <FormControl error={shouldMarkError.password} margin="normal" fullWidth>
-                                <TextField error={shouldMarkError.password} value={this.state.password} name="password" onChange={this.handleInputChange.bind(this)} fullWidth className={classes.textField} label="Password" type="password" placeholder="Password"></TextField>
-                                <FormHelperText className={classes.textField}>{shouldMarkError.password ? errors.password[0] : ""}</FormHelperText>
-                            </FormControl>
-                            <FormControl error={shouldMarkError.password_confirmation} margin="normal" fullWidth>
-                                <TextField error={shouldMarkError.password_confirmation} value={this.state.password_confirmation} name="password_confirmation" onChange={this.handleInputChange.bind(this)} className={classes.textField} label="Password Confirmation" type="password" placeholder="Password Confirmation"></TextField>
-                                <FormHelperText className={classes.textField}>{shouldMarkError.password_confirmation ? errors.password_confirmation[0] : ""}</FormHelperText>
-                            </FormControl>
-                        {/* </Paper> */}
+                        <FormControl error={shouldMarkError.email} margin="normal" fullWidth>
+                            <TextField error={shouldMarkError.email} value={this.state.email} name="email" onChange={this.handleInputChange.bind(this)} fullWidth={true} className={classes.textField} label="Email" type="email" placeholder="Email"></TextField>
+                            <FormHelperText className={classes.textField}>{shouldMarkError.email ? errors.email[0] : ""}</FormHelperText>
+                        </FormControl>
+                        <FormControl error={shouldMarkError.password} margin="normal" fullWidth>
+                            <TextField error={shouldMarkError.password} value={this.state.password} name="password" onChange={this.handleInputChange.bind(this)} fullWidth className={classes.textField} label="Password" type="password" placeholder="Password"></TextField>
+                            <FormHelperText className={classes.textField}>{shouldMarkError.password ? errors.password[0] : ""}</FormHelperText>
+                        </FormControl>
+                        <FormControl error={shouldMarkError.password_confirmation} margin="normal" fullWidth>
+                            <TextField error={shouldMarkError.password_confirmation} value={this.state.password_confirmation} name="password_confirmation" onChange={this.handleInputChange.bind(this)} className={classes.textField} label="Password Confirmation" type="password" placeholder="Password Confirmation"></TextField>
+                            <FormHelperText className={classes.textField}>{shouldMarkError.password_confirmation ? errors.password_confirmation[0] : ""}</FormHelperText>
+                        </FormControl>
                     </Grid>
                     <Button onClick={this.handleSubmit.bind(this)} style={{margin: "auto", marginTop: "30px"}} variant="contained" size="large" color="primary" className={classes.button}>
                         Sign Up
