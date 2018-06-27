@@ -78,9 +78,9 @@ const styles = theme => ({
 });
 
 const tabs = {
-    all: {id: 1, value: "all"},
-    computer_science: {id: 2, value: "computer_science"},
-    data_science: {id: 3, value: "data_science"},
+    all: { id: 1, value: "all" },
+    computer_science: { id: 2, value: "computer_science" },
+    data_science: {id: 3, value: "data_science"}
 }
 
 class CourseContainer extends Component {
@@ -98,19 +98,19 @@ class CourseContainer extends Component {
     }
 
     componentDidMount() {
-        this.getAllCourses();
+        this.getCourses();
     }
 
-    getAllCourses() {
-        setTimeout(_ => {
-            axios.get('http://localhost:3000/api/v1/courses')
-            .then(res => {
-                const courses = JSON.parse(res.data.courses);
+    // getAllCourses() {
+    //     setTimeout(_ => {
+    //         axios.get('http://localhost:3000/api/v1/courses')
+    //         .then(res => {
+    //             const courses = JSON.parse(res.data.courses);
                 
-                this.setState({ courses, loading: false });
-            });
-        }, 1000);
-    }
+    //             this.setState({ courses, loading: false });
+    //         });
+    //     }, 1000);
+    // }
 
     handleCourseChange(event) {  
         const target = event.target;
@@ -137,7 +137,9 @@ class CourseContainer extends Component {
         // this.setState({ snackbarClicked: true, message });
     }
     
-    getCoursesByCategory(category) {
+    getCourses() {
+        const category = tabs[Object.keys(tabs).filter(key => tabs[key].id === this.state.tab)].value;
+
         setTimeout(_ => {
             axios.get(`http://localhost:3000/api/v1/courses?category=${category}`)
             .then(res => {
@@ -149,22 +151,7 @@ class CourseContainer extends Component {
     }
 
     handleTab = tab => _ => {
-        console.log('handle tab')
-        console.log(tab)
-        this.setState({ tab, loading: true }, _ => {
-            switch(tab) {
-                case tabs.data_science.id:
-                    this.getCoursesByCategory(tabs.data_science.value);
-                    break;
-                case tabs.computer_science.id:
-                    this.getCoursesByCategory(tabs.computer_science.value)
-                    break;
-                default:
-                    this.getAllCourses();
-                    break;
-            }
-        });
-
+        this.setState({ tab: tab.id, loading: true }, _ => this.getCourses());
     } 
 
     render() {
@@ -180,20 +167,20 @@ class CourseContainer extends Component {
                     <Grid item md={3}>
                         <List component="nav" subheader={<ListSubheader component="div">Categories</ListSubheader>}>
                             <Divider />
-                            <ListItem button onClick={this.handleTab(tabs.all.id)}>
+                            <ListItem button onClick={this.handleTab(tabs.all).bind(this)}>
                                 <ListItemText primary="All" />
                             </ListItem>
-                            <ListItem button onClick={this.handleTab(tabs.computer_science.id)}>
+                            <ListItem button onClick={this.handleTab(tabs.computer_science).bind(this)}>
                                 {/* <ListItemIcon>
                                     <LibraryBooksIcon />
                                 </ListItemIcon> */}
                                 <ListItemText primary="Computer Science" />
                             </ListItem>
-                            <ListItem button >
+                            <ListItem button onClick={this.handleTab(tabs.data_science).bind(this)} >
                                 {/* <ListItemIcon>
                                     <LibraryBooksIcon />
                                 </ListItemIcon> */}
-                                <ListItemText primary="Data Science" onClick={this.handleTab(tabs.data_science.id)} />
+                                <ListItemText primary="Data Science" />
                             </ListItem>
                         </List>
                     </Grid>

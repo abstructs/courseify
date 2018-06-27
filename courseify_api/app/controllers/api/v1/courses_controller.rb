@@ -4,7 +4,8 @@ class Api::V1::CoursesController < ApplicationController
 
   # GET /courses
   def index
-    @courses = if params[:category] then Course.where(category: params[:category]) else Course.all end
+
+    @courses = if params[:category] == "all" then Course.all else Course.where(category: params[:category]) end
 
     render json: { courses: as_json(@courses) } 
   end
