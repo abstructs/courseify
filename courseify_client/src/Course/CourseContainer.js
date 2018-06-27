@@ -78,9 +78,9 @@ const styles = theme => ({
 });
 
 const tabs = {
-    all: 1,
-    computer_science: 2,
-    data_science: 3
+    all: {id: 1, value: "all"},
+    computer_science: {id: 2, value: "computer_science"},
+    data_science: {id: 3, value: "data_science"},
 }
 
 class CourseContainer extends Component {
@@ -139,7 +139,7 @@ class CourseContainer extends Component {
     
     getCoursesByCategory(category) {
         setTimeout(_ => {
-            axios.get('http://localhost:3000/api/v1/courses')
+            axios.get(`http://localhost:3000/api/v1/courses?category=${category}`)
             .then(res => {
                 const courses = JSON.parse(res.data.courses);
                 
@@ -149,13 +149,18 @@ class CourseContainer extends Component {
     }
 
     handleTab = tab => _ => {
+        console.log('handle tab')
+        console.log(tab)
         this.setState({ tab, loading: true }, _ => {
             switch(tab) {
-                case tabs.all:
-                    this.getAllCourses();
+                case tabs.data_science.id:
+                    this.getCoursesByCategory(tabs.data_science.value);
                     break;
-                case tabs.data_science:
-                    this.getCoursesByCategory(tabs.computer_science);
+                case tabs.computer_science.id:
+                    this.getCoursesByCategory(tabs.computer_science.value)
+                    break;
+                default:
+                    this.getAllCourses();
                     break;
             }
         });
@@ -175,10 +180,10 @@ class CourseContainer extends Component {
                     <Grid item md={3}>
                         <List component="nav" subheader={<ListSubheader component="div">Categories</ListSubheader>}>
                             <Divider />
-                            <ListItem button onClick={this.handleTab(tabs.all)}>
+                            <ListItem button onClick={this.handleTab(tabs.all.id)}>
                                 <ListItemText primary="All" />
                             </ListItem>
-                            <ListItem button onClick={this.handleTab(tabs.computer_science)}>
+                            <ListItem button onClick={this.handleTab(tabs.computer_science.id)}>
                                 {/* <ListItemIcon>
                                     <LibraryBooksIcon />
                                 </ListItemIcon> */}
@@ -188,7 +193,7 @@ class CourseContainer extends Component {
                                 {/* <ListItemIcon>
                                     <LibraryBooksIcon />
                                 </ListItemIcon> */}
-                                <ListItemText primary="Data Science" onClick={this.handleTab(tabs.data_science)} />
+                                <ListItemText primary="Data Science" onClick={this.handleTab(tabs.data_science.id)} />
                             </ListItem>
                         </List>
                     </Grid>
