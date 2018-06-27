@@ -212,7 +212,7 @@ class CourseCard extends Component {
                     //     <MoreVertIcon />
                     // </IconButton>
                     // }
-                    title={`${course.title}`}
+                    title={`${course.title} - (${course.category.split("_").map(word => word[0].toUpperCase() + word.slice(1)).join(" ")})`}
                     subheader={`by ${course.author}`}
                 />
 
@@ -226,7 +226,7 @@ class CourseCard extends Component {
                         <FavoriteIcon />
                     </IconButton>
                     <IconButton onClick={this.handleShowShare.bind(this)} disabled={refreshing} aria-label="Share">
-                        <ShareIcon color={this.state.openShare ? "secondary" : "default"}  />
+                        <ShareIcon color={this.state.openShare ? "secondary" : "inherit"}  />
                     </IconButton>
                     <IconButton disabled={refreshing} onClick={this.handleShowRecommendations.bind(this)}  aria-label="Delete">
                         <PeopleIcon color={this.state.openRecommendations ? "secondary" : "inherit"} />

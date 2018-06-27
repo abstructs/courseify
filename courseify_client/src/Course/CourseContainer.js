@@ -36,7 +36,7 @@ const styles = theme => ({
     textField: {
         marginLeft: theme.spacing.unit,
         marginRight: theme.spacing.unit,
-        // width: 200,  
+        minWidth: 200,  
     },
     buttonSuccess: {
         backgroundColor: green[500],
@@ -77,6 +77,12 @@ const styles = theme => ({
     }
 });
 
+const tabs = {
+    all: 1,
+    computer_science: 2,
+    data_science: 3
+}
+
 class CourseContainer extends Component {
     constructor(props) {
         super(props);
@@ -86,11 +92,16 @@ class CourseContainer extends Component {
             courses: [],
             expanded: false,
             loading: true,
-            recommendationsOpen: false
+            recommendationsOpen: false,
+            tab: 1
         }        
     }
 
-    componentWillMount() {
+    componentDidMount() {
+        this.getAllCourses();
+    }
+
+    getAllCourses() {
         setTimeout(_ => {
             axios.get('http://localhost:3000/api/v1/courses')
             .then(res => {
@@ -109,6 +120,10 @@ class CourseContainer extends Component {
         this.setState({[name]: value});
     }
 
+    handleCourseAddSuccess() {
+        this.setState({ expanded: false, loading: true }, _ => this.getAllCourses());
+    }
+
     handleCancel(e) {
         this.setState({ expanded: false });
     }
@@ -121,12 +136,37 @@ class CourseContainer extends Component {
         this.snackbar.handleClick(message, variant);
         // this.setState({ snackbarClicked: true, message });
     }
+    
+    getCoursesByCategory(category) {
+        setTimeout(_ => {
+            axios.get('http://localhost:3000/api/v1/courses')
+            .then(res => {
+                const courses = JSON.parse(res.data.courses);
+                
+                this.setState({ courses, loading: false });
+            });
+        }, 1000);
+    }
+
+    handleTab = tab => _ => {
+        this.setState({ tab, loading: true }, _ => {
+            switch(tab) {
+                case tabs.all:
+                    this.getAllCourses();
+                    break;
+                case tabs.data_science:
+                    this.getCoursesByCategory(tabs.computer_science);
+                    break;
+            }
+        });
+
+    } 
 
     render() {
         const { classes, } = this.props;
         const isLoggedIn = Auth().isAuthenticated();
         const current_user = isLoggedIn ? Auth().paraseJwt().sub.user : {};
-        const { loading, courses } = this.state;
+        const { loading, courses  } = this.state;
 
         return (
             <div className={classes.root}>
@@ -135,7 +175,10 @@ class CourseContainer extends Component {
                     <Grid item md={3}>
                         <List component="nav" subheader={<ListSubheader component="div">Categories</ListSubheader>}>
                             <Divider />
-                            <ListItem button>
+                            <ListItem button onClick={this.handleTab(tabs.all)}>
+                                <ListItemText primary="All" />
+                            </ListItem>
+                            <ListItem button onClick={this.handleTab(tabs.computer_science)}>
                                 {/* <ListItemIcon>
                                     <LibraryBooksIcon />
                                 </ListItemIcon> */}
@@ -145,19 +188,7 @@ class CourseContainer extends Component {
                                 {/* <ListItemIcon>
                                     <LibraryBooksIcon />
                                 </ListItemIcon> */}
-                                <ListItemText primary="Data Science" />
-                            </ListItem>
-                            <ListItem button >
-                                {/* <ListItemIcon>
-                                    <LibraryBooksIcon />
-                                </ListItemIcon> */}
-                                <ListItemText primary="Engineering" />
-                            </ListItem>
-                            <ListItem button >
-                                {/* <ListItemIcon>
-                                    <LibraryBooksIcon />
-                                </ListItemIcon> */}
-                                <ListItemText primary="Social Sciences" />
+                                <ListItemText primary="Data Science" onClick={this.handleTab(tabs.data_science)} />
                             </ListItem>
                         </List>
                     </Grid>
@@ -177,7 +208,7 @@ class CourseContainer extends Component {
                             </Grid>
                             
                                 <Grid item xs={12}>
-                                    <CourseAddExpansion showSnackbar={this.showSnackbar.bind(this)} handleCancel={this.handleCancel.bind(this)} classes={classes} expanded={this.state.expanded} />
+                                    <CourseAddExpansion handleCourseAddSuccess={this.handleCourseAddSuccess.bind(this)} showSnackbar={this.showSnackbar.bind(this)} handleCancel={this.handleCancel.bind(this)} classes={classes} expanded={this.state.expanded} />
                                 </Grid>
                         </Grid>
                         {loading ?
@@ -185,8 +216,8 @@ class CourseContainer extends Component {
                                     <CircularProgress />
                                 </Grid>
                             :
-                                this.state.courses.map(course => {
-                                    return <CourseCard key={course.id} showSnackbar={this.showSnackbar.bind(this)} current_user={current_user} classes={classes} course={course} />
+                                courses.map(course => {
+                                    return <CourseCard key={course.id} showSnackbar={this.showSnackbar.bind(this)} current_user={current_user} classes={classes} course={course} />;
                                 })
                         }
                     </Grid>

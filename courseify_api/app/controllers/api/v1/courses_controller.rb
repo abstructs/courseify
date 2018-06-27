@@ -4,7 +4,7 @@ class Api::V1::CoursesController < ApplicationController
 
   # GET /courses
   def index
-    @courses = Course.all
+    @courses = if params[:category] then Course.where(category: params[:category]) else Course.all end
 
     render json: { courses: as_json(@courses) } 
   end
@@ -53,7 +53,7 @@ class Api::V1::CoursesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def course_params
-      params.permit(:title, :url, :description, :author)
+      params.permit(:title, :url, :description, :author, :category)
     end
 
     def as_json(course)

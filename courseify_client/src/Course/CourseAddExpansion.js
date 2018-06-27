@@ -1,9 +1,20 @@
 import React, { Component } from 'react';
 import '../App.css';
 import axios from 'axios';
-import { CardContent, Typography, CardActions, Collapse, Card, Button, FormControl, TextField, CircularProgress, FormHelperText } from '@material-ui/core';
+import { CardContent, Typography, CardActions, Collapse, Card, Button, FormControl, TextField, CircularProgress, FormHelperText, MenuItem, InputAdornment } from '@material-ui/core';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
+
+const categories = [
+    {
+        label: "Computer Science", 
+        value: "computer_science"
+    }, 
+    { 
+        label: "Data Science", 
+        value: "data_science"
+    }
+];
 
 class CourseAddExpansion extends Component {
     constructor(props) {
@@ -14,7 +25,8 @@ class CourseAddExpansion extends Component {
                 title: "",
                 author: "",
                 url: "",
-                description: ""
+                description: "",
+                category: ""
             },
             loading: false,
             success: undefined,
@@ -59,6 +71,7 @@ class CourseAddExpansion extends Component {
                         })
                         .catch(err => {
                             const { errors } = err.response.data;
+                            console.log(errors)
                             this.setState(
                                 { loading: false, success: false , errors }, 
                                 _ => new Error());
@@ -68,7 +81,7 @@ class CourseAddExpansion extends Component {
                 })
                 .then(_ => {
                     setTimeout(_ => {
-                        this.props.handleCancel();
+                        this.props.handleCourseAddSuccess();
                     }, 1000);
                 })
                 // .catch(err => {
@@ -119,7 +132,8 @@ class CourseAddExpansion extends Component {
             title: this.shouldMarkError("title"),
             author: this.shouldMarkError("author"),
             url: this.shouldMarkError("url"),
-            description: this.shouldMarkError("description")
+            description: this.shouldMarkError("description"),
+            category: this.shouldMarkError("category")
         };
         // classNames({
         //     [classes.buttonSuccess]: success,
@@ -164,6 +178,34 @@ class CourseAddExpansion extends Component {
                             <TextField error={shouldMarkError.url} value={course.url} onChange={this.handleCourseChange.bind(this)} name="url" className={classes.textField} label="Link" type="url" placeholder="http://"></TextField>
                             <FormHelperText className={classes.textField}>{shouldMarkError.url ? errors.url[0] : ""}</FormHelperText>
                         </FormControl>
+
+                        <FormControl error={shouldMarkError.category}>
+                            <TextField 
+                                select
+                                error={shouldMarkError.category} 
+                                name="category" 
+                                className={classes.textField}
+                                label="Category"
+                                onChange={this.handleCourseChange.bind(this)}
+                                value={course.category}
+                                // InputProps={{
+                                //     startAdornment: <InputAdornment position="start">Category</InputAdornment>,
+                                // }}
+                            >
+                                {categories.map((option, i) => {
+                                    return (
+                                        <MenuItem 
+                                        key={i}
+                                        value={option.value}
+                                        >
+                                        {option.label}
+                                        </MenuItem>
+                                    );
+                                })}
+                            </TextField>
+                            <FormHelperText className={classes.textField}>{shouldMarkError.category ? errors.category[0] : ""}</FormHelperText>
+                        </FormControl>
+
                         <FormControl error={shouldMarkError.description} margin="normal" fullWidth>
                             <TextField
                             error={shouldMarkError.description} 

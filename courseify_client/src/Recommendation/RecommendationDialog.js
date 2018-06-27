@@ -47,7 +47,7 @@ class RecommendationDialog extends Component {
     render() {
         const { classes, open, onClose } = this.props;
 
-        console.log(this.state.recommendations)
+        // console.log(this.state.recommendations)
 
         return (
             <Dialog onClose={onClose} open={open}>
@@ -84,7 +84,7 @@ RecommendationDialog.propTypes = {
     classes: PropTypes.object.isRequired,
     open: PropTypes.bool.isRequired,
     course_id: PropTypes.number.isRequired,
-    handleRecommendationsClose: PropTypes.func.isRequired
+    // handleRecommendationsClose: PropTypes.func.isRequired
 };
 
 export default withStyles(styles)(RecommendationDialog);

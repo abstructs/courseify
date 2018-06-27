@@ -156,7 +156,7 @@ class SimpleSnackbar extends Component {
                 key={key}
                 className={classNames(classes[variant])}
                 message={
-                    <span id="message-id">
+                    <span>
                         <Icon className={classNames(classes.icon, classes.iconVariant)} />
                         {message}
                     </span>}
@@ -166,7 +166,7 @@ class SimpleSnackbar extends Component {
                     // </Button>,
                 <IconButton key="close" aria-label="Close" color="inherit" className={classes.close} onClick={this.handleSnackbarClose.bind(this)}>
                     <CloseIcon />
-                </IconButton>
+                </IconButton>   
                 ]}
             />
         </Snackbar>

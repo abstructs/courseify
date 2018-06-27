@@ -4,7 +4,18 @@ import axios from 'axios';
 // import { Redirect, matchPath } from 'react-router';
 // import teacherImage from './images/laptop.jpeg';
 import PropTypes from 'prop-types';
-import { CardContent, Button, FormControl, TextField, FormHelperText } from '@material-ui/core';
+import { CardContent, Button, FormControl, TextField, FormHelperText, MenuItem } from '@material-ui/core';
+
+const categories = [
+    {
+        label: "Computer Science", 
+        value: "computer_science"
+    }, 
+    { 
+        label: "Data Science", 
+        value: "data_science"
+    }
+];
 
 class CourseEditContent extends Component {
     constructor(props) {
@@ -59,7 +70,8 @@ class CourseEditContent extends Component {
             title: this.shouldMarkError("title"),
             author: this.shouldMarkError("author"),
             url: this.shouldMarkError("url"),
-            description: this.shouldMarkError("description")
+            description: this.shouldMarkError("description"),
+            category: this.shouldMarkError("category")
         }
 
         return (
@@ -103,6 +115,32 @@ class CourseEditContent extends Component {
                     margin="normal"
                     />
                     <FormHelperText className={classes.textField}>{shouldMarkError.url && errors.url[0]}</FormHelperText>
+                </FormControl>
+                <FormControl className={classes.formControl} error={shouldMarkError.category}>
+                    <TextField 
+                        select
+                        error={shouldMarkError.category} 
+                        name="category" 
+                        className={classes.textField}
+                        label="Category"
+                        onChange={this.handleChange.bind(this)}
+                        value={this.state.category}
+                        // InputProps={{
+                        //     startAdornment: <InputAdornment position="start">Category</InputAdornment>,
+                        // }}
+                    >
+                        {categories.map((option, i) => {
+                            return (
+                                <MenuItem 
+                                key={i}
+                                value={option.value}
+                                >
+                                {option.label}
+                                </MenuItem>
+                            );
+                        })}
+                    </TextField>
+                    <FormHelperText className={classes.textField}>{shouldMarkError.category ? errors.category[0] : ""}</FormHelperText>
                 </FormControl>
                 <FormControl error={shouldMarkError.description} className={classes.formControl} fullWidth>
                     <TextField
