@@ -121,7 +121,7 @@ class CourseContainer extends Component {
     }
 
     handleCourseAddSuccess() {
-        this.setState({ expanded: false, loading: true }, _ => this.getAllCourses());
+        this.setState({ expanded: false, loading: true }, _ => this.getCourses());
     }
 
     handleCancel(e) {

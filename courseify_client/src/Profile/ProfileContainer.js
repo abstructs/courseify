@@ -8,9 +8,10 @@ import PropTypes from 'prop-types';
 
 import ProfileInfoContent from './ProfileInfoContent';
 import ProfileEditContent from './ProfileEditContent';
+import ProfileRecommendations from './ProfileRecommendations';
 import ProfileFollowerContent from './ProfileFollowerContent';
 import ProfileFollowingContent from './ProfileFollowingContent';
-import { Grid, withStyles, Card, AppBar, Tabs, Tab, List, ListItem, ListItemIcon, ListItemText, Divider, LinearProgress } from '@material-ui/core';
+import { Grid, withStyles, Card, AppBar, Tabs, Tab, List, ListItem, ListItemIcon, ListItemText, Divider, LinearProgress, CircularProgress } from '@material-ui/core';
 import PersonIcon from '@material-ui/icons/Person';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 
@@ -57,7 +58,7 @@ class ProfileContainer extends Component {
             edit: false,
 
             // tab logic
-            tab: 0,
+            tab: 1,
 
             // user info
             profile_info: {},
@@ -94,7 +95,7 @@ class ProfileContainer extends Component {
                 ...prevState.profile_info,
                 current_user_is_following: !this.state.profile_info.current_user_is_following
             }
-        }))
+        }));
     }
 
     incrementFollowers(num) {
@@ -110,15 +111,17 @@ class ProfileContainer extends Component {
     refreshUserInfo() {
         const url = this.getMatch() ? "http://localhost:3000/api/v1/users/" + this.getMatch().params.id : 
                                       "http://localhost:3000/api/v1/profile";
-        axios.get(url)
-        .then(res => {
-            const profile_info = res.data.user;
-            const new_profile_info = profile_info.is_current_user_profile ? profile_info : [];
-            this.setState({ profile_info, new_profile_info, edit: false, loading: false });
-        })
-        .catch(err => {
-            console.log(err);
-        });
+        setTimeout(() => {
+            axios.get(url)
+            .then(res => {
+                const profile_info = res.data.user;
+                const new_profile_info = profile_info.is_current_user_profile ? profile_info : [];
+                this.setState({ profile_info, new_profile_info, edit: false, loading: false });
+            })
+            .catch(err => {
+                console.log(err);
+            });
+        }, 500);
     }
 
     toggleEdit() {
@@ -140,7 +143,8 @@ class ProfileContainer extends Component {
         })); 
     }
 
-    handleTab(e, tab) {
+    handleTab = tab => _ => {
+        console.log(tab);
         this.setState({ tab });
     }
 
@@ -169,7 +173,7 @@ class ProfileContainer extends Component {
                                 <ListItemText primary="Profile" />
                             </ListItem>
                             <Divider />
-                            <ListItem button >
+                            <ListItem button onClick={this.handleTab(4).bind(this)}>
                                 <ListItemIcon>
                                     <LibraryBooksIcon />
                                 </ListItemIcon>
@@ -179,29 +183,38 @@ class ProfileContainer extends Component {
                     </Grid>
                     <Grid item xs={8}>
                         <Card style={{margin: "50px"}} className={classes.card}>
-                            
+                        { (this.state.tab === 1 || this.state.tab === 2 || this.state.tab === 3) &&
                             <AppBar position="static">
-                                <Tabs value={this.state.tab} onChange={this.handleTab.bind(this)}>
-                                    <Tab value={0} label="Info" />
-                                    <Tab value={1} label={`Following (${!loading && profile_info.followingCount || 0})`} />
-                                    <Tab value={2} label={`Followers (${!loading && profile_info.followerCount || 0})`} />
+                            {/* onChange={this.handleTab.bind(this) } */}
+                                <Tabs value={this.state.tab} >
+                                    <Tab value={1} onClick={this.handleTab(1).bind(this)} label="Info" />
+                                    <Tab value={2} onClick={this.handleTab(2).bind(this)} label={`Following (${!loading && profile_info.followingCount || 0})`} />
+                                    <Tab value={3} onClick={this.handleTab(3).bind(this)} label={`Followers (${!loading && profile_info.followerCount || 0})`} />
                                 </Tabs>
                             </AppBar>
+                        }
+
+                            {loading && 
+                                <Grid container spacing={0} justify="center">
+                                    <CircularProgress style={{margin: "15px"}} />
+                                </Grid>
+                            }
                             {(() => {
                                 if(!loading) {
                                     switch(this.state.tab) {
-                                        case 0:
+                                        case 1:
                                             return !this.state.edit 
                                             ? <ProfileInfoContent toggleEdit={this.toggleEdit.bind(this)} toggleCurrentUserIsFollowing={this.toggleCurrentUserIsFollowing.bind(this)} incrementFollowers={this.incrementFollowers.bind(this)}  profile={profile_info} classes={classes} /> 
                                             : <ProfileEditContent refreshUserInfo={this.refreshUserInfo.bind(this)} profile={profile_info} classes={classes} toggleEdit={this.toggleEdit.bind(this)} />;
-                                        case 1:
-                                            return <ProfileFollowingContent profile={profile_info} classes={classes} />;
                                         case 2:
+                                            return <ProfileFollowingContent profile={profile_info} classes={classes} />;
+                                        case 3:
                                             return <ProfileFollowerContent profile={profile_info} classes={classes} />;
+                                        case 4:
+                                            return <ProfileRecommendations profile={profile_info} classes={classes} />;
                                     }
                                 }
                             })()}
-                            {loading && <LinearProgress />}
                         </Card>
                         
                     </Grid>
