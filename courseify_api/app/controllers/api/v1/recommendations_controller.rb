@@ -4,9 +4,9 @@ class Api::V1::RecommendationsController < ApplicationController
 
   # GET /recommendations
   def index
-    @recommendations = Recommendation.all
+    @recommendations = if params[:user_id] then Recommendation.where(user_id: params[:user_id]) else Recommendation.all end
 
-    render json: { recommendations: @recommendations }
+    render json: { recommendations: @recommendations.to_json(include: { course: { include: :recommendations } }) }
   end
 
   # GET /recommendations/1

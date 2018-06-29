@@ -3,6 +3,7 @@ import '../App.css';
 import axios from 'axios';
 import Auth from '../Auth';
 import RecommendationCard from '../Recommendation/RecommendationCard';
+import CourseCard from '../Course/CourseCard';
 // import { Redirect, matchPath } from 'react-router';
 // import teacherImage from './images/laptop.jpeg';
 // import $ from 'jquery';
@@ -15,7 +16,6 @@ axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization
 class ProfileRecommendations extends Component {
     constructor(props) {
         super(props);
-        console.log(props);
 
         this.state = {
             recommendations: []
@@ -23,13 +23,15 @@ class ProfileRecommendations extends Component {
     }
 
     componentWillMount() {
-        axios.get(`http://localhost:3000/api/v1/profile/${this.props.profile.id}/recommendations`)
+        axios.get(`http://localhost:3000/api/v1/recommendations?user_id=${this.props.profile.id}`)
         .then(res => {
-          const recommendations = res.data.recommendations;
+            const recommendations = JSON.parse(res.data.recommendations);
+            this.setState({ recommendations });
 
-          console.log(this.props.profile_info)
+        //   console.log(this.props.profile_info);
+        //   console.log(recommendations);
           
-          this.setState({ recommendations });          
+        //   this.setState({ recommendations });          
         })
     }
 
@@ -37,7 +39,8 @@ class ProfileRecommendations extends Component {
         return (
             <div className="card-group justify-content-center">
                 {this.state.recommendations.map(recommendation => {
-                    return <div>hi</div>;
+                    const course = recommendation.course;
+                    return <CourseCard course={course} />
                 })}
             </div>
         );
