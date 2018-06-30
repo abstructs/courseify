@@ -164,10 +164,10 @@ class ProfileContainer extends Component {
 
         return (
             <div className={classes.root}>
-                <Grid container spacing={0}>
-                    <Grid item md={3}>
+                <Grid container spacing={0} >
+                    <Grid item xl={3}>
                         <List component="nav">
-                            <ListItem button >
+                            <ListItem button onClick={this.handleTab(1).bind(this)}>
                                 <ListItemIcon>
                                     <PersonIcon />
                                 </ListItemIcon>
@@ -182,44 +182,55 @@ class ProfileContainer extends Component {
                             </ListItem>
                         </List>
                     </Grid>
-                    <Grid item xs={6}>
-                        <Card style={{margin: "50px"}} className={classes.card}>
-                        { (this.state.tab === 1 || this.state.tab === 2 || this.state.tab === 3) &&
-                            <AppBar position="static">
-                            {/* onChange={this.handleTab.bind(this) } */}
-                                <Tabs value={this.state.tab} >
-                                    <Tab value={1} onClick={this.handleTab(1).bind(this)} label="Info" />
-                                    <Tab value={2} onClick={this.handleTab(2).bind(this)} label={`Following (${!loading && profile_info.followingCount || 0})`} />
-                                    <Tab value={3} onClick={this.handleTab(3).bind(this)} label={`Followers (${!loading && profile_info.followerCount || 0})`} />
-                                </Tabs>
-                            </AppBar>
-                        }
-
-                            {loading && 
-                                <Grid container spacing={0} justify="center">
-                                    <CircularProgress style={{margin: "15px"}} />
-                                </Grid>
-                            }
-                            {(() => {
-                                if(!loading) {
-                                    switch(this.state.tab) {
-                                        case 1:
-                                            return !this.state.edit 
-                                            ? <ProfileInfoContent toggleEdit={this.toggleEdit.bind(this)} toggleCurrentUserIsFollowing={this.toggleCurrentUserIsFollowing.bind(this)} incrementFollowers={this.incrementFollowers.bind(this)}  profile={profile_info} classes={classes} /> 
-                                            : <ProfileEditContent refreshUserInfo={this.refreshUserInfo.bind(this)} profile={profile_info} classes={classes} toggleEdit={this.toggleEdit.bind(this)} />;
-                                        case 2:
-                                            return <ProfileFollowingContent profile={profile_info} classes={classes} />;
-                                        case 3:
-                                            return <ProfileFollowerContent profile={profile_info} classes={classes} />;
-                                        case 4:
-                                            return <ProfileRecommendations current_user={current_user} profile={profile_info} classes={classes} />;
-                                    }
-                                }
-                            })()}
-                        </Card>
-                        
-                    </Grid>
                     
+                    {(() => {
+                        if(this.state.tab == 4) return;
+                        return (
+                            <Grid item xs={6}>
+                                <Card style={{margin: "50px"}} className={classes.card}>
+                                    <AppBar position="static">
+                                        <Tabs value={this.state.tab} >
+                                            <Tab value={1} onClick={this.handleTab(1).bind(this)} label="Info" />
+                                            <Tab value={2} onClick={this.handleTab(2).bind(this)} label={`Following (${!loading && profile_info.followingCount || 0})`} />
+                                            <Tab value={3} onClick={this.handleTab(3).bind(this)} label={`Followers (${!loading && profile_info.followerCount || 0})`} />
+                                        </Tabs>
+                                    </AppBar>
+                                    {loading && 
+                                        <Grid container spacing={0} justify="center">
+                                            <CircularProgress style={{margin: "15px"}} />
+                                        </Grid>
+                                    }
+                                    {(() => {
+                                        if(!loading) {
+                                            switch(this.state.tab) {
+                                                case 1:
+                                                    return !this.state.edit 
+                                                    ? <ProfileInfoContent toggleEdit={this.toggleEdit.bind(this)} toggleCurrentUserIsFollowing={this.toggleCurrentUserIsFollowing.bind(this)} incrementFollowers={this.incrementFollowers.bind(this)}  profile={profile_info} classes={classes} /> 
+                                                    : <ProfileEditContent refreshUserInfo={this.refreshUserInfo.bind(this)} profile={profile_info} classes={classes} toggleEdit={this.toggleEdit.bind(this)} />;
+                                                case 2:
+                                                    return <ProfileFollowingContent profile={profile_info} classes={classes} />;
+                                                case 3:
+                                                    return <ProfileFollowerContent profile={profile_info} classes={classes} />;
+                                            }
+                                        }
+                                    })()}
+                                </Card>
+                            </Grid>
+                        );
+                    })()}
+                    {(() => {
+                        return (
+                            <Grid item xs={6}>
+                                {(() => {
+                                    switch(this.state.tab) {
+                                        case 4:
+                                            return <ProfileRecommendations current_user={current_user} profile={profile_info} />;
+                                }})()}
+                            </Grid>
+                        )
+                    })()}
+                </Grid>
+                <Grid item xl={3}>
                 </Grid>
             </div>
         );

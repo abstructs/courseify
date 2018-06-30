@@ -37,7 +37,7 @@ class ProfileRecommendations extends Component {
 
     render() {
         return (
-            <div className="card-group justify-content-center">
+            <div>
                 {this.state.recommendations.map(recommendation => {
                     const course = recommendation.course;
                     return <CourseCard current_user={this.props.current_user} course={course} />
