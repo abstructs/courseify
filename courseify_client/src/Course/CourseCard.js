@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import '../App.css';
 import axios from 'axios';
-import { CardHeader, CardActions, Collapse, Card, Button, IconButton, Avatar, Dialog, DialogTitle, DialogActions, LinearProgress, DialogContent, TextField, DialogContentText } from '@material-ui/core';
+import { CardHeader, CardActions, Collapse, Card, Button, IconButton, Avatar, Dialog, DialogTitle, DialogActions, LinearProgress, DialogContent, TextField, DialogContentText, withStyles } from '@material-ui/core';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import DoneIcon from '@material-ui/icons/Done';
@@ -12,6 +12,19 @@ import CourseEditContent from './CourseEditContent';
 import PropTypes from 'prop-types';
 import CourseInfoContent from './CourseInfoContent';
 import RecommendationDialog from '../Recommendation/RecommendationDialog';
+
+const styles = theme => ({
+    card: {
+        // maxWidth: 800,
+        marginBottom: "40px"
+    },
+    actions: {
+        display: 'flex',
+    },
+    avatar: {
+    //   backgroundColor: red[500],
+    }
+});
 
 class CourseCard extends Component {
     constructor(props) {
@@ -216,7 +229,7 @@ class CourseCard extends Component {
                     subheader={`by ${course.author}`}
                 />
 
-                <CourseInfoContent classes={classes} course={course} />
+                <CourseInfoContent course={course} />
 
                 <CardActions className={classes.actions} disableActionSpacing>
                     <IconButton color={current_user_recommended ? "secondary" : "default"} 
@@ -258,4 +271,4 @@ CourseCard.propTypes = {
     classes: PropTypes.object.isRequired
 };
 
-export default CourseCard;
+export default withStyles(styles)(CourseCard);

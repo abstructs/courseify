@@ -40,7 +40,7 @@ class ProfileRecommendations extends Component {
             <div className="card-group justify-content-center">
                 {this.state.recommendations.map(recommendation => {
                     const course = recommendation.course;
-                    return <CourseCard course={course} />
+                    return <CourseCard current_user={this.props.current_user} course={course} />
                 })}
             </div>
         );

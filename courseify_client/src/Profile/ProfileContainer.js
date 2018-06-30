@@ -152,6 +152,7 @@ class ProfileContainer extends Component {
         const isLoggedIn = Auth().isAuthenticated();
         const { classes } = this.props;
         const { profile_info, loading } = this.state;
+        const current_user = isLoggedIn ? Auth().paraseJwt().sub.user : {};
         
         if(!isLoggedIn && !this.getMatch()) {
             return <Redirect to='/'/>;
@@ -164,7 +165,7 @@ class ProfileContainer extends Component {
         return (
             <div className={classes.root}>
                 <Grid container spacing={0}>
-                    <Grid item xl={3}>
+                    <Grid item md={3}>
                         <List component="nav">
                             <ListItem button >
                                 <ListItemIcon>
@@ -181,7 +182,7 @@ class ProfileContainer extends Component {
                             </ListItem>
                         </List>
                     </Grid>
-                    <Grid item xs={8}>
+                    <Grid item xs={6}>
                         <Card style={{margin: "50px"}} className={classes.card}>
                         { (this.state.tab === 1 || this.state.tab === 2 || this.state.tab === 3) &&
                             <AppBar position="static">
@@ -211,7 +212,7 @@ class ProfileContainer extends Component {
                                         case 3:
                                             return <ProfileFollowerContent profile={profile_info} classes={classes} />;
                                         case 4:
-                                            return <ProfileRecommendations profile={profile_info} classes={classes} />;
+                                            return <ProfileRecommendations current_user={current_user} profile={profile_info} classes={classes} />;
                                     }
                                 }
                             })()}

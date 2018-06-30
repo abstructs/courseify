@@ -1,9 +1,16 @@
 import React, { Component } from 'react';
 import '../App.css';
 import bookImage from '../images/book.jpeg';
-import { CardMedia, CardContent, Typography, Button } from '@material-ui/core';
+import { CardMedia, CardContent, Typography, Button, withStyles } from '@material-ui/core';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import PropTypes from 'prop-types';
+
+const styles = theme => ({
+    media: {
+        height: 0,
+        paddingTop: '56.25%', // 16:9
+    },
+});
 
 class CourseInfoContent extends Component {
     constructor(props) {
@@ -42,4 +49,4 @@ CourseInfoContent.propTypes = {
     classes: PropTypes.object.isRequired
 };
 
-export default CourseInfoContent;
+export default withStyles(styles)(CourseInfoContent);
