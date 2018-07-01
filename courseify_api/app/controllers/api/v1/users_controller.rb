@@ -32,7 +32,7 @@ class Api::V1::UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
-    
+
     if @user
       u = user_data(@user)
       # u[:follow_info] = follow_info = if current_user 
@@ -41,9 +41,10 @@ class Api::V1::UsersController < ApplicationController
       #                                   is_following: current_user.following?(@user) }
       #                                 else { is_following: false }
       #                                 end
-
-      u[:is_current_user_profile] = current_user == @user
-      u[:current_user_is_following] = current_user.following?(@user)
+      if(current_user)
+        u[:is_current_user_profile] = current_user == @user
+        u[:current_user_is_following] = current_user.following?(@user)
+      end 
 
       render json: { user: u }
     end
@@ -83,7 +84,7 @@ class Api::V1::UsersController < ApplicationController
   private
 
   def users_params
-    params.require(:user).permit(:email, :password, :password_confirmation)
+    params.require(:user).permit(:email, :username, :password, :password_confirmation)
   end
 
   def update_params
@@ -93,6 +94,7 @@ class Api::V1::UsersController < ApplicationController
   def user_data(user)
     { 
       id: user.id, 
+      email: user.email,
       first_name: user.first_name, 
       last_name: user.last_name, 
       headline: user.headline, 

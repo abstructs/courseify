@@ -14,12 +14,14 @@ import RecommendationsContainer from './Recommendation/RecommendationsContainer'
 import {
   BrowserRouter as Router,
   Route,
-  Link
+  Link,
+  Redirect
 } from 'react-router-dom';
 import SignUp from './SignUp';
 import LogIn from './LogIn';
 import LogOut from './LogOut';
 import { createMuiTheme, withTheme, MuiThemeProvider } from '@material-ui/core';
+import Auth from './Auth';
 // import RecommendationCreateModal from './Recommendation/RecommendationCreateModal';
 
 const blueTheme = createMuiTheme({
@@ -98,27 +100,32 @@ const darkTheme = createMuiTheme({
 //   }
 // }
 
+const isLoggedIn = Auth().isAuthenticated;
+
 const Main = () => (
   <Router>
     <MuiThemeProvider theme={darkTheme}>
       <Navbar />
       <Route exact path="/" component={HomeContainer}/>
       <Route path="/videos" component={VideosContainer}/>
-      {/* <Route path="/recommend" component={RecommendationContainer}/> */}
+      {/* <Route path="/recommend" component={RecommendationContainer}/>
+     */}
       <Route exact path="/profile" component={ProfileContainer}/>
-      <Route path="/profile/recommendations" component={RecommendationsContainer}/>
 
       <Route exact path="/courses" component={CourseContainer} />
+
       <Route path="/courses/:id" component={CourseContainer} />
 
-      <Route path="/people" component={ProfileContainer}>
-        <Route path="/:username" component={ProfileContainer} />
-      </Route>
+      <Route strict exact path="/people" component={ProfileContainer} />
+      <Route strict exact path="/profile/recommendations" component={RecommendationsContainer}/>
+      <Route strict exact path="/people/:username" component={ProfileContainer} />
+      <Route strict exact path="/people/:username/recommendations" component={RecommendationsContainer}/>
+
       <Route path="/signup" component={SignUp}/>
       <Route path="/login" component={LogIn}/>
       <Route path="/logout" component={LogOut}/>
       <Footer />
-      </MuiThemeProvider>
+    </MuiThemeProvider>
   </Router>
 )
 

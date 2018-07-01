@@ -25,7 +25,8 @@ class ProfileRecommendations extends Component {
         }
     }
 
-    componentWillMount() {
+    componentDidMount() {
+        console.log(this.props)
         axios.get(`http://localhost:3000/api/v1/recommendations?user_id=${this.props.profile.id}`)
         .then(res => {
             const recommendations = JSON.parse(res.data.recommendations);

@@ -22,13 +22,16 @@ const Auth = () => ({
     },
 
     paraseJwt: () => {
-      const token = localStorage.getItem("token");
-      if(!token || token == "undefined") {
+      try {
+        const token = localStorage.getItem("token");
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace('-', '+').replace('_', '/');
+        return JSON.parse(window.atob(base64));
+      }
+      catch(error) {
         return {};
       }
-      var base64Url = token.split('.')[1];
-      var base64 = base64Url.replace('-', '+').replace('_', '/');
-      return JSON.parse(window.atob(base64));
+
     }
 });
 

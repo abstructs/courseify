@@ -17,7 +17,8 @@ class User < ApplicationRecord
   validates_format_of :email, :with => /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/
   # validates :password, :email, presence: true
   validates :password, length: { in: 6..20 }, on: :create
-  validates :email, uniqueness: true, on: :create
+  validates :email, uniqueness: true, on: [:create, :update]
+  validates :username, uniqueness: true, on: [:create, :update]
   validate :check_password_confirmation, on: :create
 
   # validates :password, length: { in: 6..20 }, on: :update, if :password_changed?

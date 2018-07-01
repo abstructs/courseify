@@ -1,6 +1,6 @@
 class Api::V1::RecommendationsController < ApplicationController
   before_action :set_recommendation, only: [:show, :update]
-  before_action :authenticate_user, only: [:create]
+  before_action :authenticate_user, only: [:create, :update]
 
   # GET /recommendations
   def index

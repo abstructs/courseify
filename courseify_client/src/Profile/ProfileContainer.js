@@ -144,6 +144,7 @@ class ProfileContainer extends Component {
     }
 
     handleTab = tab => _ => {
+        console.log(tab);
         this.setState({ tab });
     }
 
@@ -161,19 +162,21 @@ class ProfileContainer extends Component {
         //     return <div>Loading</div>;
         // 
 
+        console.log()
+
         return (
             <div className={classes.root}>
                 <Grid container spacing={0} >
                     <Grid item xl={3}>
                         <List component="nav">
-                            <ListItem button onClick={this.handleTab(1).bind(this)}>
+                            <ListItem button>
                                 <ListItemIcon>
                                     <PersonIcon />
                                 </ListItemIcon>
                                 <ListItemText primary="Profile" />
                             </ListItem>
                             <Divider />
-                            <ListItem component="a" button href="/profile/recommendations">
+                            <ListItem component="a" button href={`${this.props.location.pathname}/recommendations`}>
                                 <ListItemIcon>
                                     <LibraryBooksIcon />
                                 </ListItemIcon>

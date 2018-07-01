@@ -5,6 +5,7 @@ import { CardMedia, CardContent, Typography, Button, withStyles } from '@materia
 import EditIcon from '@material-ui/icons/Create';
 import bookImage from '../images/book.jpeg';
 import PropTypes from 'prop-types';
+import Auth from '../Auth';
 
 const styles = theme => ({
     root: {
@@ -88,6 +89,8 @@ class ProfileInfoContent extends Component {
         const { classes, toggleEdit } = this.props;
         const { profile } = this.state;
 
+        const isLoggedIn = Auth().isAuthenticated();
+
         return (
             <div>
                 <CardMedia
@@ -101,13 +104,17 @@ class ProfileInfoContent extends Component {
                         {profile.is_current_user_profile ? 
                             <div></div>
                         :
-                            <Button onClick={this.handleFollow.bind(this)} style={{marginLeft: "15px"}}>
-                                {profile.current_user_is_following ? "Unfollow" : "Follow"}
-                            </Button>
+                            isLoggedIn &&
+                                <Button onClick={this.handleFollow.bind(this)} style={{marginLeft: "15px"}}>
+                                    {profile.current_user_is_following ? "Unfollow" : "Follow"}
+                                </Button>
                         }
-                        <Button onClick={toggleEdit} style={{float: "right", marginTop: "-75px", marginRight: "30px"}} variant="fab" color="secondary" aria-label="add" className={classes.button}>
-                            <EditIcon />
-                        </Button>
+                        { 
+                            isLoggedIn &&
+                                <Button onClick={toggleEdit} style={{float: "right", marginTop: "-75px", marginRight: "30px"}} variant="fab" color="secondary" aria-label="add" className={classes.button}>
+                                    <EditIcon />
+                                </Button>
+                        }
                     </Typography>
 
                     <Typography gutterBottom variant="subheading">

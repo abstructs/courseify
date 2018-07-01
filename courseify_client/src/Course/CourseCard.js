@@ -11,6 +11,7 @@ import PeopleIcon from '@material-ui/icons/SupervisorAccount';
 import CourseEditContent from './CourseEditContent';
 import PropTypes from 'prop-types';
 import CourseInfoContent from './CourseInfoContent';
+import Auth from '../Auth';
 import RecommendationDialog from '../Recommendation/RecommendationDialog';
 
 const styles = theme => ({
@@ -156,6 +157,7 @@ class CourseCard extends Component {
     render() {
         const { classes, current_user } = this.props;
         const { course, refreshing, deleted } = this.state;
+        const isLoggedIn = Auth().isAuthenticated();
 
         const current_user_recommended = this.state.course.recommendations.filter(recommendation => {
             return recommendation.user_id == this.props.current_user.id;
@@ -233,12 +235,14 @@ class CourseCard extends Component {
                 <CourseInfoContent course={course} />
 
                 <CardActions className={classes.actions} disableActionSpacing>
-                    <IconButton color={current_user_recommended ? "secondary" : "default"} 
-                    onClick={current_user_recommended ? this.handleUnrecommendClick.bind(this) : this.handleRecommendClick.bind(this)} 
-                    aria-label="Recommend this course"
-                    disabled={refreshing}>
-                        <FavoriteIcon />
-                    </IconButton>
+                    {isLoggedIn && 
+                        <IconButton color={current_user_recommended ? "secondary" : "default"} 
+                        onClick={current_user_recommended ? this.handleUnrecommendClick.bind(this) : this.handleRecommendClick.bind(this)} 
+                        aria-label="Recommend this course"
+                        disabled={refreshing}>
+                            <FavoriteIcon />
+                        </IconButton>
+                    }
                     <IconButton onClick={this.handleShowShare.bind(this)} disabled={refreshing} aria-label="Share">
                         <ShareIcon color={this.state.openShare ? "secondary" : "inherit"}  />
                     </IconButton>

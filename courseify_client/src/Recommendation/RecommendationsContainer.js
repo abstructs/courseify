@@ -51,20 +51,18 @@ class RecommendationsContainer extends Component {
     constructor(props) {
         super(props);
 
-        const parsedJwt = Auth().paraseJwt();
-
         this.state = {
-            current_user_id: parsedJwt ? parsedJwt.sub.user.id : -1,
-            is_current_user_profile: false,
             edit: false,
 
             // tab logic
             tab: 1,
 
             // user info
-            profile_info: {},
+            profile: {},
 
-            loading: true
+            loading: true,
+        
+            current_user: Auth().isAuthenticated() ? Auth().paraseJwt().sub.user : {}
         }
     }
 
@@ -75,6 +73,29 @@ class RecommendationsContainer extends Component {
             exact: true,
             strict: false
         });
+    }
+
+    componentDidMount() {
+        this.getUserInfo();
+    }
+
+    getUserInfo() {
+        const param_id = parseInt(this.props.match.params.username);
+        const url = param_id != this.state.current_user.id ? `http://localhost:3000/api/v1/users/${param_id}` 
+            : "http://localhost:3000/api/v1/profile";
+
+        axios.get(url)
+        .then(res => {
+            const profile = res.data.user;
+
+            console.log(profile)
+
+            this.setState({ profile, loading: false });
+        })
+        .catch(err => {
+            console.log(err);
+        });
+
     }
 
     // componentWillMount() {
@@ -129,8 +150,8 @@ class RecommendationsContainer extends Component {
     render() {
         const isLoggedIn = Auth().isAuthenticated();
         const { classes } = this.props;
-        const { profile_info, loading } = this.state;
-        const current_user = isLoggedIn ? Auth().paraseJwt().sub.user : {};
+        const { profile, loading, current_user } = this.state;
+        // const current_user = isLoggedIn ? Auth().paraseJwt().sub.user : {};
         
         if(!isLoggedIn && !this.getMatch()) {
             return <Redirect to='/'/>;
@@ -138,14 +159,14 @@ class RecommendationsContainer extends Component {
 
         // if(Object.keys(this.state.profile_info).length == 0) {
         //     return <div>Loading</div>;
-        // 
+        // }
 
         return (
             <div className={classes.root}>
                 <Grid container spacing={0} justify="space-between">
                     <Grid item xl={3}>
                         <List component="nav">
-                            <ListItem button component="a" href="/profile">
+                            <ListItem button component="a" href={`${this.props.location.pathname.split("/").slice(0,-1).join("/")}`}>
                                 <ListItemIcon>
                                     <PersonIcon />
                                 </ListItemIcon>
@@ -168,7 +189,7 @@ class RecommendationsContainer extends Component {
                                     Recommendations
                                 </Typography>
                                 <Typography variant="caption" align="left" style={{marginTop: "5px"}} color="textSecondary">
-                                    Courses that <b>{current_user.email}</b> has recommended.
+                                    Courses that <b>{profile.email}</b> has recommended.
                                 </Typography>
                                 {/* <Fade in={!loading && !this.state.expanded}>
                                     <Button onClick={this.handleExpandClick.bind(this)} disabled={this.state.expanded} color="primary" style={{float: "right"}}>Add A Course</Button>
@@ -179,8 +200,10 @@ class RecommendationsContainer extends Component {
                                 <CourseAddExpansion handleCourseAddSuccess={this.handleCourseAddSuccess.bind(this)} showSnackbar={this.showSnackbar.bind(this)} handleCancel={this.handleCancel.bind(this)} classes={classes} expanded={this.state.expanded} />
                             </Grid> */}
                         </Grid> 
-
-                        <ProfileRecommendations current_user={current_user} profile={profile_info} />
+                        {loading ? <div></div>
+                        :
+                            <ProfileRecommendations current_user={current_user} profile={profile} />
+                        }
                     </Grid>
                     <Grid item xs={2} style={{width: "100%"}}>
 
