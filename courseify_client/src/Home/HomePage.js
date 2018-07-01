@@ -90,12 +90,12 @@ class HomePage extends Component {
                             </ListItemIcon>
                             <ListItemText primary="Inbox" />
                         </ListItem> */}
-                        <ListItem button onClick={(e) => this.handleTabClick(e, "recommendation")}>
+                        {/* <ListItem button onClick={(e) => this.handleTabClick(e, "recommendation")}>
                             <ListItemIcon>
                                 <LibraryBooksIcon />
                             </ListItemIcon>
                             <ListItemText primary="Recommendations" />
-                        </ListItem>
+                        </ListItem> */}
                     </List>
                 </Grid>
 

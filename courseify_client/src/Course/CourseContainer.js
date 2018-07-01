@@ -93,12 +93,36 @@ class CourseContainer extends Component {
             expanded: false,
             loading: true,
             recommendationsOpen: false,
-            tab: 1
+            tab: 1,
+            show: false
         }        
     }
 
     componentDidMount() {
-        this.getCourses();
+        const id = this.props.match.params.id;
+        if(id) {
+            this.getCourse(id);
+        } 
+        else {
+            this.getCourses();
+        }
+    }
+
+    getCourse(id) {
+            // const category = tabs[Object.keys(tabs).filter(key => tabs[key].id === this.state.tab)].value;
+        this.setState({ show: true }, _ => {
+            setTimeout(_ => {
+                axios.get(`http://localhost:3000/api/v1/courses/${id}`)
+                .then(res => {
+                    const course = JSON.parse(res.data.course);
+    
+                    // console.log(course);
+                    
+                    this.setState({ course, loading: false, show: true });
+                });
+            }, 1000);
+        });
+
     }
 
     // getAllCourses() {
@@ -158,7 +182,20 @@ class CourseContainer extends Component {
         const { classes, } = this.props;
         const isLoggedIn = Auth().isAuthenticated();
         const current_user = isLoggedIn ? Auth().paraseJwt().sub.user : {};
-        const { loading, courses  } = this.state;
+        const { loading, courses, show, course } = this.state;
+
+        if(show) {
+            return (
+                <Grid container spacing={0} justify="center" style={{marginTop: "40px"}}>
+                {loading ? <CircularProgress />
+                :
+                    <Grid item xs={6}>
+                        <CourseCard key={course.id} showSnackbar={this.showSnackbar.bind(this)} current_user={current_user} course={course} />
+                    </Grid>
+                }
+                </Grid>
+            )
+        }
 
         return (
             <div className={classes.root}>

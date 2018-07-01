@@ -107,7 +107,10 @@ const Main = () => (
       {/* <Route path="/recommend" component={RecommendationContainer}/> */}
       <Route exact path="/profile" component={ProfileContainer}/>
       <Route path="/profile/recommendations" component={RecommendationsContainer}/>
-      <Route path="/courses" component={CourseContainer}/>
+
+      <Route exact path="/courses" component={CourseContainer} />
+      <Route path="/courses/:id" component={CourseContainer} />
+
       <Route path="/people" component={ProfileContainer}>
         <Route path="/:username" component={ProfileContainer} />
       </Route>

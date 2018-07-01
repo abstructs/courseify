@@ -149,6 +149,7 @@ class CourseCard extends Component {
         const copied = document.execCommand('copy');
         if(copied) {
             this.props.showSnackbar("Copied to clipboard", "success");
+            this.handleShareClose();
         }
     }
  
@@ -185,9 +186,9 @@ class CourseCard extends Component {
                 <Dialog
                     style={{minWidth: "400px"}}
                     open={this.state.openShare}
-                    // onClose={this.handleClose}
+                    onClose={this.handleShareClose.bind(this)}
                     aria-labelledby="form-dialog-title"
-                    >
+                >
                     <DialogTitle id="form-dialog-title">Share this course with a friend</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
@@ -198,7 +199,7 @@ class CourseCard extends Component {
                         onFocus={this.handleShareFocus.bind(this)}
                         margin="normal"
                         id="link"
-                        value="http://localhost:3001/courses"
+                        value={`http://localhost:3001/courses/${course.id}`}
                         label="Copy Link"
                         type="text"
                         fullWidth

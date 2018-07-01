@@ -12,7 +12,7 @@ class Api::V1::CoursesController < ApplicationController
 
   # GET /courses/1
   def show
-    render json: { course: as_json(@course), current_user_recommended: current_user.recommendations.include?(@course) }
+    render json: { course: as_json(@course) }
   end
 
   # POST /courses
