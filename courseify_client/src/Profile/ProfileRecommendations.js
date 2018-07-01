@@ -4,6 +4,8 @@ import axios from 'axios';
 import Auth from '../Auth';
 import RecommendationCard from '../Recommendation/RecommendationCard';
 import CourseCard from '../Course/CourseCard';
+import { Grid } from '@material-ui/core';
+import SimpleSnackbar from '../Helpers/SimpleSnackbar';
 // import { Redirect, matchPath } from 'react-router';
 // import teacherImage from './images/laptop.jpeg';
 // import $ from 'jquery';
@@ -18,7 +20,8 @@ class ProfileRecommendations extends Component {
         super(props);
 
         this.state = {
-            recommendations: []
+            recommendations: [],
+            message: ""
         }
     }
 
@@ -32,15 +35,21 @@ class ProfileRecommendations extends Component {
         //   console.log(recommendations);
           
         //   this.setState({ recommendations });          
-        })
+        });
+    }
+
+    showSnackbar = (message, variant) => {
+        this.snackbar.handleClick(message, variant);
+        // this.setState({ snackbarClicked: true, message });
     }
 
     render() {
         return (
             <div>
+                <SimpleSnackbar onRef={ref => this.snackbar = ref} />
                 {this.state.recommendations.map(recommendation => {
                     const course = recommendation.course;
-                    return <CourseCard current_user={this.props.current_user} course={course} />
+                    return <CourseCard showSnackbar={this.showSnackbar.bind(this)} current_user={this.props.current_user} course={course} />
                 })}
             </div>
         );

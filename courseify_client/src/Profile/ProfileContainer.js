@@ -144,7 +144,6 @@ class ProfileContainer extends Component {
     }
 
     handleTab = tab => _ => {
-        console.log(tab);
         this.setState({ tab });
     }
 
@@ -174,7 +173,7 @@ class ProfileContainer extends Component {
                                 <ListItemText primary="Profile" />
                             </ListItem>
                             <Divider />
-                            <ListItem button onClick={this.handleTab(4).bind(this)}>
+                            <ListItem component="a" button href="/profile/recommendations">
                                 <ListItemIcon>
                                     <LibraryBooksIcon />
                                 </ListItemIcon>
@@ -186,7 +185,7 @@ class ProfileContainer extends Component {
                     {(() => {
                         if(this.state.tab == 4) return;
                         return (
-                            <Grid item xs={6}>
+                            <Grid item xs={8}>
                                 <Card style={{margin: "50px"}} className={classes.card}>
                                     <AppBar position="static">
                                         <Tabs value={this.state.tab} >
@@ -218,7 +217,7 @@ class ProfileContainer extends Component {
                             </Grid>
                         );
                     })()}
-                    {(() => {
+                    {/* {(() => {
                         return (
                             <Grid item xs={6}>
                                 {(() => {
@@ -228,7 +227,7 @@ class ProfileContainer extends Component {
                                 }})()}
                             </Grid>
                         )
-                    })()}
+                    })()} */}
                 </Grid>
                 <Grid item xl={3}>
                 </Grid>
