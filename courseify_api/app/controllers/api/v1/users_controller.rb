@@ -88,13 +88,14 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def update_params
-    params.permit(:id, :user, :first_name, :last_name, :headline, :education, :industry, :country, :summary)
+    params.permit(:id, :username, :user, :first_name, :last_name, :headline, :education, :industry, :country, :summary)
   end
 
   def user_data(user)
     { 
       id: user.id, 
       email: user.email,
+      username: user.username,
       first_name: user.first_name, 
       last_name: user.last_name, 
       headline: user.headline, 

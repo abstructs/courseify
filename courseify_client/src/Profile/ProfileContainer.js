@@ -167,7 +167,7 @@ class ProfileContainer extends Component {
         return (
             <div className={classes.root}>
                 <Grid container spacing={0} >
-                    <Grid item xl={3}>
+                    <Grid item xl={3} style={{marginRight: "50px"}}>
                         <List component="nav">
                             <ListItem button>
                                 <ListItemIcon>
@@ -186,10 +186,9 @@ class ProfileContainer extends Component {
                     </Grid>
                     
                     {(() => {
-                        if(this.state.tab == 4) return;
                         return (
-                            <Grid item xs={8}>
-                                <Card style={{margin: "50px"}} className={classes.card}>
+                            <Grid style={{paddingTop: "50px"}} item md={8}>
+                                <Card className={classes.card}>
                                     <AppBar position="static">
                                         <Tabs value={this.state.tab} >
                                             <Tab value={1} onClick={this.handleTab(1).bind(this)} label="Info" />

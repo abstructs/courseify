@@ -18,6 +18,7 @@ class User < ApplicationRecord
   # validates :password, :email, presence: true
   validates :password, length: { in: 6..20 }, on: :create
   validates :email, uniqueness: true, on: [:create, :update]
+  validates :username, presence: true
   validates :username, uniqueness: true, on: [:create, :update]
   validate :check_password_confirmation, on: :create
 

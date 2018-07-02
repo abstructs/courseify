@@ -35,6 +35,7 @@ class SignUp extends Component {
             email: "",
             password: "",
             password_confirmation: "",
+            username: "",
             errors: {},
             redirect: false
         }
@@ -54,6 +55,7 @@ class SignUp extends Component {
         const payload = {
             user: {
                 email: this.state.email,
+                username: this.state.username,
                 password: this.state.password,
                 password_confirmation: this.state.password_confirmation
             }
@@ -64,6 +66,7 @@ class SignUp extends Component {
         .then(_ => this.setState({redirect: true}))
         .catch(err => {
             const { errors } = err.response.data;
+            console.log(errors)
             this.setState({ errors }, 
                 this.showSnackbar("Something went wrong, double check those fields!", "error"));
         });
@@ -85,8 +88,9 @@ class SignUp extends Component {
 
         const shouldMarkError = {
             email: this.shouldMarkError("email"),
+            username: this.shouldMarkError("username"),
             password: this.shouldMarkError("password"),
-            password_confirmation: this.shouldMarkError("password_confirmation"),
+            password_confirmation: this.shouldMarkError("password_confirmation")
         }
 
         if (redirect) {
@@ -109,6 +113,10 @@ class SignUp extends Component {
                         <FormControl error={shouldMarkError.email} margin="normal" fullWidth>
                             <TextField error={shouldMarkError.email} value={this.state.email} name="email" onChange={this.handleInputChange.bind(this)} fullWidth={true} className={classes.textField} label="Email" type="email" placeholder="Email"></TextField>
                             <FormHelperText className={classes.textField}>{shouldMarkError.email ? errors.email[0] : ""}</FormHelperText>
+                        </FormControl>
+                        <FormControl error={shouldMarkError.username} margin="normal" fullWidth>
+                            <TextField error={shouldMarkError.username} value={this.state.username} name="username" onChange={this.handleInputChange.bind(this)} fullWidth={true} className={classes.textField} label="Username" type="text" placeholder="Username"></TextField>
+                            <FormHelperText className={classes.textField}>{shouldMarkError.username ? errors.username[0] : ""}</FormHelperText>
                         </FormControl>
                         <FormControl error={shouldMarkError.password} margin="normal" fullWidth>
                             <TextField error={shouldMarkError.password} value={this.state.password} name="password" onChange={this.handleInputChange.bind(this)} fullWidth className={classes.textField} label="Password" type="password" placeholder="Password"></TextField>
