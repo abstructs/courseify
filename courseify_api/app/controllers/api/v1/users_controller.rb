@@ -19,19 +19,21 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def followers
-    u = User.find(params[:user_id])
+    u = User.find(params[:user_username])
 
     render json: { followers: u.followers }
   end
 
   def following
-    u = User.find(params[:user_id])
+    u = User.find(params[:user_username])
 
     render json: { following: u.following }
   end
 
   def show
-    @user = User.find(params[:id])
+    @user = User.find_by(username: params[:username])
+
+    puts(@user)
 
     if @user
       u = user_data(@user)

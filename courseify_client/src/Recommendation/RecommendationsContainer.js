@@ -80,8 +80,8 @@ class RecommendationsContainer extends Component {
     }
 
     getUserInfo() {
-        const param_id = parseInt(this.props.match.params.username);
-        const url = param_id != this.state.current_user.id ? `http://localhost:3000/api/v1/users/${param_id}` 
+        const username = this.props.match.params.username;
+        const url = username != this.state.current_user.username ? `http://localhost:3000/api/v1/users/${username}` 
             : "http://localhost:3000/api/v1/profile";
 
         axios.get(url)
@@ -189,7 +189,7 @@ class RecommendationsContainer extends Component {
                                     Recommendations
                                 </Typography>
                                 <Typography variant="caption" align="left" style={{marginTop: "5px"}} color="textSecondary">
-                                    Courses that <b>{profile.email}</b> has recommended.
+                                    Courses that <b>{profile.username}</b> has recommended.
                                 </Typography>
                                 {/* <Fade in={!loading && !this.state.expanded}>
                                     <Button onClick={this.handleExpandClick.bind(this)} disabled={this.state.expanded} color="primary" style={{float: "right"}}>Add A Course</Button>

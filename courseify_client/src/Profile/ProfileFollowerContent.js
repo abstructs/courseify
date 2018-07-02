@@ -21,6 +21,7 @@ class ProfileFollowers extends Component {
         .then(res => {
             const followers = res.data.followers;
             this.setState({ followers });
+            
         })
     }
 

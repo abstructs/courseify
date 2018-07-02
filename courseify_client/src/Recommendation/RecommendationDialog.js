@@ -47,7 +47,7 @@ class RecommendationDialog extends Component {
     render() {
         const { classes, open, onClose } = this.props;
 
-        // console.log(this.state.recommendations)
+        console.log(this.props.recommendations)
 
         return (
             <Dialog onClose={onClose} open={open}>
@@ -61,8 +61,8 @@ class RecommendationDialog extends Component {
                                 <PersonIcon />
                                 </Avatar>
                             </ListItemAvatar>
-                            <ListItemText primary={recommendation.user.email} />
-                            <Button href={`/people/${recommendation.user.id}`}>View Profile</Button>
+                            <ListItemText primary={recommendation.user.username} />
+                            <Button href={`/people/${recommendation.user.username}`}>View Profile</Button>
                         </ListItem>
                     ))}
                     {/* <ListItem button onClick={() => this.handleListItemClick('addAccount')}>

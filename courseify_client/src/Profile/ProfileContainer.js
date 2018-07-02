@@ -70,7 +70,7 @@ class ProfileContainer extends Component {
     // EFFECTS: Gets the parameters from the url react router style
     getMatch() {
         return matchPath(this.props.history.location.pathname, {
-            path: '/people/:id',
+            path: '/people/:username',
             exact: true,
             strict: false
         });
@@ -109,11 +109,12 @@ class ProfileContainer extends Component {
 
     // EFFECTS: Manages the data set on the profile page depending on if it's the current users profile or another user's
     refreshUserInfo() {
-        const url = this.getMatch() ? "http://localhost:3000/api/v1/users/" + this.getMatch().params.id : 
-                                      "http://localhost:3000/api/v1/profile";
+        const url = this.props.match.url.split("/")[1] == "people" ? `http://localhost:3000/api/v1/users/${this.props.match.params.username}` : 
+                                                                     `http://localhost:3000/api/v1/profile`;
         setTimeout(() => {
             axios.get(url)
             .then(res => {
+                console.log(res)
                 const profile_info = res.data.user;
                 const new_profile_info = profile_info.is_current_user_profile ? profile_info : [];
                 this.setState({ profile_info, new_profile_info, edit: false, loading: false });

@@ -62,7 +62,7 @@ class Api::V1::CoursesController < ApplicationController
                                 recommendations: { 
                                   include: { 
                                     user: { 
-                                      only: [:id, :email] 
+                                      only: [:id, :username] 
                                     } 
                                   } 
                                 }
