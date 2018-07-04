@@ -11,6 +11,10 @@ class Api::V1::UsersController < ApplicationController
   def update
     @user = current_user
 
+    puts "\n\n\n"
+    puts params[:file]
+    puts "\n\n\n"
+
     if current_user[:id].to_i == update_params[:id].to_i && @user.update(update_params)
         render status: 200
     else

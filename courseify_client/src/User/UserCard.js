@@ -45,7 +45,7 @@ class UserCard extends Component {
                 </Typography>
                 </CardContent>
                 <CardActions>
-                    <Button href={`/people/${user.id}`} size="small" color="primary">
+                    <Button href={`/people/${user.username}`} size="small" color="primary">
                         Check Out Their Profile
                     </Button>
                     {/* <Button size="small" color="primary">

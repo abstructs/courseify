@@ -189,7 +189,7 @@ class RecommendationsContainer extends Component {
                                     Recommendations
                                 </Typography>
                                 <Typography variant="caption" align="left" style={{marginTop: "5px"}} color="textSecondary">
-                                    Courses that <b>{profile.username}</b> has recommended.
+                                    Courses that <b>@{profile.username}</b> has recommended.
                                 </Typography>
                                 {/* <Fade in={!loading && !this.state.expanded}>
                                     <Button onClick={this.handleExpandClick.bind(this)} disabled={this.state.expanded} color="primary" style={{float: "right"}}>Add A Course</Button>

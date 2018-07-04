@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import '../App.css';
 import axios from 'axios';
 import Auth from '../Auth';
-import { withStyles, CardContent, Button, TextField, FormControl, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, FormHelperText, CircularProgress, Grid, LinearProgress } from '@material-ui/core';
+import { withStyles, CardContent, Button, TextField, FormControl, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, FormHelperText, CircularProgress, Grid, LinearProgress, Input } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
@@ -82,15 +82,44 @@ class ProfileEditContent extends Component {
     }
 
     handleSave(event) {
-        this.setState({ loading: true }, _ => {
-            axios.put("http://localhost:3000/api/v1/users/" + this.state.profile.id, this.state.profile)
-            // .then(res => this.props.refreshUserInfo())
-            .then(_ => this.props.refreshUserInfo())
-            .catch(err => {
-                const { errors } = err.response.data;
-                this.setState({ errors, loading: false });
-            });
-        })
+        const file = this.upload.files[0];
+        var formData = new FormData();
+        formData.append("file", file, "filename");
+
+        // axios.put("http://localhost:3000/api/v1/users/" + this.state.profile.id, { file },
+        //     // { headers: {'Content-Type': 'multipart/form-data' }}
+        // )
+        // .then(res => console.log(res))
+        // .catch(err => console.log(err.response));
+
+        Object.keys(this.state.profile).map(key => {
+            formData.append(key, this.state.profile[key]);
+        });
+
+        axios({
+            method: 'put',
+            url: `http://localhost:3000/api/v1/users/${this.state.profile.username}`,
+            data: formData,
+            config: { headers: {'Content-Type': 'multipart/form-data' }}
+            })
+            .then(function (response) {
+                //handle success
+                console.log(response);
+            })
+            .catch(function (response) {
+                //handle error
+                console.log(response);
+        });
+
+        // this.setState({ loading: true }, _ => {
+        //     axios.put("http://localhost:3000/api/v1/users/" + this.state.profile.id, this.state.profile)
+        //     // .then(res => this.props.refreshUserInfo())
+        //     .then(_ => this.props.refreshUserInfo())
+        //     .catch(err => {
+        //         const { errors } = err.response.data;
+        //         this.setState({ errors, loading: false });
+        //     });
+        // })
     }
 
     handleChange(event) {
@@ -115,6 +144,10 @@ class ProfileEditContent extends Component {
         const errors = this.state.errors[paramName] || [];
         return errors.length != 0;
     }
+
+    handleUpload() {
+        this.upload.click();
+    }
     
 
 
@@ -133,9 +166,37 @@ class ProfileEditContent extends Component {
             summary: this.shouldMarkError("summary"),
         }
 
+        console.log(this.upload)
+
         return (
             <div className={classes.root} noValidate autoComplete="off">
                 <CardContent>
+                    <div>
+                        <input id="myInput" type="file" ref={(ref) => this.upload = ref} style={{ display: 'none' }} />
+                        <Button
+                        className="floatingButton"
+                        backgroundColor='#293C8E'
+                        onClick={this.handleUpload.bind(this) }
+                        >
+                        {/* <ContentAdd /> */}
+                        Upload Image
+                        </Button>
+                    </div>
+                    <FormControl error={shouldMarkError.first_name} className={classes.formControl}>
+                        {/* <Input
+                        // onChange={this.handleChange.bind(this)}
+                        id="banner_image"
+                        // name="banner_image"
+                        // type="file"
+                        label="Banner Image"
+                        value={""}
+                        // error={shouldMarkError.first_name}
+                        /> */}
+                        {/* <Button primary={true} label="Choose an Image" component={"input"}>
+                            
+                        </Button> */}
+                        <FormHelperText>{shouldMarkError.first_name ? errors.first_name[0] : ""}</FormHelperText>
+                    </FormControl>
                     <FormControl error={shouldMarkError.first_name} className={classes.formControl}>
                         <TextField
                         onChange={this.handleChange.bind(this)}

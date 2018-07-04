@@ -21,6 +21,7 @@ class User < ApplicationRecord
   validates :username, presence: true
   validates :username, uniqueness: true, on: [:create, :update]
   validate :check_password_confirmation, on: :create
+  has_one_attached :banner
 
   # validates :password, length: { in: 6..20 }, on: :update, if :password_changed?
   # validates :email, uniqueness: true, on: :update, if :password_changed?

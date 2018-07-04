@@ -252,7 +252,7 @@ class CourseContainer extends Component {
                     </Grid>
                     <Grid item xs={2} style={{width: "100%"}}>
 
-                        <ExpansionPanel>
+                        {/* <ExpansionPanel>
                             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                             <Typography className={classes.heading}>Top Authors</Typography>
                             </ExpansionPanelSummary>
@@ -278,7 +278,7 @@ class CourseContainer extends Component {
                             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                             <Typography className={classes.heading}>Top Courses</Typography>
                             </ExpansionPanelSummary>
-                        </ExpansionPanel>
+                        </ExpansionPanel> */}
                     </Grid>
                 </Grid>
             </div>
