@@ -68,7 +68,10 @@ class ProfileEditContent extends Component {
             open: false,
             loading: false,
             success: undefined,
-            banner_file_name: ""
+            banner: {
+                file_name: "",
+                url: ""
+            }
         }
 
     }
@@ -100,18 +103,15 @@ class ProfileEditContent extends Component {
 
         axios({
             method: 'put',
-            url: `http://localhost:3000/api/v1/users/${this.state.profile.username}`,
+            url: `http://localhost:3000/api/v1/users/${this.props.profile.username}`,
             data: formData,
             config: { headers: {'Content-Type': 'multipart/form-data' }}
             })
-            .then(function (response) {
-                //handle success
-                console.log(response);
-            })
-            .catch(function (response) {
-                //handle error
-                console.log(response);
-        });
+            .then(res => this.props.refreshUserInfo())
+            .catch(err => {
+                const { errors } = err.response.data;
+                this.setState({ errors, loading: false });
+            });
 
         // this.setState({ loading: true }, _ => {
         //     axios.put("http://localhost:3000/api/v1/users/" + this.state.profile.id, this.state.profile)
@@ -159,17 +159,21 @@ class ProfileEditContent extends Component {
         const uploadInput = this.upload 
         const file = uploadInput && uploadInput.files.length !== 0 ? uploadInput.files[0] : false;
 
-        
+        console.log(file)
 
         if(file && this.validateFile(file)) {
-            this.setState({ banner_file_name: file.name });
-            
+            this.setState(prevState => ({
+                banner: {
+                    ...prevState.banner,
+                    file_name: file.name
+                }
+            }));
         } else {
             this.setState(prevState => ({
                 // ...prevState,
                 errors: {
                     ...prevState.errors,
-                    banner_image: [file.type + " is not a valid file format"]
+                    banner: [file.type + " is not a valid file format"]
                 }
             }));
         }
@@ -190,8 +194,10 @@ class ProfileEditContent extends Component {
             country: this.shouldMarkError("country"),
             headline: this.shouldMarkError("headline"),
             summary: this.shouldMarkError("summary"),
-            banner_image: this.shouldMarkError("banner_image")
+            banner: this.shouldMarkError("banner")
         }
+
+        console.log(this.state.profile);
 
         return (
             <div className={classes.root} noValidate autoComplete="off">
@@ -272,22 +278,21 @@ class ProfileEditContent extends Component {
                         />
                         <FormHelperText>{shouldMarkError.headline ? errors.headline[0] : ""}</FormHelperText>
                     </FormControl>
-                    <FormControl style={{width: "35%", display: "inline-block"}} error={shouldMarkError.banner_image} className={classes.formControl}>
+                    <FormControl style={{width: "35%", display: "inline-block"}} error={shouldMarkError.banner} className={classes.formControl}>
                         <input onChange={this.handleFileChange.bind(this)} type="file" ref={(ref) => this.upload = ref} style={{ display: 'none' }} />
                         {/* <p style={{display: "inline"}}> file: books.jpeg</p> */}
-                        <Tooltip disableHoverListener={this.state.banner_file_name == ""} title={this.state.banner_file_name}>
+                        <Tooltip disableHoverListener={this.state.banner.file_name == ""} title={this.state.banner.file_name}>
                             <TextField
-                            value={this.state.banner_file_name}
+                            value={this.state.banner.file_name}
                             name="banner"
                             margin="normal"
                             label="Banner Image"
                             disabled
-                            error={shouldMarkError.banner_image}
+                            error={shouldMarkError.banner}
                             style={{display: "inline-block"}}
                             color="primary"
                         />
                         </Tooltip>
-                        {/* <FormHelperText>{shouldMarkError.banner_image ? errors.banner_image[0] : ""}</FormHelperText> */}
                         <IconButton
                         // style={{display: "inline"}}
                         className="floatingButton"
@@ -299,6 +304,7 @@ class ProfileEditContent extends Component {
                         >
                             <PhotoCamera />
                         </IconButton>
+                        <FormHelperText>{shouldMarkError.banner ? errors.banner[0] : ""}</FormHelperText>
                     </FormControl>
                     <FormControl error={shouldMarkError.summary} margin="normal" fullWidth>
                         <TextField

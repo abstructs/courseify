@@ -10,12 +10,8 @@ class Api::V1::UsersController < ApplicationController
 
   def update
     @user = current_user
-
-    puts "\n\n\n"
-    puts params[:file]
-    puts "\n\n\n"
-
-    if current_user[:id].to_i == update_params[:id].to_i && @user.update(update_params)
+  
+    if current_user[:id].to_i == params[:id].to_i && @user.update(update_params)
         render status: 200
     else
       render json: { errors: @user.errors }, status: 400
@@ -35,7 +31,7 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def show
-    @user = User.find_by(username: params[:username])
+    @user = User.find_by(username: params[:id])
 
     puts(@user)
 
