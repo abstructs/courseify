@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import '../App.css';
 import axios from 'axios';
 import Auth from '../Auth';
-import { withStyles, CardContent, Button, TextField, FormControl, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, FormHelperText, CircularProgress, Grid, LinearProgress, Input } from '@material-ui/core';
+import { withStyles, CardContent, Button, TextField, FormControl, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, FormHelperText, CircularProgress, Grid, LinearProgress, Input, Tooltip } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
@@ -148,8 +148,19 @@ class ProfileEditContent extends Component {
     handleUpload() {
         this.upload.click();
     }
-    
 
+    validateFile(file) {
+        console.log(file)
+    }
+    
+    handleFileChange() {
+        if(this.validateFile()) {
+            // this.forceUpdate();
+        } else {
+            
+        }
+        
+    }
 
     render() {
         const { classes, toggleEdit } = this.props;
@@ -165,23 +176,12 @@ class ProfileEditContent extends Component {
             headline: this.shouldMarkError("headline"),
             summary: this.shouldMarkError("summary"),
         }
-
-        console.log(this.upload)
+        const z = this.upload ? this.upload.files : "";
+        console.log(z)
 
         return (
             <div className={classes.root} noValidate autoComplete="off">
                 <CardContent>
-                    <div>
-                        <input id="myInput" type="file" ref={(ref) => this.upload = ref} style={{ display: 'none' }} />
-                        <Button
-                        className="floatingButton"
-                        backgroundColor='#293C8E'
-                        onClick={this.handleUpload.bind(this) }
-                        >
-                        {/* <ContentAdd /> */}
-                        Upload Image
-                        </Button>
-                    </div>
                     <FormControl error={shouldMarkError.first_name} className={classes.formControl}>
                         {/* <Input
                         // onChange={this.handleChange.bind(this)}
@@ -258,6 +258,27 @@ class ProfileEditContent extends Component {
                         />
                         <FormHelperText>{shouldMarkError.headline ? errors.headline[0] : ""}</FormHelperText>
                     </FormControl>
+                    <FormControl style={{display: "inline"}} error={shouldMarkError.banner} className={classes.formControl}>
+                        <input onChange={this.handleFileChange.bind(this)} type="file" ref={(ref) => this.upload = ref} style={{ display: 'none' }} />
+                        {/* <p style={{display: "inline"}}> file: books.jpeg</p> */}
+                        <Tooltip disableHoverListener={this.upload == undefined || this.upload.files.length == 0} title={(this.upload && this.upload.files.length !== 0) ? this.upload.files[0].name : ""}>
+                            <TextField
+                            value={(this.upload && this.upload.files.length !== 0) ? this.upload.files[0].name : ""}
+                            name="banner"
+                            margin="normal"
+                            label="File"
+                            disabled
+                        />
+                        </Tooltip>
+                        <Button
+                        // style={{display: "inline"}}
+                        className="floatingButton"
+                        onClick={this.handleUpload.bind(this) }
+                        >
+                        {/* <ContentAdd /> */}
+                        Upload Image
+                        </Button>
+                    </FormControl>
                     <FormControl error={shouldMarkError.summary} margin="normal" fullWidth>
                         <TextField
                         onChange={this.handleChange.bind(this)}
@@ -272,10 +293,10 @@ class ProfileEditContent extends Component {
                         />
                         <FormHelperText>{shouldMarkError.summary ? errors.summary[0] : ""}</FormHelperText>
                     </FormControl>
-                        {/* <Button  variant="contained"  onClick={this.handleCourseAdd.bind(this)} size="small" color="primary"> */}
-                        <Button className={addBtnClassName} disabled={loading} onClick={this.handleSave.bind(this)} variant="contained" color="primary" size="small">
-                            {loading ? "Loading" : "Save"}
-                        </Button>
+                    {/* <Button  variant="contained"  onClick={this.handleCourseAdd.bind(this)} size="small" color="primary"> */}
+                    <Button className={addBtnClassName} disabled={loading} onClick={this.handleSave.bind(this)} variant="contained" color="primary" size="small">
+                        {loading ? "Loading" : "Save"}
+                    </Button>
 
                     {/* onClick={this.handleCancel.bind(this)} variant="contained" color="secondary" className={classes.button} */}
                     <Button onClick={this.handleClickOpen.bind(this)}>Cancel</Button>
