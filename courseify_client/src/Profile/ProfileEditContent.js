@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import '../App.css';
 import axios from 'axios';
 import Auth from '../Auth';
-import { withStyles, CardContent, Button, TextField, FormControl, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, FormHelperText, CircularProgress, Grid, LinearProgress, Input, Tooltip } from '@material-ui/core';
+import { withStyles, CardContent, Button, TextField, FormControl, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, FormHelperText, CircularProgress, Grid, LinearProgress, Input, Tooltip, IconButton } from '@material-ui/core';
 import PropTypes from 'prop-types';
+import PhotoCamera from '@material-ui/icons/PhotoCamera';
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
 
@@ -66,7 +67,8 @@ class ProfileEditContent extends Component {
             errors: {},
             open: false,
             loading: false,
-            success: undefined
+            success: undefined,
+            banner_file_name: ""
         }
 
     }
@@ -150,15 +152,28 @@ class ProfileEditContent extends Component {
     }
 
     validateFile(file) {
-        console.log(file)
+        return (/\.(gif|jpg|jpeg|tiff|png)$/i).test(file.name);
     }
     
     handleFileChange() {
-        if(this.validateFile()) {
-            // this.forceUpdate();
-        } else {
+        const uploadInput = this.upload 
+        const file = uploadInput && uploadInput.files.length !== 0 ? uploadInput.files[0] : false;
+
+        
+
+        if(file && this.validateFile(file)) {
+            this.setState({ banner_file_name: file.name });
             
+        } else {
+            this.setState(prevState => ({
+                // ...prevState,
+                errors: {
+                    ...prevState.errors,
+                    banner_image: [file.type + " is not a valid file format"]
+                }
+            }));
         }
+        
         
     }
 
@@ -175,9 +190,8 @@ class ProfileEditContent extends Component {
             country: this.shouldMarkError("country"),
             headline: this.shouldMarkError("headline"),
             summary: this.shouldMarkError("summary"),
+            banner_image: this.shouldMarkError("banner_image")
         }
-        const z = this.upload ? this.upload.files : "";
-        console.log(z)
 
         return (
             <div className={classes.root} noValidate autoComplete="off">
@@ -258,26 +272,33 @@ class ProfileEditContent extends Component {
                         />
                         <FormHelperText>{shouldMarkError.headline ? errors.headline[0] : ""}</FormHelperText>
                     </FormControl>
-                    <FormControl style={{display: "inline"}} error={shouldMarkError.banner} className={classes.formControl}>
+                    <FormControl style={{width: "35%", display: "inline-block"}} error={shouldMarkError.banner_image} className={classes.formControl}>
                         <input onChange={this.handleFileChange.bind(this)} type="file" ref={(ref) => this.upload = ref} style={{ display: 'none' }} />
                         {/* <p style={{display: "inline"}}> file: books.jpeg</p> */}
-                        <Tooltip disableHoverListener={this.upload == undefined || this.upload.files.length == 0} title={(this.upload && this.upload.files.length !== 0) ? this.upload.files[0].name : ""}>
+                        <Tooltip disableHoverListener={this.state.banner_file_name == ""} title={this.state.banner_file_name}>
                             <TextField
-                            value={(this.upload && this.upload.files.length !== 0) ? this.upload.files[0].name : ""}
+                            value={this.state.banner_file_name}
                             name="banner"
                             margin="normal"
-                            label="File"
+                            label="Banner Image"
                             disabled
+                            error={shouldMarkError.banner_image}
+                            style={{display: "inline-block"}}
+                            color="primary"
                         />
                         </Tooltip>
-                        <Button
+                        {/* <FormHelperText>{shouldMarkError.banner_image ? errors.banner_image[0] : ""}</FormHelperText> */}
+                        <IconButton
                         // style={{display: "inline"}}
                         className="floatingButton"
                         onClick={this.handleUpload.bind(this) }
+                        style={{display: "inline-block", marginLeft: "15px"}}
+                        // variant="fab"
+                        // mini
+                        aria-label="Upload"
                         >
-                        {/* <ContentAdd /> */}
-                        Upload Image
-                        </Button>
+                            <PhotoCamera />
+                        </IconButton>
                     </FormControl>
                     <FormControl error={shouldMarkError.summary} margin="normal" fullWidth>
                         <TextField
