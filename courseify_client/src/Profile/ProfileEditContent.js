@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import '../App.css';
 import axios from 'axios';
 import Auth from '../Auth';
-import { withStyles, CardContent, Button, TextField, FormControl, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, FormHelperText, CircularProgress, Grid, LinearProgress, Input, Tooltip, IconButton } from '@material-ui/core';
+import { withStyles, CardContent, Button, TextField, FormControl, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, FormHelperText, CircularProgress, Grid, LinearProgress, Input, Tooltip, IconButton, CardMedia } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
+import bookImage from '../images/book.jpeg';
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
 
@@ -23,10 +24,10 @@ const styles = theme => ({
         width: "25%",
     },
     media: {
-        height: "250px",
+        height: 0,
         // paddingTop: '56.25%', // 16:9
-        // paddingTop: '30%', // 16:9
-        // height: "200px"
+        paddingTop: '30%', // 16:9
+        // maxHeight: "200px"
     },
     margin: {
         margin: theme.spacing.unit,
@@ -198,9 +199,17 @@ class ProfileEditContent extends Component {
         }
 
         console.log(this.state.profile);
+        // className={classes.root} noValidate
+        console.log(bookImage)
+        const image = this.upload ? URL.createObjectURL(this.upload.files[0]) : bookImage;
 
         return (
-            <div className={classes.root} noValidate autoComplete="off">
+            <div autoComplete="off">
+                <CardMedia
+                    className={classes.media}
+                    image={image}
+                    title="Contemplative Reptile"
+                    />
                 <CardContent>
                     <FormControl error={shouldMarkError.first_name} className={classes.formControl}>
                         {/* <Input
