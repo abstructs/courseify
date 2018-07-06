@@ -110,6 +110,8 @@ class ProfileEditContent extends Component {
             })
             .then(res => this.props.refreshUserInfo())
             .catch(err => {
+                console.log(err.response)
+                console.log("error happened line 114")
                 const { errors } = err.response.data;
                 this.setState({ errors, loading: false });
             });
@@ -144,6 +146,7 @@ class ProfileEditContent extends Component {
     }
 
     shouldMarkError(paramName) {
+        console.log(this.state)
         const errors = this.state.errors[paramName] || [];
         return errors.length != 0;
     }
@@ -170,6 +173,7 @@ class ProfileEditContent extends Component {
                 }
             }));
         } else {
+            console.log("error happened line 175")
             this.setState(prevState => ({
                 // ...prevState,
                 errors: {
@@ -187,7 +191,7 @@ class ProfileEditContent extends Component {
         const { profile, errors, loading, success } = this.state;
 
         const addBtnClassName = success != undefined ? (success ? classes.buttonSuccess : classes.buttonError) : "";
-
+        console.log(errors)
         const shouldMarkError = {
             first_name: this.shouldMarkError("first_name"),
             last_name: this.shouldMarkError("last_name"),
@@ -201,7 +205,7 @@ class ProfileEditContent extends Component {
         console.log(this.state.profile);
         // className={classes.root} noValidate
         console.log(bookImage)
-        const image = this.upload ? URL.createObjectURL(this.upload.files[0]) : bookImage;
+        const image = this.upload ? URL.createObjectURL(this.upload.files[0]) : profile.banner_url;
 
         return (
             <div autoComplete="off">

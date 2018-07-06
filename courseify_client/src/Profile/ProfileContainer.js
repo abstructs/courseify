@@ -163,7 +163,7 @@ class ProfileContainer extends Component {
         //     return <div>Loading</div>;
         // 
 
-        console.log()
+        console.log(profile_info)
 
         return (
             <div className={classes.root}>

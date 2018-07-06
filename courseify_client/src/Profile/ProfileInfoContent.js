@@ -95,7 +95,7 @@ class ProfileInfoContent extends Component {
             <div>
                 <CardMedia
                 className={classes.media}
-                image={bookImage}
+                image={profile.banner_url}
                 title="Contemplative Reptile"
                 />
                 <CardContent className={classes.cardContent}>
