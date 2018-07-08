@@ -12,6 +12,7 @@ class User < ApplicationRecord
   has_many :followers, through:  :passive_follows, source: :follower
 
   has_secure_password
+  has_one_attached :banner
   # attr_accessor :password, :salt, :password_confirmation
   
   validates_format_of :email, :with => /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/
@@ -21,7 +22,7 @@ class User < ApplicationRecord
   validates :username, presence: true
   validates :username, uniqueness: true, on: [:create, :update]
   validate :check_password_confirmation, on: :create
-  has_one_attached :banner
+  
 
   # validates :password, length: { in: 6..20 }, on: :update, if :password_changed?
   # validates :email, uniqueness: true, on: :update, if :password_changed?
@@ -53,10 +54,6 @@ class User < ApplicationRecord
     following.include?(other_user)
   end
 
-  def check_password_confirmation
-    errors.add(:password_confirmation, "and password do not match") if password != password_confirmation
-  end 
-
   def self.from_token_request request
     # Returns a valid user, `nil` or raise `Knock.not_found_exception_class_name`
     # e.g.
@@ -73,6 +70,10 @@ class User < ApplicationRecord
   end
 
   private
+
+  def check_password_confirmation
+    errors.add(:password_confirmation, "and password do not match") if password != password_confirmation
+  end 
 
   def password_changed?
     !self.password.blank?

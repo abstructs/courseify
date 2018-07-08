@@ -71,7 +71,7 @@ class ProfileEditContent extends Component {
             success: undefined,
             banner: {
                 file_name: "",
-                url: ""
+                url: props.profile.banner_url
             }
         }
 
@@ -90,41 +90,27 @@ class ProfileEditContent extends Component {
     handleSave(event) {
         const file = this.upload.files[0];
         var formData = new FormData();
-        formData.append("file", file, "filename");
-
-        // axios.put("http://localhost:3000/api/v1/users/" + this.state.profile.id, { file },
-        //     // { headers: {'Content-Type': 'multipart/form-data' }}
-        // )
-        // .then(res => console.log(res))
-        // .catch(err => console.log(err.response));
+        formData.append("banner", file, file.name);
 
         Object.keys(this.state.profile).map(key => {
             formData.append(key, this.state.profile[key]);
         });
 
-        axios({
-            method: 'put',
-            url: `http://localhost:3000/api/v1/users/${this.props.profile.username}`,
-            data: formData,
-            config: { headers: {'Content-Type': 'multipart/form-data' }}
-            })
-            .then(res => this.props.refreshUserInfo())
-            .catch(err => {
-                console.log(err.response)
-                console.log("error happened line 114")
-                const { errors } = err.response.data;
-                this.setState({ errors, loading: false });
+        this.setState({ loading: true }, _ => {
+            axios({
+                method: 'put',
+                url: `http://localhost:3000/api/v1/users/${this.props.profile.username}`,
+                data: formData,
+                config: { headers: {'Content-Type': 'multipart/form-data' }}
+                })
+                .then(res => this.props.refreshUserInfo())
+                .catch(err => {
+                    console.log(err.response)
+                    console.log("error happened line 114")
+                    const { errors } = err.response.data;
+                    this.setState({ errors, loading: false });
             });
-
-        // this.setState({ loading: true }, _ => {
-        //     axios.put("http://localhost:3000/api/v1/users/" + this.state.profile.id, this.state.profile)
-        //     // .then(res => this.props.refreshUserInfo())
-        //     .then(_ => this.props.refreshUserInfo())
-        //     .catch(err => {
-        //         const { errors } = err.response.data;
-        //         this.setState({ errors, loading: false });
-        //     });
-        // })
+        });
     }
 
     handleChange(event) {
@@ -146,7 +132,7 @@ class ProfileEditContent extends Component {
     }
 
     shouldMarkError(paramName) {
-        console.log(this.state)
+        if(errors == undefined) return;
         const errors = this.state.errors[paramName] || [];
         return errors.length != 0;
     }
@@ -163,22 +149,32 @@ class ProfileEditContent extends Component {
         const uploadInput = this.upload 
         const file = uploadInput && uploadInput.files.length !== 0 ? uploadInput.files[0] : false;
 
-        console.log(file)
-
-        if(file && this.validateFile(file)) {
+        // const image = this.upload && this.upload.files.length != 0 ? URL.createObjectURL(this.upload.files[0]) : profile.banner_url;
+        console.log(this.state)
+        if(file) {
+            if(this.validateFile(file)) {
+                this.setState(prevState => ({
+                    banner: {
+                        ...prevState.banner,
+                        file_name: file.name,
+                        url: URL.createObjectURL(file)
+                    }
+                }));
+            } else {
+                this.setState(prevState => ({
+                    // ...prevState,
+                    errors: {
+                        ...prevState.errors,
+                        banner: [file.type + " is not a valid file format"]
+                    }
+                }));
+            }
+        }
+        else {
             this.setState(prevState => ({
                 banner: {
                     ...prevState.banner,
-                    file_name: file.name
-                }
-            }));
-        } else {
-            console.log("error happened line 175")
-            this.setState(prevState => ({
-                // ...prevState,
-                errors: {
-                    ...prevState.errors,
-                    banner: [file.type + " is not a valid file format"]
+                    url: this.props.profile.banner_url
                 }
             }));
         }
@@ -188,10 +184,10 @@ class ProfileEditContent extends Component {
 
     render() {
         const { classes, toggleEdit } = this.props;
-        const { profile, errors, loading, success } = this.state;
+        const { profile, errors, loading, success, banner } = this.state;
 
         const addBtnClassName = success != undefined ? (success ? classes.buttonSuccess : classes.buttonError) : "";
-        console.log(errors)
+
         const shouldMarkError = {
             first_name: this.shouldMarkError("first_name"),
             last_name: this.shouldMarkError("last_name"),
@@ -204,14 +200,15 @@ class ProfileEditContent extends Component {
 
         console.log(this.state.profile);
         // className={classes.root} noValidate
-        console.log(bookImage)
-        const image = this.upload ? URL.createObjectURL(this.upload.files[0]) : profile.banner_url;
+        console.log(this.upload)
+        // console.log(this.upload.files)
+        
 
         return (
             <div autoComplete="off">
                 <CardMedia
                     className={classes.media}
-                    image={image}
+                    image={banner.url}
                     title="Contemplative Reptile"
                     />
                 <CardContent>
@@ -291,12 +288,13 @@ class ProfileEditContent extends Component {
                         />
                         <FormHelperText>{shouldMarkError.headline ? errors.headline[0] : ""}</FormHelperText>
                     </FormControl>
+                    {/* accept="image/*" */}
                     <FormControl style={{width: "35%", display: "inline-block"}} error={shouldMarkError.banner} className={classes.formControl}>
-                        <input onChange={this.handleFileChange.bind(this)} type="file" ref={(ref) => this.upload = ref} style={{ display: 'none' }} />
+                        <input onChange={this.handleFileChange.bind(this)} type="file"  ref={(ref) => this.upload = ref} style={{ display: 'none' }} />
                         {/* <p style={{display: "inline"}}> file: books.jpeg</p> */}
-                        <Tooltip disableHoverListener={this.state.banner.file_name == ""} title={this.state.banner.file_name}>
+                        <Tooltip disableHoverListener={banner.file_name == ""} title={banner.file_name}>
                             <TextField
-                            value={this.state.banner.file_name}
+                            value={banner.file_name}
                             name="banner"
                             margin="normal"
                             label="Banner Image"

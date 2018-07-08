@@ -11,14 +11,18 @@ class Api::V1::UsersController < ApplicationController
   def update
     @user = current_user
 
-    if update_params.has_key?(:file)
-      @user.banner.attach(update_params[:file]) 
-    end
+    @user.assign_attributes(update_params.except(:banner))
+    valid_banner = if update_params.has_key?(:banner) then valid_banner_type?(update_params[:banner]) else nil end
   
-    if current_user[:id].to_i == params[:id].to_i && @user.update(update_params)
+    if current_user[:id].to_i == params[:id].to_i && @user.valid? && valid_banner != false
+        @user.banner.attach(update_params[:banner])
+        @user.save
         render status: 200
     else
-      @user.banner.purge
+      if(!valid_banner)
+        @user.errors.add(:banner, 'must be jpeg, jpg, or png')
+      end
+      
       render json: { errors: @user.errors }, status: 400
     end 
   end
@@ -95,13 +99,13 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def update_params
-    params.permit(:id, :username, :user, :first_name, :last_name, :headline, :education, :industry, :country, :summary, :file)
+    params.permit(:id, :username, :user, :first_name, :last_name, :headline, :education, :industry, :country, :summary, :banner)
   end
 
   def user_data(user)
     { 
       id: user.id, 
-      banner_url: url_for(user.banner),
+      banner_url: if user.banner.attached? then url_for(user.banner) else false end,
       email: user.email,
       username: user.username,
       first_name: user.first_name, 
@@ -115,6 +119,16 @@ class Api::V1::UsersController < ApplicationController
       followerCount: user.followers.count,
       followingCount: user.following.count,
     }
+  end
+
+  def valid_banner_type?(banner_blob)
+    puts "\n\n\n\n\n\n"
+    puts(banner_blob)
+    puts(banner_blob.content_type.downcase)
+    puts(!banner_blob.content_type.downcase.in?(%w(image/jpeg image/png image/jpg)))
+    puts "fk1"
+    
+    return banner_blob.content_type.downcase.in?(%w(image/jpeg image/png image/jpg))
   end
 
   # def find_param
