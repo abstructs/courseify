@@ -90,7 +90,8 @@ class ProfileEditContent extends Component {
     handleSave(event) {
         const file = this.upload.files[0];
         var formData = new FormData();
-        formData.append("banner", file, file.name);
+        if(file) formData.append("banner", file, file.name);
+        
 
         Object.keys(this.state.profile).map(key => {
             formData.append(key, this.state.profile[key]);
@@ -132,7 +133,6 @@ class ProfileEditContent extends Component {
     }
 
     shouldMarkError(paramName) {
-        if(errors == undefined) return;
         const errors = this.state.errors[paramName] || [];
         return errors.length != 0;
     }
@@ -174,7 +174,8 @@ class ProfileEditContent extends Component {
             this.setState(prevState => ({
                 banner: {
                     ...prevState.banner,
-                    url: this.props.profile.banner_url
+                    url: this.props.profile.banner_url,
+                    file_name: ""
                 }
             }));
         }
@@ -197,43 +198,25 @@ class ProfileEditContent extends Component {
             summary: this.shouldMarkError("summary"),
             banner: this.shouldMarkError("banner")
         }
-
-        console.log(this.state.profile);
-        // className={classes.root} noValidate
-        console.log(this.upload)
-        // console.log(this.upload.files)
         
 
         return (
             <div autoComplete="off">
                 <CardMedia
                     className={classes.media}
-                    image={banner.url}
+                    image={banner.url ? banner.url : bookImage}
                     title="Contemplative Reptile"
-                    />
+                />
                 <CardContent>
-                    <FormControl error={shouldMarkError.first_name} className={classes.formControl}>
-                        {/* <Input
-                        // onChange={this.handleChange.bind(this)}
-                        id="banner_image"
-                        // name="banner_image"
-                        // type="file"
-                        label="Banner Image"
-                        value={""}
-                        // error={shouldMarkError.first_name}
-                        /> */}
-                        {/* <Button primary={true} label="Choose an Image" component={"input"}>
-                            
-                        </Button> */}
-                        <FormHelperText>{shouldMarkError.first_name ? errors.first_name[0] : ""}</FormHelperText>
-                    </FormControl>
                     <FormControl error={shouldMarkError.first_name} className={classes.formControl}>
                         <TextField
                         onChange={this.handleChange.bind(this)}
+                        style={{marginLeft: "0px"}} 
                         id="first_name"
                         name="first_name"
                         label="First Name"
                         value={this.state.profile.first_name}
+                        // margin="dense"
                         error={shouldMarkError.first_name}
                         />
                         <FormHelperText>{shouldMarkError.first_name ? errors.first_name[0] : ""}</FormHelperText>
@@ -246,6 +229,7 @@ class ProfileEditContent extends Component {
                         label="Last Name"
                         value={this.state.profile.last_name}
                         error={shouldMarkError.last_name} 
+                        margin="dense"
                         />
                         <FormHelperText>{shouldMarkError.last_name ? errors.last_name[0] : ""}</FormHelperText>
                     </FormControl>
@@ -257,6 +241,7 @@ class ProfileEditContent extends Component {
                         label="Username"
                         value={this.state.profile.username}
                         error={shouldMarkError.username}
+                        margin="dense"
                         />
                         <FormHelperText>{shouldMarkError.username ? errors.username[0] : ""}</FormHelperText>
                     </FormControl>
@@ -270,7 +255,7 @@ class ProfileEditContent extends Component {
                         label="Country"
                         name="country"
                         value={this.state.profile.country}
-                        margin="normal"
+                        margin="dense"
                         error={shouldMarkError.country}
                         />
                         <FormHelperText>{shouldMarkError.country ? errors.country[0] : ""}</FormHelperText>
@@ -283,41 +268,51 @@ class ProfileEditContent extends Component {
                         name="headline"
                         value={this.state.profile.headline}
                         fullWidth={true}
-                        margin="normal"
+                        margin="dense"
                         error={shouldMarkError.headline}
                         />
                         <FormHelperText>{shouldMarkError.headline ? errors.headline[0] : ""}</FormHelperText>
                     </FormControl>
-                    {/* accept="image/*" */}
-                    <FormControl style={{width: "35%", display: "inline-block"}} error={shouldMarkError.banner} className={classes.formControl}>
-                        <input onChange={this.handleFileChange.bind(this)} type="file"  ref={(ref) => this.upload = ref} style={{ display: 'none' }} />
-                        {/* <p style={{display: "inline"}}> file: books.jpeg</p> */}
-                        <Tooltip disableHoverListener={banner.file_name == ""} title={banner.file_name}>
-                            <TextField
-                            value={banner.file_name}
-                            name="banner"
-                            margin="normal"
-                            label="Banner Image"
-                            disabled
-                            error={shouldMarkError.banner}
-                            style={{display: "inline-block"}}
-                            color="primary"
-                        />
-                        </Tooltip>
-                        <IconButton
-                        // style={{display: "inline"}}
-                        className="floatingButton"
-                        onClick={this.handleUpload.bind(this) }
-                        style={{display: "inline-block", marginLeft: "15px"}}
-                        // variant="fab"
-                        // mini
-                        aria-label="Upload"
-                        >
+                    <FormControl  error={shouldMarkError.banner} className={classes.formControl}>
+                        <Grid container spacing={0}>
+                            <Grid item xl={6}>
+                                <input accept="image/*" onChange={this.handleFileChange.bind(this)} type="file"  ref={(ref) => this.upload = ref} style={{ display: 'none' }} />
+                                {/* <p style={{display: "inline"}}> file: books.jpeg</p> */}
+                                {/* <Tooltip disableHoverListener={banner.file_name == ""} title={banner.file_name}> */}
+                                    <TextField
+                                    value={banner.file_name}
+                                    name="banner"
+                                    margin="dense"
+                                    label="Banner Image"
+                                    disabled
+                                    error={shouldMarkError.banner}
+                                    style={{flex: ""}}
+                                    color="primary"
+                                    />
+                                {/* </Tooltip> */}
+                            </Grid>
+                            <Grid item xl={2}>
+                            <IconButton
+                                // style={{display: "inline"}}
+                                className="floatingButton"
+                                onClick={this.handleUpload.bind(this) }
+                                style={{ marginTop: "15px", marginLeft: "15px"}}
+                                // style={{flex: ""}}
+                                // variant="fab"
+                                // mini
+                                aria-label="Upload"
+                            >
                             <PhotoCamera />
                         </IconButton>
-                        <FormHelperText>{shouldMarkError.banner ? errors.banner[0] : ""}</FormHelperText>
+                        </Grid>
+                        <Grid container spacing={0}>
+                            <Grid item xl={12}>
+                                <FormHelperText>{shouldMarkError.banner ? errors.banner[0] : ""}</FormHelperText>
+                            </Grid>
+                        </Grid>
+                    </Grid>
                     </FormControl>
-                    <FormControl error={shouldMarkError.summary} margin="normal" fullWidth>
+                    <FormControl error={shouldMarkError.summary} margin="dense" fullWidth>
                         <TextField
                         onChange={this.handleChange.bind(this)}
                         id="summary"
@@ -326,7 +321,7 @@ class ProfileEditContent extends Component {
                         multiline
                         fullWidth
                         value={this.state.profile.summary}
-                        margin="normal"
+                        margin="dense"
                         error={shouldMarkError.summary}
                         />
                         <FormHelperText>{shouldMarkError.summary ? errors.summary[0] : ""}</FormHelperText>

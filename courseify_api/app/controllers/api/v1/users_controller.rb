@@ -15,34 +15,35 @@ class Api::V1::UsersController < ApplicationController
     valid_banner = if update_params.has_key?(:banner) then valid_banner_type?(update_params[:banner]) else nil end
   
     if current_user[:id].to_i == params[:id].to_i && @user.valid? && valid_banner != false
-        @user.banner.attach(update_params[:banner])
-        @user.save
-        render status: 200
+      if update_params.has_key?(:banner) then @user.banner.attach(update_params[:banner]) end
+        
+      @user.save
+      render status: 200
     else
-      if(!valid_banner)
-        @user.errors.add(:banner, 'must be jpeg, jpg, or png')
-      end
+      if(!valid_banner) then @user.errors.add(:banner, 'must be jpeg, jpg, or png') end
       
       render json: { errors: @user.errors }, status: 400
     end 
   end
 
   def followers
-    u = User.find(params[:user_username])
+    @user = User.find(params[:user_id])
 
-    render json: { followers: u.followers }
+    followers = @user.followers.map do |user| user_data(user) end
+
+    render json: { followers: followers }
   end
 
   def following
-    u = User.find(params[:user_username])
+    @user = User.find(params[:user_id])
 
-    render json: { following: u.following }
+    following = @user.following.map do |user| user_data(user) end
+
+    render json: { following: following }
   end
 
   def show
     @user = User.find_by(username: params[:id])
-
-    puts(@user)
 
     if @user
       u = user_data(@user)
@@ -121,13 +122,7 @@ class Api::V1::UsersController < ApplicationController
     }
   end
 
-  def valid_banner_type?(banner_blob)
-    puts "\n\n\n\n\n\n"
-    puts(banner_blob)
-    puts(banner_blob.content_type.downcase)
-    puts(!banner_blob.content_type.downcase.in?(%w(image/jpeg image/png image/jpg)))
-    puts "fk1"
-    
+  def valid_banner_type?(banner_blob)    
     return banner_blob.content_type.downcase.in?(%w(image/jpeg image/png image/jpg))
   end
 

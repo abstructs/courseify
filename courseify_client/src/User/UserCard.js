@@ -23,6 +23,8 @@ class UserCard extends Component {
         const { user } = this.props;
         const { classes } = this.props;
 
+        console.log(user)
+
         return (
             <Card style={{margin: "20px"}} className={classes.card}>
                 <CardMedia

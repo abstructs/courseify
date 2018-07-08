@@ -111,7 +111,7 @@ class ProfileInfoContent extends Component {
                         }
                         { 
                             isLoggedIn &&
-                                <Button onClick={toggleEdit} style={{float: "right", marginTop: "-75px", marginRight: "30px"}} variant="fab" color="secondary" aria-label="add" className={classes.button}>
+                                <Button onClick={toggleEdit} style={{float: "right", marginTop: "-108px", marginRight: "30px"}} variant="fab" color="secondary" aria-label="add" className={classes.button}>
                                     <EditIcon />
                                 </Button>
                         }

@@ -22,11 +22,19 @@ class Api::V1::CoursesController < ApplicationController
     # @course.user_id = current_user.id
     # @course.user = current_user
 
-    if @course.save
+    valid_image = if course_params.has_key?(:image) then valid_image_type?(course_params[:image]) else nil end
+
+    if @course.valid? && valid_image != false
+      if course_params.has_key?(:image) then @course.image.attach(course_params[:banner]) end
+      @course.save
+
       render json: @course, status: :created
     else
+      if(!valid_image) then @course.errors.add(:image, 'must be jpeg, jpg, or png') end
+
       render json: { errors: @course.errors }, status: :unprocessable_entity
     end
+
   end
 
   # PATCH/PUT /courses/1
@@ -54,7 +62,7 @@ class Api::V1::CoursesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def course_params
-      params.permit(:title, :url, :description, :author, :category)
+      params.permit(:title, :url, :description, :author, :category, :image)
     end
 
     def as_json(course)
@@ -68,6 +76,12 @@ class Api::V1::CoursesController < ApplicationController
                                 }
                               }
                 )
+    end
+
+    private 
+
+    def valid_image_type?(image_blob)    
+      return image_blob.content_type.downcase.in?(%w(image/jpeg image/png image/jpg))
     end
 
     # def as_json

@@ -3,7 +3,7 @@ import '../App.css';
 import axios from 'axios';
 import Auth from '../Auth';
 import UserCard from '../User/UserCard';
-import { CardContent } from '@material-ui/core';
+import { CardContent, Typography } from '@material-ui/core';
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
 
@@ -12,7 +12,7 @@ class ProfileFollowing extends Component {
         super(props);
 
         this.state = {
-            following: []
+            following: [],
         }
     }
 
@@ -27,7 +27,14 @@ class ProfileFollowing extends Component {
     }
 
     render() {
-        const { classes } = this.props;
+        const { classes, profile } = this.props;
+        const { following } = this.state;
+
+        if(following.length == 0) {
+            return (
+                <Typography style={{margin: "50px"}} variant="headline" align="center">Looks like @{profile.username} isn't following anyone.</Typography>
+            );
+        }
 
         return (
             <CardContent className={classes.cardContent}>
