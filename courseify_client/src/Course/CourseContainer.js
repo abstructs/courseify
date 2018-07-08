@@ -167,7 +167,7 @@ class CourseContainer extends Component {
         setTimeout(_ => {
             axios.get(`http://localhost:3000/api/v1/courses?category=${category}`)
             .then(res => {
-                const courses = JSON.parse(res.data.courses);
+                const { courses } = res.data;
                 
                 this.setState({ courses, loading: false });
             });

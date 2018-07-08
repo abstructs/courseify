@@ -150,7 +150,7 @@ class ProfileEditContent extends Component {
         const file = uploadInput && uploadInput.files.length !== 0 ? uploadInput.files[0] : false;
 
         // const image = this.upload && this.upload.files.length != 0 ? URL.createObjectURL(this.upload.files[0]) : profile.banner_url;
-        console.log(this.state)
+        
         if(file) {
             if(this.validateFile(file)) {
                 this.setState(prevState => ({
@@ -278,7 +278,7 @@ class ProfileEditContent extends Component {
                             <Grid item xl={6}>
                                 <input accept="image/*" onChange={this.handleFileChange.bind(this)} type="file"  ref={(ref) => this.upload = ref} style={{ display: 'none' }} />
                                 {/* <p style={{display: "inline"}}> file: books.jpeg</p> */}
-                                {/* <Tooltip disableHoverListener={banner.file_name == ""} title={banner.file_name}> */}
+                                <Tooltip disableHoverListener={banner.file_name == ""} title={banner.file_name}>
                                     <TextField
                                     value={banner.file_name}
                                     name="banner"
@@ -289,7 +289,7 @@ class ProfileEditContent extends Component {
                                     style={{flex: ""}}
                                     color="primary"
                                     />
-                                {/* </Tooltip> */}
+                                </Tooltip>
                             </Grid>
                             <Grid item xl={2}>
                             <IconButton

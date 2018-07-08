@@ -24,7 +24,7 @@ class CourseInfoContent extends Component {
             <div>
                 <CardMedia
                     className={classes.media}
-                    image={bookImage}
+                    image={course.image_url}
                     title="Books"
                 />
                 <CardContent>

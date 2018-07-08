@@ -7,7 +7,18 @@ class Api::V1::CoursesController < ApplicationController
 
     @courses = if params[:category] == "all" then Course.all else Course.where(category: params[:category]) end
 
-    render json: { courses: as_json(@courses) } 
+    # @courses = @courses.map { |course| 
+    #   if course.image.attached?
+    #     course.image_url = url_for(course.image)
+    #   else
+    #     course.image_url = ""
+    #   end
+    #   course
+    # }
+    # puts "fk1"
+    # puts @courses[0].image_url
+    # render json: { courses: as_json(@courses) } 
+    render json: { courses: @courses.collect { |c| c.as_json.merge({image_url: (if c.image.attached? then url_for(c.image) else false end)}) }  }
   end
 
   # GET /courses/1
@@ -25,7 +36,7 @@ class Api::V1::CoursesController < ApplicationController
     valid_image = if course_params.has_key?(:image) then valid_image_type?(course_params[:image]) else nil end
 
     if @course.valid? && valid_image != false
-      if course_params.has_key?(:image) then @course.image.attach(course_params[:banner]) end
+      if course_params.has_key?(:image) then @course.image.attach(course_params[:image]) end
       @course.save
 
       render json: @course, status: :created
@@ -39,9 +50,6 @@ class Api::V1::CoursesController < ApplicationController
 
   # PATCH/PUT /courses/1
   def update
-    # puts "\n\n\n"
-    # puts course_params
-    # puts "\n\n\n"
     if @course.update(course_params)
       render json: @course
     else
@@ -66,7 +74,7 @@ class Api::V1::CoursesController < ApplicationController
     end
 
     def as_json(course)
-      course.to_json(include: { 
+      course.to_json(include: {
                                 recommendations: { 
                                   include: { 
                                     user: { 
