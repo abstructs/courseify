@@ -76,7 +76,7 @@ class CourseCard extends Component {
     refresh() {
         axios.get(`http://localhost:3000/api/v1/courses/${this.state.course.id}`)
         .then(res => {
-            const course = JSON.parse(res.data.course);
+            const { course } = res.data;
             this.setState({ course, refreshing: false });
         })
     }
@@ -114,7 +114,6 @@ class CourseCard extends Component {
     }
 
     handleEditSuccess() {
-        console.log("success")
         this.setState({ expanded: false, refreshing: true }, _ => setTimeout(_ => {
             this.refresh();
             this.props.showSnackbar("Course succesfully edited", "success");
@@ -152,6 +151,17 @@ class CourseCard extends Component {
             this.props.showSnackbar("Copied to clipboard", "success");
             this.handleShareClose();
         }
+    }
+
+    setImageUrl(new_url) {
+        console.log("set url called")
+        this.setState(prevState => ({
+            // ...prevState,
+            course: {
+                ...prevState.course,
+                image_url: new_url
+            }
+        })); 
     }
  
     render() {
@@ -265,7 +275,7 @@ class CourseCard extends Component {
                 {refreshing && <LinearProgress />}
 
                 <Collapse in={this.state.expanded} timeout="auto">
-                    <CourseEditContent handleEditError={this.handleEditError.bind(this)} handleEditLoading={this.handleEditLoading.bind(this)} handleEditSuccess={this.handleEditSuccess.bind(this)} handleEditExpand={this.handleEditExpand.bind(this)} classes={classes} course={course} />
+                    <CourseEditContent setImageUrl={this.setImageUrl.bind(this)} handleEditError={this.handleEditError.bind(this)} handleEditLoading={this.handleEditLoading.bind(this)} handleEditSuccess={this.handleEditSuccess.bind(this)} handleEditExpand={this.handleEditExpand.bind(this)} classes={classes} course={course} />
                 </Collapse>
             </Card>
         );

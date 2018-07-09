@@ -5,22 +5,13 @@ class Api::V1::RecommendationsController < ApplicationController
   # GET /recommendations
   def index
     @recommendations = if params[:user_id] then Recommendation.where(user_id: params[:user_id]) else Recommendation.all end
-
-    render json: { recommendations: @recommendations.to_json( include: {
-                                                                course: { 
-                                                                  include: {
-                                                                    recommendations: { 
-                                                                      include: { 
-                                                                        user: { 
-                                                                          only: [:id, :username] 
-                                                                        } 
-                                                                      } 
-                                                                    }
-                                                                  }
-                                                                }
-                                                              } 
-                                                            )
-                  }
+    puts @recommendations[0].course
+    render json: { recommendations: @recommendations.collect { |r| 
+        # r.course = r.course.attributes #.merge({image_url: (if course.image.attached? then url_for(course.image) else false end)})
+        
+        r.as_json.merge({image_url: (if r.course.image.attached? then url_for(r.course.image) else false end)})
+      }
+    }
   end
 
   # GET /recommendations/1
@@ -70,5 +61,12 @@ class Api::V1::RecommendationsController < ApplicationController
     # Only allow a trusted parameter "white list" through.
     def recommendation_params
       params.permit(:course_id)
+    end
+
+    def json_with_image(course) 
+      puts "\n\n\nfk1"
+      puts course.class
+      puts "\n\n\nfk1end"
+      course.as_json.merge({image_url: (if course.image.attached? then url_for(course.image) else false end)})
     end
 end

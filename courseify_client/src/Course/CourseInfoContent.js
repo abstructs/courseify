@@ -20,11 +20,13 @@ class CourseInfoContent extends Component {
         const { classes } = this.props;
         const { course } = this.props;
 
+        console.log(course)
+
         return (
             <div>
                 <CardMedia
                     className={classes.media}
-                    image={course.image_url}
+                    image={course.image_url ? course.image_url : bookImage}
                     title="Books"
                 />
                 <CardContent>

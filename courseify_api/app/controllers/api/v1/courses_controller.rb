@@ -18,12 +18,12 @@ class Api::V1::CoursesController < ApplicationController
     # puts "fk1"
     # puts @courses[0].image_url
     # render json: { courses: as_json(@courses) } 
-    render json: { courses: @courses.collect { |c| c.as_json.merge({image_url: (if c.image.attached? then url_for(c.image) else false end)}) }  }
+    render json: { courses: @courses.reverse.collect { |c| json_with_image(c) }  }
   end
 
   # GET /courses/1
   def show
-    render json: { course: as_json(@course) }
+    render json: { course: json_with_image(@course) }
   end
 
   # POST /courses
@@ -48,14 +48,33 @@ class Api::V1::CoursesController < ApplicationController
 
   end
 
-  # PATCH/PUT /courses/1
+
   def update
-    if @course.update(course_params)
-      render json: @course
+    @course = Course.find(params[:id])
+
+    @course.assign_attributes(course_params.except(:image))
+    valid_image = if course_params.has_key?(:image) then valid_image_type?(course_params[:image]) else nil end
+  
+    if @course.valid? && valid_image != false
+      if course_params.has_key?(:image) then @course.image.attach(course_params[:image]) end
+        
+      @course.save
+      render json: json_with_image(@course), status: 200
     else
-      render json: { errors: @course.errors }, status: :unprocessable_entity
-    end
+      if(!valid_image) then @course.errors.add(:image, 'must be jpeg, jpg, or png') end
+      
+      render json: { errors: @course.errors }, status: 400
+    end 
   end
+
+  # PATCH/PUT /courses/1
+  # def update
+  #   if @course.update(course_params)
+  #     render json: @course
+  #   else
+  #     render json: { errors: @course.errors }, status: :unprocessable_entity
+  #   end
+  # end
 
   # DELETE /courses/1
   def destroy
@@ -87,6 +106,10 @@ class Api::V1::CoursesController < ApplicationController
     end
 
     private 
+
+    def json_with_image(course) 
+      course.as_json.merge({image_url: (if course.image.attached? then url_for(course.image) else false end)})
+    end
 
     def valid_image_type?(image_blob)    
       return image_blob.content_type.downcase.in?(%w(image/jpeg image/png image/jpg))

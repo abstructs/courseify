@@ -114,7 +114,7 @@ class CourseContainer extends Component {
             setTimeout(_ => {
                 axios.get(`http://localhost:3000/api/v1/courses/${id}`)
                 .then(res => {
-                    const course = JSON.parse(res.data.course);
+                    const { course } = res.data;
     
                     // console.log(course);
                     
@@ -178,11 +178,15 @@ class CourseContainer extends Component {
         this.setState({ tab: tab.id, loading: true }, _ => this.getCourses());
     } 
 
+    
+
     render() {
         const { classes, } = this.props;
         const isLoggedIn = Auth().isAuthenticated();
         const current_user = isLoggedIn ? Auth().paraseJwt().sub.user : {};
         const { loading, courses, show, course } = this.state;
+
+        
 
         if(show) {
             return (

@@ -14,8 +14,9 @@ class Course < ApplicationRecord
   validates :description, presence: true
   validates :url, :format => URI::regexp(%w(http https))
 
-  def attributes_with_image_url
-    as_json.merge({image_url: image_url})
+  def image_url
+    # as_json.merge({image_url: "hi"})
+    # Rails.application.routes.url_helpers.course_url(image)
   end
 
   def as_json(options={})

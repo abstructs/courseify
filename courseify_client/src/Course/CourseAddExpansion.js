@@ -67,7 +67,7 @@ class CourseAddExpansion extends Component {
         if(file) formData.append("image", file, file.name);
 
         Object.keys(course).map(key => {
-            formData.append(key, this.state.course[key]);
+            formData.append(key, course[key]);
         });
 
         if(!loading && !success) {
@@ -293,25 +293,25 @@ class CourseAddExpansion extends Component {
                                     </Tooltip>
                                 </Grid>
                                 <Grid item xl={2}>
-                                <IconButton
-                                    // style={{display: "inline"}}
-                                    className="floatingButton"
-                                    onClick={this.handleUpload.bind(this) }
-                                    style={{ marginTop: "25px", marginLeft: "5px"}}
-                                    // style={{flex: ""}}
-                                    // variant="fab"
-                                    // mini
-                                    aria-label="Upload"
-                                >
-                                <PhotoCamera />
-                            </IconButton>
-                            </Grid>
-                            <Grid container spacing={0}>
-                                <Grid item xl={12}>
-                                    <FormHelperText className={classes.textField}>{shouldMarkError.image ? errors.image[0] : ""}</FormHelperText>
+                                    <IconButton
+                                        // style={{display: "inline"}}
+                                        className="floatingButton"
+                                        onClick={this.handleUpload.bind(this) }
+                                        style={{ marginTop: "25px", marginLeft: "5px"}}
+                                        // style={{flex: ""}}
+                                        // variant="fab"
+                                        // mini
+                                        aria-label="Upload"
+                                    >
+                                    <PhotoCamera />
+                                </IconButton>
+                                </Grid>
+                                <Grid container spacing={0}>
+                                    <Grid item xl={12}>
+                                        <FormHelperText className={classes.textField}>{shouldMarkError.image ? errors.image[0] : ""}</FormHelperText>
+                                    </Grid>
                                 </Grid>
                             </Grid>
-                        </Grid>
                         </FormControl>
 
                         <FormControl error={shouldMarkError.description} margin="normal" fullWidth>

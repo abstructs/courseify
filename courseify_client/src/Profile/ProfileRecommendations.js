@@ -29,7 +29,7 @@ class ProfileRecommendations extends Component {
         console.log(this.props)
         axios.get(`http://localhost:3000/api/v1/recommendations?user_id=${this.props.profile.id}`)
         .then(res => {
-            const recommendations = JSON.parse(res.data.recommendations);
+            const { recommendations } = res.data;
             this.setState({ recommendations });
 
         //   console.log(this.props.profile_info);
@@ -50,6 +50,7 @@ class ProfileRecommendations extends Component {
                 <SimpleSnackbar onRef={ref => this.snackbar = ref} />
                 {this.state.recommendations.map(recommendation => {
                     const course = recommendation.course;
+                    console.log(course)
                     return <CourseCard showSnackbar={this.showSnackbar.bind(this)} current_user={this.props.current_user} course={course} />
                 })}
             </div>
