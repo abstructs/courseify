@@ -30,6 +30,7 @@ class ProfileRecommendations extends Component {
         axios.get(`http://localhost:3000/api/v1/recommendations?user_id=${this.props.profile.id}`)
         .then(res => {
             const { recommendations } = res.data;
+            console.log(res.data)
             this.setState({ recommendations });
 
         //   console.log(this.props.profile_info);

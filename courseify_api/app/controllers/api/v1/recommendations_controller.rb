@@ -5,13 +5,14 @@ class Api::V1::RecommendationsController < ApplicationController
   # GET /recommendations
   def index
     @recommendations = if params[:user_id] then Recommendation.where(user_id: params[:user_id]) else Recommendation.all end
-    puts @recommendations[0].course
-    render json: { recommendations: @recommendations.collect { |r| 
-        # r.course = r.course.attributes #.merge({image_url: (if course.image.attached? then url_for(course.image) else false end)})
-        
-        r.as_json.merge({image_url: (if r.course.image.attached? then url_for(r.course.image) else false end)})
-      }
+    recommendations_json = @recommendations.collect { |r| 
+      r_json = r.as_json
+      r_json["course"] = r_json["course"].merge({image_url: (if r.course.image.attached? then url_for(r.course.image) else false end)})
+      r_json
     }
+
+    render json: { recommendations: recommendations_json }
+    
   end
 
   # GET /recommendations/1
