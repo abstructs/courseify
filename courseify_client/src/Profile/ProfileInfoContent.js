@@ -90,6 +90,7 @@ class ProfileInfoContent extends Component {
         const { profile } = this.state;
 
         const isLoggedIn = Auth().isAuthenticated();
+        const is_current_user_profile = isLoggedIn ? Auth().paraseJwt().sub.user.id === profile.id : false;
 
         return (
             <div>
@@ -110,7 +111,7 @@ class ProfileInfoContent extends Component {
                                 </Button>
                         }
                         { 
-                            isLoggedIn &&
+                            is_current_user_profile && 
                                 <Button onClick={toggleEdit} style={{float: "right", marginTop: "-108px", marginRight: "30px"}} variant="fab" color="secondary" aria-label="add" className={classes.button}>
                                     <EditIcon />
                                 </Button>

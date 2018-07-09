@@ -54,7 +54,7 @@ class Api::V1::UsersController < ApplicationController
       #                                 else { is_following: false }
       #                                 end
       if(current_user)
-        u[:is_current_user_profile] = current_user == @user
+        u[:is_current_user_profile] = current_user.id == @user.id
         u[:current_user_is_following] = current_user.following?(@user)
       end 
 

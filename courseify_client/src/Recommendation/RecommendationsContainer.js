@@ -153,9 +153,9 @@ class RecommendationsContainer extends Component {
         const { profile, loading, current_user } = this.state;
         // const current_user = isLoggedIn ? Auth().paraseJwt().sub.user : {};
         
-        if(!isLoggedIn && !this.getMatch()) {
-            return <Redirect to='/'/>;
-        }
+        // if(!isLoggedIn && !this.getMatch()) {
+        //     return <Redirect to='/'/>;
+        // }
 
         // if(Object.keys(this.state.profile_info).length == 0) {
         //     return <div>Loading</div>;

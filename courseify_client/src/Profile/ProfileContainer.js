@@ -53,7 +53,7 @@ class ProfileContainer extends Component {
         const parsedJwt = Auth().paraseJwt();
 
         this.state = {
-            current_user_id: parsedJwt ? parsedJwt.sub.user.id : -1,
+            // current_user_id: parsedJwt ? parsedJwt.sub.user.id : -1,
             is_current_user_profile: false,
             edit: false,
 
@@ -76,7 +76,7 @@ class ProfileContainer extends Component {
         });
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.refreshUserInfo();
     }
 
@@ -114,9 +114,10 @@ class ProfileContainer extends Component {
         setTimeout(() => {
             axios.get(url)
             .then(res => {
-                console.log(res)
+                const isLoggedIn = Auth().isAuthenticated();
                 const profile_info = res.data.user;
-                const new_profile_info = profile_info.is_current_user_profile ? profile_info : [];
+                const new_profile_info = isLoggedIn && profile_info.is_current_user_profile ? profile_info : [];
+                
                 this.setState({ profile_info, new_profile_info, edit: false, loading: false });
             })
             .catch(err => {
