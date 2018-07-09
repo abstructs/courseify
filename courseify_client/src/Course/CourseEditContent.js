@@ -30,8 +30,11 @@ class CourseEditContent extends Component {
         super(props);
 
         this.state = {
-            course : props.course,
-            errors: {}
+            course: props.course,
+            errors: {},
+            image: {
+                file_name: ""
+            }
         }       
     }
 
@@ -245,9 +248,9 @@ class CourseEditContent extends Component {
                     <Grid container spacing={0}>
                         <Grid item xl={6}>
                             <input accept="image/*" onChange={this.handleFileChange.bind(this)} type="file"  ref={(ref) => this.upload = ref} style={{ display: 'none' }} />
-                            {/* <Tooltip disableHoverListener={image.file_name == ""} title={image.file_name}> */}
+                            <Tooltip disableHoverListener={this.state.image.file_name == ""} title={this.state.image.file_name}>
                                 <TextField
-                                // value={image.file_name}
+                                value={this.state.image.file_name}
                                 name="image"
                                 margin="normal"
                                 className={classes.textField}
@@ -256,7 +259,7 @@ class CourseEditContent extends Component {
                                 error={shouldMarkError.image}
                                 color="primary"
                                 />
-                            {/* </Tooltip> */}
+                            </Tooltip>
                         </Grid>
                         <Grid item xl={2}>
                             <IconButton
