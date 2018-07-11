@@ -80,7 +80,7 @@ class CourseAddExpansion extends Component {
                     setTimeout(_ => {
                         axios({
                             method: 'post',
-                            url: `http://localhost:3000/api/v1/courses`,
+                            url: `/api/v1/courses`,
                             data: formData,
                             config: { headers: {'Content-Type': 'multipart/form-data' }}
                             })

@@ -51,11 +51,11 @@ class HomePage extends Component {
   };
 
   componentDidMount() {
-    axios.get('http://localhost:3000/api/v1/recommendations')
+    axios.get('/api/v1/recommendations')
     .then(res => {
       const recommendations = res.data.recommendations;
 
-      axios.get('http://localhost:3000/api/v1/users')
+      axios.get('/api/v1/users')
       .then(res => {
         const users = res.data.users;
 

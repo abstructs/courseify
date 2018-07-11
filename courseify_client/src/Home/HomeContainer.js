@@ -29,7 +29,7 @@ class HomeContainer extends Component {
     // .then(res => {
     //   const recommendations = res.data.recommendations;
 
-    //   axios.get('http://localhost:3000/api/v1/users')
+    //   axios.get('/api/v1/users')
     //   .then(res => {
     //     const users = res.data.users;
 

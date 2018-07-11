@@ -52,7 +52,7 @@ class CourseCard extends Component {
     }
 
     handleDelete(e) {
-        axios.delete(`http://localhost:3000/api/v1/courses/${this.state.course.id}`)
+        axios.delete(`/api/v1/courses/${this.state.course.id}`)
         .then(res => {
             this.setState({ refreshing: true, deleteDialogOpen: false }, _ => setTimeout(_ => {
                 this.setState({ deleted: true })
@@ -74,7 +74,7 @@ class CourseCard extends Component {
     }
 
     refresh() {
-        axios.get(`http://localhost:3000/api/v1/courses/${this.state.course.id}`)
+        axios.get(`/api/v1/courses/${this.state.course.id}`)
         .then(res => {
             const { course } = res.data;
             this.setState({ course, refreshing: false });
@@ -82,7 +82,7 @@ class CourseCard extends Component {
     }
 
     handleRecommendClick() {
-        axios.post('http://localhost:3000/api/v1/recommendations', { course_id: this.state.course.id })
+        axios.post('/api/v1/recommendations', { course_id: this.state.course.id })
         .then(res => {
             console.log('recommend')
             this.setState({ current_user_recommended: true, refreshing: true }, _ => setTimeout(_ => { 
@@ -96,7 +96,7 @@ class CourseCard extends Component {
     }
 
     handleUnrecommendClick() {
-        axios.delete('http://localhost:3000/api/v1/recommendations', { course_id: this.state.course.id })
+        axios.delete('/api/v1/recommendations', { course_id: this.state.course.id })
         .then(res => {
             this.setState({ current_user_recommended: false, refreshing: true }, _ => setTimeout(_ => {
                 this.refresh();

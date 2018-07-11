@@ -100,7 +100,7 @@ class ProfileEditContent extends Component {
         this.setState({ loading: true }, _ => {
             axios({
                 method: 'put',
-                url: `http://localhost:3000/api/v1/users/${this.props.profile.username}`,
+                url: `/api/v1/users/${this.props.profile.username}`,
                 data: formData,
                 config: { headers: {'Content-Type': 'multipart/form-data' }}
                 })

@@ -81,8 +81,8 @@ class RecommendationsContainer extends Component {
 
     getUserInfo() {
         const username = this.props.match.params.username;
-        const url = username != this.state.current_user.username ? `http://localhost:3000/api/v1/users/${username}` 
-            : "http://localhost:3000/api/v1/profile";
+        const url = username != this.state.current_user.username ? `/api/v1/users/${username}` 
+            : "/api/v1/profile";
 
         axios.get(url)
         .then(res => {
@@ -131,8 +131,8 @@ class RecommendationsContainer extends Component {
 
     // EFFECTS: Manages the data set on the profile page depending on if it's the current users profile or another user's
     // refreshUserInfo() {
-    //     const url = this.getMatch() ? "http://localhost:3000/api/v1/users/" + this.getMatch().params.id : 
-    //                                   "http://localhost:3000/api/v1/profile";
+    //     const url = this.getMatch() ? "/api/v1/users/" + this.getMatch().params.id : 
+    //                                   "/api/v1/profile";
     //     setTimeout(() => {
     //         axios.get(url)
     //         .then(res => {

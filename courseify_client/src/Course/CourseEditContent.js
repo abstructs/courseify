@@ -69,7 +69,7 @@ class CourseEditContent extends Component {
 
         axios({
             method: 'put',
-            url: `http://localhost:3000/api/v1/courses/${this.state.course.id}`,
+            url: `/api/v1/courses/${this.state.course.id}`,
             data: formData,
             config: { headers: {'Content-Type': 'multipart/form-data' }}
         })
@@ -85,7 +85,7 @@ class CourseEditContent extends Component {
         });
 
         // setTimeout(() => {
-        //     axios.put(`http://localhost:3000/api/v1/courses/${this.state.course.id}`, { ... this.state })
+        //     axios.put(`/api/v1/courses/${this.state.course.id}`, { ... this.state })
         //     .then(res => {
         //         this.props.handleEditSuccess();
         //     })

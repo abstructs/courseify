@@ -112,7 +112,7 @@ class CourseContainer extends Component {
             // const category = tabs[Object.keys(tabs).filter(key => tabs[key].id === this.state.tab)].value;
         this.setState({ show: true }, _ => {
             setTimeout(_ => {
-                axios.get(`http://localhost:3000/api/v1/courses/${id}`)
+                axios.get(`/api/v1/courses/${id}`)
                 .then(res => {
                     const { course } = res.data;
     
@@ -127,7 +127,7 @@ class CourseContainer extends Component {
 
     // getAllCourses() {
     //     setTimeout(_ => {
-    //         axios.get('http://localhost:3000/api/v1/courses')
+    //         axios.get('/api/v1/courses')
     //         .then(res => {
     //             const courses = JSON.parse(res.data.courses);
                 
@@ -165,7 +165,7 @@ class CourseContainer extends Component {
         const category = tabs[Object.keys(tabs).filter(key => tabs[key].id === this.state.tab)].value;
 
         setTimeout(_ => {
-            axios.get(`http://localhost:3000/api/v1/courses?category=${category}`)
+            axios.get(`/api/v1/courses?category=${category}`)
             .then(res => {
                 const { courses } = res.data;
                 
