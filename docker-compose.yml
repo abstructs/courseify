@@ -13,3 +13,10 @@ services:
       - "3000:3000"
     depends_on:
       - db
+  frontend:
+    build: ./courseify_client
+    command: npm run start
+    volumes:
+      - .:/frontend
+    ports:
+      - "3001:3001"
