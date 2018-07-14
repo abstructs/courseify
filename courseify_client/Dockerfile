@@ -1,7 +1,7 @@
 FROM node:9.11.1
 MAINTAINER Andrew Wilson 
 
-RUN /mkdir 
+RUN mkdir /myapp
 WORKDIR /myapp
 COPY package.json /myapp/package.json
 COPY package-lock.json /myapp/package-lock.json
