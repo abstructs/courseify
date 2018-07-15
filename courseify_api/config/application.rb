@@ -34,7 +34,8 @@ module CourseifyApi
 
     config.middleware.insert_before 0, Rack::Cors do
       allow do
-        origins 'http://localhost:3001'
+        origins 'localhost:3001', '127.0.0.1:3001', '0.0.0.0',
+            /\Ahttp:\/\/192\.168\.0\.\d{1,3}(:\d+)?\z/
         resource '*', :headers => :any, :methods => [:get, :post, :put, :delete, :options]
       end
     end

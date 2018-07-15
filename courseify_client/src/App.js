@@ -22,6 +22,7 @@ import LogIn from './LogIn';
 import LogOut from './LogOut';
 import { createMuiTheme, withTheme, MuiThemeProvider } from '@material-ui/core';
 import Auth from './Auth';
+
 // import RecommendationCreateModal from './Recommendation/RecommendationCreateModal';
 
 const blueTheme = createMuiTheme({
@@ -104,7 +105,7 @@ const isLoggedIn = Auth().isAuthenticated;
 
 const Main = () => (
   <Router>
-    <MuiThemeProvider theme={darkTheme}>
+    <MuiThemeProvider theme={blueTheme}>
       <Navbar />
       <Route exact path="/" component={HomeContainer}/>
       <Route path="/videos" component={VideosContainer}/>
