@@ -6,3 +6,5 @@ COPY Gemfile /myapp/Gemfile
 COPY Gemfile.lock /myapp/Gemfile.lock
 RUN bundle install
 COPY . /myapp
+RUN rake db:migrate
+EXPOSE 3000

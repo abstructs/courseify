@@ -74,7 +74,6 @@ class LogIn extends Component {
     }
 
     shouldMarkError(paramName) {
-        console.log(this.state.errors)
         const errors = this.state.errors[paramName] || [];
         return errors.length != 0;
     }

@@ -17,7 +17,7 @@ class ProfileFollowers extends Component {
     }
 
     componentDidMount() {
-        axios.get(`http://localhost:3000/api/v1/users/${this.props.profile.id}/followers/`)
+        axios.get(`/api/v1/users/${this.props.profile.id}/followers/`)
         .then(res => {
             const followers = res.data.followers;
             this.setState({ followers });

@@ -211,7 +211,7 @@ class CourseCard extends Component {
                         onFocus={this.handleShareFocus.bind(this)}
                         margin="normal"
                         id="link"
-                        value={`http://localhost:3001/courses/${course.id}`}
+                        value={`/courses/${course.id}`}
                         label="Copy Link"
                         type="text"
                         fullWidth
