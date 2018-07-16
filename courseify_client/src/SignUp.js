@@ -61,7 +61,7 @@ class SignUp extends Component {
             }
         }
         
-        axios.post("http://localhost:3000/api/v1/users/", payload)
+        axios.post("/api/v1/users/", payload)
         .then(res => Auth().authenticate(payload.user))
         .then(_ => this.setState({redirect: true}))
         .catch(err => {

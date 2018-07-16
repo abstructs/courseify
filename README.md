@@ -22,3 +22,13 @@
 ## To start the container
 
 ``` docker-compose up ```
+
+
+### Amazon EC2
+
+## SSH into the EC2 terminal
+
+*It's required to have the ssh key pairs for this to work*
+
+```ssh -i courseify-key-pair.pem ec2-user@(SERVER-IP-ADDRESS)```
+
