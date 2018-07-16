@@ -15,8 +15,8 @@ services:
       - db
   frontend:
     build: ./courseify_client
-    command: npm run start-build
+    command: npm run start-prod
     volumes:
       - .:/frontend
     ports:
-      - "3001:3001"
+      - "8080:8080"

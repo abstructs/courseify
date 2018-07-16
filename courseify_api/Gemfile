@@ -53,4 +53,5 @@ gem 'rack-cors', :require => 'rack/cors'
 # handle tokens for api auth
 gem 'knock'
 
-gem 'foreman'
+# add aws sdk for active-storage
+gem "aws-sdk-s3", require: false

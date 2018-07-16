@@ -7,4 +7,5 @@ COPY Gemfile.lock /myapp/Gemfile.lock
 RUN bundle install
 COPY . /myapp
 RUN rake db:migrate
+ENV RAILS_ENV production
 EXPOSE 3000

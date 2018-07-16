@@ -24,7 +24,7 @@
     "sweetalert": "^2.1.0"
   },
   "scripts": {
-    "start-build": "PORT=8080 node server.js",
+    "start-prod": "PORT=8080 node server.js",
     "start": "PORT=3001 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
