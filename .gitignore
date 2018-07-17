@@ -1,4 +1,5 @@
 ./frontend
 ./backend
-.env
+.env.development
+.env.production
 courseify-key-pair.pem

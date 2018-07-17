@@ -15,7 +15,7 @@ services:
       - db
   frontend:
     build: ./courseify_client
-    command: npm run start-prod
+    command: npm run start
     volumes:
       - .:/frontend
     ports:

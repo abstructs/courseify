@@ -26,10 +26,11 @@ class HomeContainer extends Component {
 
   render() {
     const isLoggedIn = Auth().isAuthenticated();
+
     // .then(res => {
     //   const recommendations = res.data.recommendations;
 
-    //   axios.get('/api/v1/users')
+    //   axios.get(`${process.env.REACT_APP_API_URL}/api/v1/users`)
     //   .then(res => {
     //     const users = res.data.users;
 

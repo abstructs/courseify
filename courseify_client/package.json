@@ -4,7 +4,7 @@
   "private": false,
   "proxy": {
     "/api": {
-      "target": "http://backend:3000",
+      "target": "http://localhost:3000",
       "secure": false
     }
   },
@@ -13,6 +13,7 @@
     "@material-ui/icons": "^1.1.0",
     "ajv": "^6.5.2",
     "axios": "^0.18.0",
+    "cors": "^2.8.4",
     "express": "^4.16.3",
     "jquery": "^3.3.1",
     "npm": "^6.2.0",
@@ -24,7 +25,7 @@
     "sweetalert": "^2.1.0"
   },
   "scripts": {
-    "start-prod": "PORT=8080 node server.js",
+    "start-prod": "PORT=3001 node server.js",
     "start": "PORT=3001 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",

@@ -61,7 +61,7 @@ class SignUp extends Component {
             }
         }
         
-        axios.post("/api/v1/users/", payload)
+        axios.post(`${process.env.REACT_APP_API_URL}/api/v1/users/`, payload)
         .then(res => Auth().authenticate(payload.user))
         .then(_ => this.setState({redirect: true}))
         .catch(err => {

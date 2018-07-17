@@ -27,7 +27,7 @@ class ProfileRecommendations extends Component {
 
     componentDidMount() {
         console.log(this.props)
-        axios.get(`/api/v1/recommendations?user_id=${this.props.profile.id}`)
+        axios.get(`${process.env.REACT_APP_API_URL}/v1/recommendations?user_id=${this.props.profile.id}`)
         .then(res => {
             const { recommendations } = res.data;
             console.log(res.data)

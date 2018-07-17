@@ -15,7 +15,7 @@ class VideosContainer extends Component {
     }
 
     componentDidMount() {
-        axios.get("/api/v1/videos.json", { headers: Auth().headers() })
+        axios.get(`${process.env.REACT_APP_API_URL}/api/v1/videos.json`, { headers: Auth().headers() })
         .then(response => {
             console.log(response)
             this.setState({videos: response.data})

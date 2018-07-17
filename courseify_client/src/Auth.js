@@ -10,7 +10,7 @@ const Auth = () => ({
     // auth should be in the form "auth": { "email": ___, "password": ___ }
     authenticate: ({ email, password }) => {
       return (
-        axios.post("/api/v1/users/user_token", { auth: { email, password }})
+        axios.post(`${process.env.REACT_APP_API_URL}/api/v1/users/user_token`, { auth: { email, password }})
         .then(res => localStorage.setItem('token', res.data.jwt))
       );
     },

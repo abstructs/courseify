@@ -109,8 +109,8 @@ class ProfileContainer extends Component {
 
     // EFFECTS: Manages the data set on the profile page depending on if it's the current users profile or another user's
     refreshUserInfo() {
-        const url = this.props.match.url.split("/")[1] == "people" ? `/api/v1/users/${this.props.match.params.username}` : 
-                                                                     `/api/v1/profile`;
+        const url = this.props.match.url.split("/")[1] == "people" ? `${process.env.REACT_APP_API_URL}/api/v1/users/${this.props.match.params.username}` : 
+                                                                     `${process.env.REACT_APP_API_URL}/api/v1/profile`;
         setTimeout(() => {
             axios.get(url)
             .then(res => {

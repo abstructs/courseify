@@ -17,7 +17,7 @@ class ProfileFollowing extends Component {
     }
 
     componentDidMount() {
-        axios.get(`/api/v1/users/${this.props.profile.username}/following/`)
+        axios.get(`${process.env.REACT_APP_API_URL}/api/v1/users/${this.props.profile.username}/following/`)
         .then(res => {
             const following = res.data.following;
             console.log(following)

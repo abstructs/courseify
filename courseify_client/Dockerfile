@@ -10,4 +10,6 @@ RUN npm install
 
 COPY . /myapp
 
+# RUN npm run build
+
 EXPOSE 3001

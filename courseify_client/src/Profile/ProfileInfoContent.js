@@ -53,7 +53,7 @@ class ProfileInfoContent extends Component {
     }
 
     follow(user_id) {
-        axios.post("/api/v1/follows", { user_id })
+        axios.post(`${process.env.REACT_APP_API_URL}/api/v1/follows`, { user_id })
         .then(res => {
             this.setState(prevState => ({ 
                 profile: {
@@ -70,7 +70,7 @@ class ProfileInfoContent extends Component {
 
     unfollow(user_id) {
         if(this.state.is_current_user_profile) return;
-        axios.delete("/api/v1/follows/" + user_id)
+        axios.delete(`${process.env.REACT_APP_API_URL}/api/v1/follows/` + user_id)
         .then(res => {
             this.setState(prevState => ({ 
                 profile: {

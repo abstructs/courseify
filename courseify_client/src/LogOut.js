@@ -11,7 +11,7 @@ class Logout extends Component {
     componentDidMount() {
         localStorage.removeItem('token');
         // console.log(this.state)
-        // axios.get("/api/v1/videos.json")
+        // axios.get(`${process.env.REACT_APP_API_URL}/api/v1/videos.json`)
         // .then(response => {
         //     console.log(response)
         //     this.setState({videos: response.data})

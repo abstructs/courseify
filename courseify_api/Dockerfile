@@ -7,5 +7,6 @@ COPY Gemfile.lock /myapp/Gemfile.lock
 RUN bundle install
 COPY . /myapp
 RUN rake db:migrate
-ENV RAILS_ENV production
+# ENV RAILS_ENV production
+# RUN EDITOR="nano --wait" rails credentials:edit
 EXPOSE 3000
