@@ -27,6 +27,8 @@ class HomeContainer extends Component {
   render() {
     const isLoggedIn = Auth().isAuthenticated();
 
+    console.log(process.env.REACT_APP_API_URL)
+
     // .then(res => {
     //   const recommendations = res.data.recommendations;
 
