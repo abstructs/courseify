@@ -11,6 +11,8 @@ class User < ApplicationRecord
   has_many :following, through:  :active_follows, source: :followed
   has_many :followers, through:  :passive_follows, source: :follower
 
+  has_many :curriculums
+
   has_secure_password
   has_one_attached :banner
   # attr_accessor :password, :salt, :password_confirmation

@@ -1,14 +1,14 @@
 FROM node:9.11.1
 MAINTAINER Andrew Wilson 
 
-RUN mkdir /myapp
-WORKDIR /myapp
-COPY package.json /myapp/package.json
-COPY package-lock.json /myapp/package-lock.json
+RUN mkdir /frontend
+WORKDIR /frontend
+COPY package.json /frontend/package.json
+COPY package-lock.json /frontend/package-lock.json
 
 RUN npm install
 
-COPY . /myapp
+COPY . /frontend
 
 # RUN npm run build
 
