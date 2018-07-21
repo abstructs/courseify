@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :curriculums
   namespace :api do
     namespace :v1 do
       post 'users/user_token' => 'user_token#create'
