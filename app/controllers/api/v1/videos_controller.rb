@@ -18,7 +18,7 @@ class Api::V1::VideosController < ApplicationController
   def create
     @video = Video.new(video_params)
 
-    if @video.save
+    if @video.save!
       render json: @video, status: :created, location: @video
     else
       render json: @video.errors, status: :unprocessable_entity
@@ -27,7 +27,7 @@ class Api::V1::VideosController < ApplicationController
 
   # PATCH/PUT /videos/1
   def update
-    if @video.update(video_params)
+    if @video.update(video_params)!
       render json: @video
     else
       render json: @video.errors, status: :unprocessable_entity
@@ -36,7 +36,7 @@ class Api::V1::VideosController < ApplicationController
 
   # DELETE /videos/1
   def destroy
-    @video.destroy
+    @video.destroy!
   end
 
   private

@@ -31,7 +31,7 @@ class Api::V1::RecommendationsController < ApplicationController
     @recommendation = current_user.recommendations.new(recommendation_params)
     # @recommendation.user_id = current_user.id
 
-    if @recommendation.save
+    if @recommendation.save!
       render json: @recommendation, status: :created
     else
       render status: :unprocessable_entity
@@ -40,7 +40,7 @@ class Api::V1::RecommendationsController < ApplicationController
 
   # PATCH/PUT /recommendations/1
   def update
-    if current_user.id == @recommendation.user_id && @recommendation.update(recommendation_params)
+    if current_user.id == @recommendation.user_id && @recommendation.update(recommendation_params)!
       render json: @recommendation
     else
       render status: :unprocessable_entity

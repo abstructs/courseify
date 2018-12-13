@@ -16,7 +16,7 @@ class Api::V1::UserTokenController < Knock::AuthTokenController
     private
 
     def handleInvalidInfo(exception)
-        render json: { errors: exception.errors }, status: 400
+        render json: { errors: exception.errors }, status: :bad_request
     end
 
     # def handleInvalidPassword

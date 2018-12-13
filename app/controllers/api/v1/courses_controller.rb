@@ -37,11 +37,13 @@ class Api::V1::CoursesController < ApplicationController
 
     if @course.valid? && valid_image != false
       if course_params.has_key?(:image) then @course.image.attach(course_params[:image]) end
-      @course.save
+      @course.save!
 
       render json: @course, status: :created
     else
       if(!valid_image) then @course.errors.add(:image, 'must be jpeg, jpg, or png') end
+      
+      puts @course.errors
 
       render status: :unprocessable_entity
     end
@@ -61,6 +63,8 @@ class Api::V1::CoursesController < ApplicationController
       render json: json_with_image(@course), status: :ok
     else
       if(!valid_image) then @course.errors.add(:image, 'must be jpeg, jpg, or png') end
+
+      puts @course.errors
       
       render status: :bad_request
     end 

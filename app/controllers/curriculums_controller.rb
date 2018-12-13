@@ -20,7 +20,7 @@ class CurriculumsController < ApplicationController
     if @curriculum.save
       render json: @curriculum, status: :created, location: @curriculum
     else
-      render json: @curriculum.errors, status: :unprocessable_entity
+      render status: :unprocessable_entity
     end
   end
 
@@ -29,7 +29,7 @@ class CurriculumsController < ApplicationController
     if @curriculum.update(curriculum_params)
       render json: @curriculum
     else
-      render json: @curriculum.errors, status: :unprocessable_entity
+      render status: :unprocessable_entity
     end
   end
 

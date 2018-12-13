@@ -21,6 +21,8 @@ class Api::V1::UsersController < ApplicationController
       render status: 200
     else
       if(!valid_banner) then @user.errors.add(:banner, 'must be jpeg, jpg, or png') end
+
+      puts @user.errors
       
       render status: :bad_request
     end 
@@ -85,11 +87,13 @@ class Api::V1::UsersController < ApplicationController
   def create
     @user = User.new users_params
 
-    if @user.save
+    if @user.save!
       render status: :ok
     else
       # render json: { messages: error_messages(@user, "danger") }, status: 400
-      render json: { errors: @user.errors.as_json(full_messages: true) }, status: :bad_request
+      # json: { errors: @user.errors.as_json(full_messages: true) }, 
+      
+      render status: :bad_request
     end
   end
 
