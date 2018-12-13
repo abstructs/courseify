@@ -43,11 +43,10 @@ class Api::V1::CoursesController < ApplicationController
     else
       if(!valid_image) then @course.errors.add(:image, 'must be jpeg, jpg, or png') end
 
-      render json: { errors: @course.errors }, status: :unprocessable_entity
+      render status: :unprocessable_entity
     end
 
   end
-
 
   def update
     @course = Course.find(params[:id])
@@ -59,22 +58,13 @@ class Api::V1::CoursesController < ApplicationController
       if course_params.has_key?(:image) then @course.image.attach(course_params[:image]) end
         
       @course.save
-      render json: json_with_image(@course), status: 200
+      render json: json_with_image(@course), status: :ok
     else
       if(!valid_image) then @course.errors.add(:image, 'must be jpeg, jpg, or png') end
       
-      render json: { errors: @course.errors }, status: 400
+      render status: :bad_request
     end 
   end
-
-  # PATCH/PUT /courses/1
-  # def update
-  #   if @course.update(course_params)
-  #     render json: @course
-  #   else
-  #     render json: { errors: @course.errors }, status: :unprocessable_entity
-  #   end
-  # end
 
   # DELETE /courses/1
   def destroy
@@ -111,7 +101,7 @@ class Api::V1::CoursesController < ApplicationController
       course.as_json.merge({image_url: (if course.image.attached? then url_for(course.image) else false end)})
     end
 
-    def valid_image_type?(image_blob)    
+    def valid_image_type?(image_blob)
       return image_blob.content_type.downcase.in?(%w(image/jpeg image/png image/jpg))
     end
 

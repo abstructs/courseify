@@ -34,7 +34,7 @@ class Api::V1::RecommendationsController < ApplicationController
     if @recommendation.save
       render json: @recommendation, status: :created
     else
-      render json: @recommendation.errors, status: :unprocessable_entity
+      render status: :unprocessable_entity
     end
   end
 
@@ -43,7 +43,7 @@ class Api::V1::RecommendationsController < ApplicationController
     if current_user.id == @recommendation.user_id && @recommendation.update(recommendation_params)
       render json: @recommendation
     else
-      render json: @recommendation.errors, status: :unprocessable_entity
+      render status: :unprocessable_entity
     end
   end
 
@@ -65,9 +65,9 @@ class Api::V1::RecommendationsController < ApplicationController
     end
 
     def json_with_image(course) 
-      puts "\n\n\nfk1"
-      puts course.class
-      puts "\n\n\nfk1end"
+      # puts "\n\n\nfk1"
+      # puts course.class
+      # puts "\n\n\nfk1end"
       course.as_json.merge({image_url: (if course.image.attached? then url_for(course.image) else false end)})
     end
 end
