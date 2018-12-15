@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import '../App.css';
 import axios from 'axios';
-import Auth from '../Auth';
+import Auth from '../User/Auth';
 import { withStyles, CardContent, Button, TextField, FormControl, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, FormHelperText, CircularProgress, Grid, LinearProgress, Input, Tooltip, IconButton, CardMedia } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';

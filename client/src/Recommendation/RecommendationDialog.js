@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Auth from '../Auth';
+import Auth from '../User/Auth';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';

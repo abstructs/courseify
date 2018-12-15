@@ -51,21 +51,33 @@ class LogIn extends Component {
         });
     }
 
+    formIsValid() {
+        const { email, password } = this.state;
+        
+        const validEmail = email.length() > 0;
+        const validPassword = password.length() >= 6 && password.length() <= 20;
+        
+        return validEmail && validPassword;
+    }
+
     handleSubmit(event) {
         const req = {
             "email": this.state.email,
             "password": this.state.password
         }
-    
-        Auth().authenticate(req)
-        .then(res => {
-            this.setState({ redirect: true });
-        })
-        .catch(err => {
-            const { errors } = err.response.data;
+
+        if(!this.formIsValid()) {
             this.setState({ errors },
                 this.showSnackbar("We couldn't log you in, are you missing something?", "error"));
-        });
+        } else {
+            Auth().authenticate(req)
+            .then(res => {
+                this.setState({ redirect: true });
+            })
+            .catch(err => {
+                this.showSnackbar("Something went wrong.", "error");
+            });
+        }
     }
 
     showSnackbar = (message, variant) => {

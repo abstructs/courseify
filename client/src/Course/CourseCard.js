@@ -11,7 +11,7 @@ import PeopleIcon from '@material-ui/icons/SupervisorAccount';
 import CourseEditContent from './CourseEditContent';
 import PropTypes from 'prop-types';
 import CourseInfoContent from './CourseInfoContent';
-import Auth from '../Auth';
+import Auth from '../User/Auth';
 import RecommendationDialog from '../Recommendation/RecommendationDialog';
 
 const styles = theme => ({

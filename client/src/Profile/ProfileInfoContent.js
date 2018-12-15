@@ -5,7 +5,7 @@ import { CardMedia, CardContent, Typography, Button, withStyles } from '@materia
 import EditIcon from '@material-ui/icons/Create';
 import bookImage from '../images/book.jpeg';
 import PropTypes from 'prop-types';
-import Auth from '../Auth';
+import Auth from '../User/Auth';
 
 const styles = theme => ({
     root: {

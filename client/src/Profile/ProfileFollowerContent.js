@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import '../App.css';
 import axios from 'axios';
-import Auth from '../Auth';
+import Auth from '../User/Auth';
 import UserCard from '../User/UserCard';
 import { CardContent, Typography } from '@material-ui/core';
 

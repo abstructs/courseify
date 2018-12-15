@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import '../App.css';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 // import VideosContainer from './VideosContainer.js';
-import Auth from '../Auth';
+import Auth from '../User/Auth';
 // import teacherImage from '../images/laptop.jpeg';
 import HomeLandingPage from './HomeLandingPage';
 import HomePage from './HomePage';

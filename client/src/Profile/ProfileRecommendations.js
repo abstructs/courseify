@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import '../App.css';
 import axios from 'axios';
-import Auth from '../Auth';
+import Auth from '../User/Auth';
 import RecommendationCard from '../Recommendation/RecommendationCard';
 import CourseCard from '../Course/CourseCard';
 import { Grid } from '@material-ui/core';

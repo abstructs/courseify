@@ -4,7 +4,6 @@ import './App.css';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 // import 'jquery';
 // import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import VideosContainer from './VideosContainer.js';
 import HomeContainer from './Home/HomeContainer';
 import Navbar from './Navbar';
 import Footer from './Footer';
@@ -21,7 +20,7 @@ import SignUp from './SignUp';
 import LogIn from './LogIn';
 import LogOut from './LogOut';
 import { createMuiTheme, withTheme, MuiThemeProvider } from '@material-ui/core';
-import Auth from './Auth';
+import Auth from './User/Auth';
 
 // import RecommendationCreateModal from './Recommendation/RecommendationCreateModal';
 
@@ -108,7 +107,6 @@ const Main = () => (
     <MuiThemeProvider theme={blueTheme}>
       <Navbar />
       <Route exact path="/" component={HomeContainer}/>
-      <Route path="/videos" component={VideosContainer}/>
       {/* <Route path="/recommend" component={RecommendationContainer}/>
      */}
       <Route exact path="/profile" component={ProfileContainer}/>

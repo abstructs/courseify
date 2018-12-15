@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import '../App.css';
 import axios from 'axios';
-import Auth from '../Auth';
+import Auth from '../User/Auth';
 import { Redirect, matchPath } from 'react-router';
 // import $ from 'jquery';
 import PropTypes from 'prop-types';

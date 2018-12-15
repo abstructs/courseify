@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import '../App.css';
 import axios from 'axios';
-import Auth from '../Auth';
+import Auth from './User/Auth';
 import PropTypes from 'prop-types';
 import { Grid, List, ListItem, ListItemText, Divider, ListSubheader, Typography, withStyles, Button, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, CircularProgress, Fade, Snackbar, Icon, SnackbarContent } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
