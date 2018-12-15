@@ -1,5 +1,7 @@
+/* tslint:disable */s
+
 import React, { Component } from 'react';
-import './App.css';
+import '../App.css';
 import { Paper } from '@material-ui/core';
 // import axios from 'axios';
 // import Auth from './Auth';

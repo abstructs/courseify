@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import headerImage from '../images/book.jpeg';
-import { Typography, Grid, Paper, withStyles, Card, CardMedia, CardContent, Button } from '@material-ui/core';
+import * as React from 'react';
+import { Typography, Grid, Paper, withStyles, Card, CardMedia, CardContent, Button, Theme, createStyles } from '@material-ui/core';
 
-const styles = theme => ({
+const headerImage = require('../../images/book.jpeg');
+
+const styles: any = (theme: Theme) => createStyles({
   root: {
     flexGrow: 1,
   },
@@ -14,8 +14,18 @@ const styles = theme => ({
   },
 });
 
-class HomeLandingPage extends Component {
-  render() {
+interface PropTypes {
+  classes: {
+    root: string,
+    card: string,
+    media: string,
+    button: string,
+    paper: string
+  }
+}
+
+class LandingPage extends React.Component<PropTypes, {}> {
+  render(): React.ReactNode {
 
     const { classes } = this.props;
 
@@ -101,8 +111,4 @@ class HomeLandingPage extends Component {
   }
 }
 
-HomeLandingPage.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
-
-export default withStyles(styles)(HomeLandingPage);
+export default withStyles(styles)(LandingPage);

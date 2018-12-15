@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import './App.css';
+import '../App.css';
 import axios from 'axios';
 import { Redirect } from 'react-router';
 import Auth from './Auth';
 import { Grid, Paper, withStyles, Typography, TextField, FormControl, Button, FormHelperText } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import SimpleSnackbar from './Helpers/SimpleSnackbar';
+import SimpleSnackbar from '../Helpers/SimpleSnackbar';
 
 const styles = theme => ({
     root: {

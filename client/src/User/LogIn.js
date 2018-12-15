@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import './App.css';
+import '../App.css';
 // import axios from 'axios';
 import { Redirect } from 'react-router';
 import Auth from './Auth';
 import PropTypes from 'prop-types';
 // import Alert from './Alert';
 import { Grid, withStyles, Typography, TextField, FormControl, Button, FormHelperText } from '@material-ui/core';
-import SimpleSnackbar from './Helpers/SimpleSnackbar';
+import SimpleSnackbar from '../Helpers/SimpleSnackbar';
 
 const styles = theme => ({
     root: {
@@ -67,8 +67,8 @@ class LogIn extends Component {
         }
 
         if(!this.formIsValid()) {
-            this.setState({ errors },
-                this.showSnackbar("We couldn't log you in, are you missing something?", "error"));
+            // this.setState({ errors },
+            this.showSnackbar("We couldn't log you in, are you missing something?", "error");
         } else {
             Auth().authenticate(req)
             .then(res => {

@@ -1,3 +1,5 @@
+/* tslint:disable */
+
 import React, { Component } from 'react';
 import '../App.css';
 import bookImage from '../images/book.jpeg';

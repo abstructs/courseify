@@ -72596,7 +72596,7 @@ exports.BasicSourceMapConsumer = BasicSourceMapConsumer;
  *
  *  {
  *    version : 3,
- *    file: "app.js",
+ *    file: "app.tsx",
  *    sections: [{
  *      offset: {line:100, column:10},
  *      map: {
@@ -86679,9 +86679,9 @@ if(true) {
 
 /***/ }),
 
-/***/ "./src/App.js":
+/***/ "./src/App.tsx":
 /*!********************!*\
-  !*** ./src/App.js ***!
+  !*** ./src/App.tsx ***!
   \********************/
 /*! exports provided: default */
 /*! exports used: default */
@@ -86707,7 +86707,7 @@ if(true) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__LogOut__ = __webpack_require__(/*! ./LogOut */ "./src/LogOut.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__material_ui_core__ = __webpack_require__(/*! @material-ui/core */ "./node_modules/@material-ui/core/index.es.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__Auth__ = __webpack_require__(/*! ./Auth */ "./src/Auth.js");
-var _jsxFileName = '/Users/abstruct/Desktop/courseify/courseify_client/src/App.js',
+var _jsxFileName = '/Users/abstruct/Desktop/courseify/courseify_client/src/App.tsx',
     _this = this;
 
 
@@ -94461,7 +94461,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react_dom__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__index_css__ = __webpack_require__(/*! ./index.css */ "./src/index.css");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__index_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__index_css__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__App__ = __webpack_require__(/*! ./App */ "./src/App.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__App__ = __webpack_require__(/*! ./App */ "./src/App.tsx");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__registerServiceWorker__ = __webpack_require__(/*! ./registerServiceWorker */ "./src/registerServiceWorker.js");
 var _jsxFileName = '/Users/abstruct/Desktop/courseify/courseify_client/src/index.js';
 

@@ -1,8 +1,10 @@
+/* tslint:disable */
+
 import React, { Component } from 'react';
-import './App.css';
+import '../App.css';
 import PropTypes from 'prop-types';
 // import axios from 'axios';
-import Auth from './Auth';
+import Auth from '../User/Auth';
 
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
