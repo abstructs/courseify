@@ -1,9 +1,7 @@
-/* tslint:disable */
-
 import * as React from 'react';
 // import logo from './logo.svg';
 // import './App.css';
-// import Navbar from './Helpers/Navbar';
+import Navbar from './Helpers/Navbar';
 // import Footer from './Helpers/Footer';
 // import ProfileContainer from './Profile/ProfileContainer';
 // import CourseContainer from './Course/CourseContainer';
@@ -20,7 +18,7 @@ import {
 // import LogIn from './User/LogIn';
 // import LogOut from './User/LogOut';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
-import HomeComponent from './Home/components/HomeComponent';
+import LandingPage from './Home/containers/LandingPage';
 // import Auth from './User/Auth';
 
 // import RecommendationCreateModal from './Recommendation/RecommendationCreateModal';
@@ -87,8 +85,8 @@ const blueTheme = createMuiTheme({
 const App = () => (
   <Router>
     <MuiThemeProvider theme={blueTheme}>
-      {/* <Navbar /> */}
-      <Route exact path="/" component={HomeComponent}/>
+      <Navbar isAuthenticated={false} />
+      <Route exact path="/" component={LandingPage}/>
       {/* <Route path="/recommend" component={RecommendationContainer}/>
      */}
       {/* <Route exact path="/profile" component={ProfileContainer}/> */}

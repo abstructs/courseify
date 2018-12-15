@@ -7,12 +7,5 @@
       "coverage/lcov-report/*.js"
     ]
   },
-  "rules": {
-    "no-console": false,
-    "object-literal-sort-keys": false
-  },
-  "jsRules": {
-    "no-console": false,
-    "object-literal-sort-keys": false
-  }
+  "defaultSeverity": "warning"
 }

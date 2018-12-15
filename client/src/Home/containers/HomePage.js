@@ -11,8 +11,8 @@ import { withStyles, List, ListItem, ListItemIcon, ListItemText, ExpansionPanelS
 
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
-import UserCard from '../User/UserCard';
-import RecommendationCard from '../Recommendation/RecommendationCard';
+import UserCard from '../../User/UserCard';
+import RecommendationCard from '../../Recommendation/RecommendationCard';
 // Icons
 import InboxIcon from '@material-ui/icons/Inbox';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
