@@ -7,7 +7,8 @@ import { Grid, List, ListItem, ListItemText, Divider, ListSubheader, Typography,
 // import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import green from '@material-ui/core/colors/green';
 import CourseAddExpansion from '../CourseAddExpansion';
-import { IAddCourseForm } from 'src/Services/CourseService';
+import { IAddCourseForm, CourseService, ICourse } from 'src/Services/CourseService';
+import CourseCard from '../CourseCard';
 // import red from '@material-ui/core/colors/green';
 // import CourseCard from '../CourseCard';
 // import CourseAddExpansion from '../CourseAddExpansion';
@@ -86,9 +87,9 @@ const styles = ({ spacing, palette}: Theme) => createStyles({
 // }
 
 enum Tab {
-    All = "All",
-    ComputerScience = "ComputerScience",
-    DataScience = "DataScience"
+    All = "all",
+    ComputerScience = "computer_science",
+    DataScience = "data_science"
 }
 
 interface IPropTypes {
@@ -100,22 +101,28 @@ interface IPropTypes {
 interface IStateTypes {
     currentTab: Tab,
     expanded: boolean,
-    loading: boolean
+    loading: boolean,
+    courses: ICourse[]
 }
 
 class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
+
+    private courseService: CourseService;
+
     constructor(props: IPropTypes) {
         super(props);
         // this.snackbar = React.createRef();
 
         this.state = {
-            // courses: [],
+            courses: [],
             expanded: false,
             loading: false,
             // recommendationsOpen: false,
             currentTab: Tab.All,
             // show: false
         }        
+
+        this.courseService = new CourseService();
     }
 
     componentDidMount() {
@@ -125,7 +132,7 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
         //     this.getCourse(id);
         // } 
         // else {
-        //     this.getCourses();
+        this.getCourses();
         // }
     }
 
@@ -146,16 +153,22 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
 
     // }
 
-    // getAllCourses() {
-    //     setTimeout(_ => {
+    getCourses() {
+        this.courseService.getAll((courses: ICourse[]) => {
+            this.setState({
+                courses
+            })
+        }, (err) => {
+            console.error(err);
+        });
+        // this.course
             // axios.get(`${process.env.REACT_APP_API_URL}/api/v1/courses`)
-    //         .then(res => {
-    //             const courses = JSON.parse(res.data.courses);
+            // .then(res => {
+            //     const courses = JSON.parse(res.data.courses);
                 
-    //             this.setState({ courses, loading: false });
-    //         });
-    //     }, 1000);
-    // }
+            //     this.setState({ courses, loading: false });
+            // });
+    }
 
     // handleCourseChange(event) {  
     //     const target = event.target;
@@ -207,11 +220,11 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
     
 
     render() {
-        const { classes, } = this.props;
+        const { classes } = this.props;
 
         // , courses, show, course
 
-        const { loading, expanded } = this.state;
+        const { loading, expanded, courses } = this.state;
 
         
 
@@ -278,10 +291,15 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
                                     <CircularProgress />
                                 </Grid>
                             :
-                                courses.map(course => {
-                                    return <CourseCard key={course.id} showSnackbar={this.showSnackbar.bind(this)} current_user={current_user} course={course} />;
-                                })
+
                         } */}
+                            {
+                                // showSnackbar={this.showSnackbar.bind(this)} 
+                                // current_user={current_user} 
+                                courses.map((course: ICourse) => {
+                                    return <CourseCard key={course.id} course={course} />;
+                                })
+                            }
                     </Grid>
                     <Grid item xs={2} style={{width: "100%"}}>
 

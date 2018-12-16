@@ -10,6 +10,19 @@ export interface IAddCourseForm {
     image: IImage
 }
 
+export interface ICourse {
+    id: number,
+    user_id: number,
+    title: string,
+    author: string,
+    url: string,
+    description: string,
+    category: string,
+    image_url: string | null,
+    created_at: string,
+    updated_at: string
+}
+
 export interface IImage {
     fileName: string,
     imageUrl: string,
@@ -22,11 +35,16 @@ export class CourseService extends Service {
         super();
     }
 
-    getAll(callback: (res: any) => void) {
-        axios.get(`${super.getApiUrl()}/api/v1/courses`)
-        .then(res => {
-            console.log(res);
-        })
+    getAll(onSuccess: (courses: ICourse[]) => void, onError: (reason: any) => void) {
+        axios.get(`${super.getApiUrl()}/api/v1/courses?category=all`)
+        .then(res => res.data.courses)
+        .then(onSuccess)
+        .catch(onError);
+    }
+
+    getByCategory(category: string, callback: (res: any) => void) {
+        axios.get(`${super.getApiUrl()}/api/v1/courses?category=${category}`)
+        .then(callback);
     }
 
     addCourse(course: IAddCourseForm, onSuccess: (res: any) => void, onError: (reason: any) => void) {
