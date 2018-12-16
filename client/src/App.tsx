@@ -4,7 +4,7 @@ import * as React from 'react';
 import Navbar from './Helpers/Navbar';
 // import Footer from './Helpers/Footer';
 // import ProfileContainer from './Profile/ProfileContainer';
-// import CourseContainer from './Course/CourseContainer';
+import CourseComponent from './Course/components/CourseComponent';
 // import RecommendationsContainer from './Recommendation/RecommendationsContainer';
 import {
   BrowserRouter as Router,
@@ -95,7 +95,7 @@ const App = () => (
      */}
       {/* <Route exact path="/profile" component={ProfileContainer}/> */}
 
-      {/* <Route exact path="/courses" component={CourseContainer} /> */}
+      <Route exact path="/courses" component={CourseComponent} />
 
       {/* <Route path="/courses/:id" component={CourseContainer} /> */}
 

@@ -1,28 +1,27 @@
 /* tslint:disable */
 
-import React, { Component } from 'react';
-import '../App.css';
-import axios from 'axios';
-import Auth from './User/Auth';
-import PropTypes from 'prop-types';
-import { Grid, List, ListItem, ListItemText, Divider, ListSubheader, Typography, withStyles, Button, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, CircularProgress, Fade, Snackbar, Icon, SnackbarContent } from '@material-ui/core';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import * as React from 'react';
+// import '../App.css';
+import { Grid, List, ListItem, ListItemText, Divider, ListSubheader, Typography, withStyles,Theme, createStyles, Fade, Button } from '@material-ui/core';
+// Button, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, CircularProgress, Fade, Snackbar, Icon, SnackbarContent, 
+// import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import green from '@material-ui/core/colors/green';
-import red from '@material-ui/core/colors/green';
-import CourseCard from './CourseCard';
-import CourseAddExpansion from './CourseAddExpansion';
-import RecommendationDialog from '../Recommendation/RecommendationDialog';
-import classNames from 'classnames';
-import SimpleSnackbar from '../Helpers/SimpleSnackbar';
+import CourseAddExpansion from '../CourseAddExpansion';
+// import red from '@material-ui/core/colors/green';
+// import CourseCard from '../CourseCard';
+// import CourseAddExpansion from '../CourseAddExpansion';
+// import RecommendationDialog from '../../Recommendation/RecommendationDialog';
+// import classNames from 'classnames';
+// import SimpleSnackbar from '../../Helpers/SimpleSnackbar';
 
-axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
+// axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
 
-const styles = theme => ({
+const styles = ({ spacing, palette}: Theme) => createStyles({
     root: {
         flexGrow: 1
     },
     progress: {
-        margin: theme.spacing.unit * 2
+        margin: spacing.unit * 2
     },
     card: {
         // maxWidth: 800,
@@ -36,8 +35,8 @@ const styles = theme => ({
         display: 'flex',
     },
     textField: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
+        marginLeft: spacing.unit,
+        marginRight: spacing.unit,
         minWidth: 200,  
     },
     buttonSuccess: {
@@ -47,13 +46,13 @@ const styles = theme => ({
         },
     },
     buttonError: {
-        backgroundColor: theme.palette.error.dark,
+        backgroundColor: palette.error.dark,
         // '&:hover': {
         //   backgroundColor: red[222],
         // },
     },
     wrapper: {
-        margin: theme.spacing.unit,
+        margin: spacing.unit,
         position: 'relative',
     },
     buttonProgress: {
@@ -79,53 +78,72 @@ const styles = theme => ({
     }
 });
 
-const tabs = {
-    all: { id: 1, value: "all" },
-    computer_science: { id: 2, value: "computer_science" },
-    data_science: {id: 3, value: "data_science"}
+// const tabs = {
+//     all: { id: 1, value: "all" },
+//     computer_science: { id: 2, value: "computer_science" },
+//     data_science: { id: 3, value: "data_science" }
+// }
+
+enum Tab {
+    All = "All",
+    ComputerScience = "ComputerScience",
+    DataScience = "DataScience"
 }
 
-class CourseContainer extends Component {
-    constructor(props) {
+interface IPropTypes {
+    classes: {
+        root: string
+    }
+}
+
+interface IStateTypes {
+    currentTab: Tab,
+    expanded: boolean,
+    loading: boolean
+}
+
+class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
+    constructor(props: IPropTypes) {
         super(props);
         // this.snackbar = React.createRef();
 
         this.state = {
-            courses: [],
+            // courses: [],
             expanded: false,
-            loading: true,
-            recommendationsOpen: false,
-            tab: 1,
-            show: false
+            loading: false,
+            // recommendationsOpen: false,
+            currentTab: Tab.All,
+            // show: false
         }        
     }
 
     componentDidMount() {
-        const id = this.props.match.params.id;
-        if(id) {
-            this.getCourse(id);
-        } 
-        else {
-            this.getCourses();
-        }
+        // const id = this.props.match.params.id;
+
+        // if(id) {
+        //     this.getCourse(id);
+        // } 
+        // else {
+        //     this.getCourses();
+        // }
     }
 
-    getCourse(id) {
+    // getCourse(id) {
             // const category = tabs[Object.keys(tabs).filter(key => tabs[key].id === this.state.tab)].value;
-        this.setState({ show: true }, _ => {
-            setTimeout(_ => {
-                axios.get(`${process.env.REACT_APP_API_URL}/v1/courses/${id}`)
-                .then(res => {
-                    const { course } = res.data;
+        // this.setState({ show: true }, _ => {
+        //     setTimeout(_ => {
+        //         axios.get(`${process.env.REACT_APP_API_URL}/v1/courses/${id}`)
+        //         .then(res => {
+        //             const { course } = res.data;
     
-                    // console.log(course);
+        //             // console.log(course);
                     
-                    this.setState({ course, loading: false, show: true });
-                });
-            }, 1000);
-        });
+        //             this.setState({ course, loading: false, show: true });
+        //         });
+        //     }, 1000);
+        // });
 
-    }
+    // }
 
     // getAllCourses() {
     //     setTimeout(_ => {
@@ -138,88 +156,94 @@ class CourseContainer extends Component {
     //     }, 1000);
     // }
 
-    handleCourseChange(event) {  
-        const target = event.target;
-        const value = target.value;
-        const name = target.name;
+    // handleCourseChange(event) {  
+    //     const target = event.target;
+    //     const value = target.value;
+    //     const name = target.name;
 
-        this.setState({[name]: value});
-    }
+    //     this.setState({[name]: value});
+    // }
 
     handleCourseAddSuccess() {
-        this.setState({ expanded: false, loading: true }, _ => this.getCourses());
+        this.setState({ expanded: false });
+        // this.setState({ expanded: false, loading: true }, _ => this.getCourses());
     }
 
-    handleCancel(e) {
+    handleCancel() {
         this.setState({ expanded: false });
     }
 
-    handleExpandClick(e) {
+    handleExpandClick() {
         this.setState({ expanded: !this.state.expanded});
     }
 
-    showSnackbar = (message, variant) => {
-        this.snackbar.handleClick(message, variant);
-        // this.setState({ snackbarClicked: true, message });
-    }
+    // showSnackbar = (message, variant) => {
+    //     this.snackbar.handleClick(message, variant);
+    //     // this.setState({ snackbarClicked: true, message });
+    // }
     
-    getCourses() {
-        const category = tabs[Object.keys(tabs).filter(key => tabs[key].id === this.state.tab)].value;
+    // getCourses() {
+    //     const category = tabs[Object.keys(tabs).filter(key => tabs[key].id === this.state.tab)].value;
 
-        setTimeout(_ => {
-            axios.get(`${process.env.REACT_APP_API_URL}/api/v1/courses?category=${category}`)
-            .then(res => {
-                const { courses } = res.data;
+    //     setTimeout(_ => {
+    //         axios.get(`${process.env.REACT_APP_API_URL}/api/v1/courses?category=${category}`)
+    //         .then(res => {
+    //             const { courses } = res.data;
                 
-                this.setState({ courses, loading: false });
-            });
-        }, 1000);
-    }
+    //             this.setState({ courses, loading: false });
+    //         });
+    //     }, 1000);
+    // }
 
-    handleTab = tab => _ => {
-        this.setState({ tab: tab.id, loading: true }, _ => this.getCourses());
+    handleTab = (newTab: Tab) => () => {
+        // _ => this.getCourses()
+        // , loading: true 
+
+        this.setState({ currentTab: newTab });
     } 
 
     
 
     render() {
         const { classes, } = this.props;
-        const isLoggedIn = Auth().isAuthenticated();
-        const current_user = isLoggedIn ? Auth().paraseJwt().sub.user : {};
-        const { loading, courses, show, course } = this.state;
+
+        // , courses, show, course
+
+        const { loading, expanded } = this.state;
 
         
 
-        if(show) {
-            return (
-                <Grid container spacing={0} justify="center" style={{marginTop: "40px"}}>
-                {loading ? <CircularProgress />
-                :
-                    <Grid item xs={6}>
-                        <CourseCard key={course.id} showSnackbar={this.showSnackbar.bind(this)} current_user={current_user} course={course} />
-                    </Grid>
-                }
-                </Grid>
-            )
-        }
+        // if(show) {
+        //     return (
+        //         <Grid container spacing={0} justify="center" style={{marginTop: "40px"}}>
+        //         {loading ? <CircularProgress />
+        //         :
+        //             <Grid item xs={6}>
+        //                 <CourseCard key={course.id} showSnackbar={this.showSnackbar.bind(this)} current_user={current_user} course={course} />
+        //             </Grid>
+        //         }
+        //         </Grid>
+        //     )
+        // }
 
         return (
             <div className={classes.root}>
-                <SimpleSnackbar onRef={ref => this.snackbar = ref} />
+                {/* <SimpleSnackbar onRef={ref => this.snackbar = ref} /> */}
+
                 <Grid container spacing={0} justify="space-between">
                     <Grid item md={3}>
                         <List component="nav" subheader={<ListSubheader component="div">Categories</ListSubheader>}>
                             <Divider />
-                            <ListItem button onClick={this.handleTab(tabs.all).bind(this)}>
+                            <ListItem button onClick={() => this.handleTab(Tab.All)}>
                                 <ListItemText primary="All" />
                             </ListItem>
-                            <ListItem button onClick={this.handleTab(tabs.computer_science).bind(this)}>
+                            <ListItem button onClick={() => this.handleTab(Tab.ComputerScience)}>
                                 {/* <ListItemIcon>
                                     <LibraryBooksIcon />
                                 </ListItemIcon> */}
                                 <ListItemText primary="Computer Science" />
                             </ListItem>
-                            <ListItem button onClick={this.handleTab(tabs.data_science).bind(this)} >
+                            <ListItem button onClick={() => this.handleTab(Tab.DataScience)} >
                                 {/* <ListItemIcon>
                                     <LibraryBooksIcon />
                                 </ListItemIcon> */}
@@ -237,16 +261,17 @@ class CourseContainer extends Component {
                                 <Typography variant="caption" align="left" style={{marginTop: "5px"}} color="textSecondary">
                                     See what people are recommending.
                                 </Typography>
-                                <Fade in={!loading && !this.state.expanded}>
-                                    <Button onClick={this.handleExpandClick.bind(this)} disabled={this.state.expanded} color="primary" style={{float: "right"}}>Add A Course</Button>
+                                <Fade in={!loading && !expanded}>
+                                    <Button onClick={() => this.handleExpandClick()} disabled={expanded} color="primary" style={{float: "right"}}>Add A Course</Button>
                                 </Fade>
                             </Grid>
-                            
+                            {/* showSnackbar={this.showSnackbar.bind(this)}  */}
                                 <Grid item xs={12}>
-                                    <CourseAddExpansion handleCourseAddSuccess={this.handleCourseAddSuccess.bind(this)} showSnackbar={this.showSnackbar.bind(this)} handleCancel={this.handleCancel.bind(this)} classes={classes} expanded={this.state.expanded} />
+                                {/* handleSuccess={() => this.handleCourseAddSuccess()}   */}
+                                    <CourseAddExpansion onCancel={() => this.handleCancel()} expanded={expanded} />
                                 </Grid>
                         </Grid>
-                        {loading ?
+                        {/* {loading ?
                                 <Grid container spacing={0} justify="center">
                                     <CircularProgress />
                                 </Grid>
@@ -254,7 +279,7 @@ class CourseContainer extends Component {
                                 courses.map(course => {
                                     return <CourseCard key={course.id} showSnackbar={this.showSnackbar.bind(this)} current_user={current_user} course={course} />;
                                 })
-                        }
+                        } */}
                     </Grid>
                     <Grid item xs={2} style={{width: "100%"}}>
 
@@ -292,8 +317,4 @@ class CourseContainer extends Component {
     }
 }
 
-CourseContainer.propTypes = {
-    classes: PropTypes.object.isRequired
-};
-
-export default withStyles(styles)(CourseContainer);
+export default withStyles(styles)(CourseComponent);

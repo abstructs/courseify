@@ -16,7 +16,7 @@ import { withStyles, List, ListItem, ListItemText, Grid, Paper, Typography, } fr
 // import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 // import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 // import ViewListIcon from '@material-ui/icons/ViewList';
-import { RecommendationService } from 'src/Services/RecommendationService';
+// import { RecommendationService } from 'src/Services/RecommendationService';
 import UserCard from 'src/User/UserCard';
 import { UserService, IUser } from 'src/Services/UserService';
 // import UserCard from 'src/User/UserCard';
@@ -152,7 +152,7 @@ interface IStateTypes {
 
 class HomePage extends React.Component<IPropTypes, IStateTypes> {
 
-    private recommendationService: RecommendationService;
+    // private recommendationService: RecommendationService;
     private userService: UserService;
 
     constructor(props: IPropTypes) {
@@ -164,7 +164,7 @@ class HomePage extends React.Component<IPropTypes, IStateTypes> {
             tab: ITab.People
         }
 
-        this.recommendationService = new RecommendationService();
+        // this.recommendationService = new RecommendationService();
         this.userService = new UserService();
     }
 
@@ -175,9 +175,9 @@ class HomePage extends React.Component<IPropTypes, IStateTypes> {
 //   };
 
     componentDidMount() {
-        this.recommendationService.getAll((recommendataions) => {
+        // this.recommendationService.getAll((recommendataions) => {
 
-        });
+        // });
 
         this.userService.getAll((users: Array<IUser>) => {
             this.setState({
