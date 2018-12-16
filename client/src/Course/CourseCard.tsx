@@ -3,19 +3,20 @@
 import * as React from 'react';
 
 // import { CardHeader, CardActions, Collapse, Card, Button, IconButton, Avatar, Dialog, DialogTitle, DialogActions, LinearProgress, DialogContent, TextField, DialogContentText, withStyles } from '@material-ui/core';
-// import FavoriteIcon from '@material-ui/icons/Favorite';
-// import ShareIcon from '@material-ui/icons/Share';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import ShareIcon from '@material-ui/icons/Share';
 import DoneIcon from '@material-ui/icons/Done';
-// import EditIcon from '@material-ui/icons/Create';
-// import DeleteIcon from '@material-ui/icons/Delete';
-// import PeopleIcon from '@material-ui/icons/SupervisorAccount';
+import EditIcon from '@material-ui/icons/Create';
+import DeleteIcon from '@material-ui/icons/Delete';
+import PeopleIcon from '@material-ui/icons/SupervisorAccount';
 // import CourseEditContent from './CourseEditContent';
 
 import CourseInfoContent from './CourseInfoContent';
 
 // import RecommendationDialog from '../Recommendation/RecommendationDialog';
 import { ICourse } from 'src/Services/CourseService';
-import { Card, Dialog, DialogTitle, DialogActions, Button, DialogContent, DialogContentText, TextField, CardHeader, Avatar, CardActions, withStyles } from '@material-ui/core';
+// Collapse
+import { Card, Dialog, DialogTitle, DialogActions, Button, DialogContent, DialogContentText, TextField, CardHeader, Avatar, CardActions, withStyles, IconButton } from '@material-ui/core';
 // import { PropTypes } from '@material-ui/core';
 
 const styles = {
@@ -67,15 +68,15 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
         }
     }
 
-    handleEditExpand() {
+    expandEdit() {
         this.setState({ expanded: !this.state.expanded });
     }
 
-    handleDeleteClick() {
+    openDeleteDialog() {
         this.setState({ deleteDialogOpen: true });
     }
 
-    handleDelete() {
+    deleteCourse() {
         console.log("delete")
         // axios.delete(`${process.env.REACT_APP_API_URL}/api/v1/courses/${this.state.course.id}`)
         // .then(res => {
@@ -156,19 +157,19 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
         // });
     }
 
-    handleShowRecommendations() {
+    openRecommendationsDialog() {
         this.setState({ openRecommendations: true });
     }
 
-    handleRecommendationsClose() {
+    closeRecommendationsDialog() {
         this.setState({ openRecommendations: false });
     }
 
-    handleShowShare() {
+    openShareDialog() {
         this.setState({ openShare: true });
     }
 
-    handleShareClose() {
+    closeShareDialog() {
         this.setState({ openShare: false });
     }
     // handleShareFocus(event) {
@@ -177,8 +178,9 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
 
     handleCopy() {
         const copied = document.execCommand('copy');
+
         if(copied) {
-            this.handleShareClose();
+            this.closeShareDialog();
         }
     }
 
@@ -216,7 +218,7 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
                 <Dialog open={this.state.deleteDialogOpen} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
                     <DialogTitle id="alert-dialog-title">{"Are you sure you want to remove this course?"}</DialogTitle>
                     <DialogActions>
-                        <Button onClick={this.handleDelete.bind(this)} color="primary" autoFocus>
+                        <Button onClick={() => this.deleteCourse()} color="primary" autoFocus>
                             Yes, remove it
                         </Button>
                         <Button onClick={this.handleCancel.bind(this)}>
@@ -227,7 +229,7 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
                 <Dialog
                     style={{minWidth: "400px"}}
                     open={this.state.openShare}
-                    onClose={this.handleShareClose.bind(this)}
+                    onClose={() => this.closeShareDialog()}
                     aria-labelledby="form-dialog-title"
                 >
                     <DialogTitle id="form-dialog-title">Share this course with a friend</DialogTitle>
@@ -247,7 +249,7 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.handleShareClose.bind(this)} color="primary">
+                        <Button onClick={() => this.closeShareDialog()} color="primary">
                             Close
                         </Button>
                         <Button onClick={this.handleCopy.bind(this)} color="primary">
@@ -274,38 +276,39 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
                 <CourseInfoContent course={course} />
 
                 <CardActions className={classes.actions} disableActionSpacing>
-                    {/* {isLoggedIn && 
-                        <IconButton color={current_user_recommended ? "secondary" : "default"} 
-                        onClick={current_user_recommended ? this.handleUnrecommendClick.bind(this) : this.handleRecommendClick.bind(this)} 
+                        <IconButton color={true ? "secondary" : "default"} 
+                        // onClick={true ? this.handleUnrecommendClick.bind(this) : this.handleRecommendClick.bind(this)} 
                         aria-label="Recommend this course"
-                        disabled={refreshing}>
+                        //disabled={refreshing}
+                        >
                             <FavoriteIcon />
                         </IconButton>
-                    } */}
-                    {/* <IconButton onClick={this.handleShowShare.bind(this)} disabled={refreshing} aria-label="Share">
+                        {/*  */}
+                    <IconButton onClick={() => this.openShareDialog()} aria-label="Share">
                         <ShareIcon color={this.state.openShare ? "secondary" : "inherit"}  />
                     </IconButton>
-                    <IconButton disabled={refreshing} onClick={this.handleShowRecommendations.bind(this)}  aria-label="Delete">
+                    <IconButton onClick={() => this.openRecommendationsDialog()}  aria-label="Delete">
                         <PeopleIcon color={this.state.openRecommendations ? "secondary" : "inherit"} />
-                    </IconButton> */}
-                    {/* {
-                        current_user.id === course.user_id && 
+                    </IconButton>
+                    {
+                        // current_user.id === course.user_id &&   
                         <div>
-                            <IconButton disabled={refreshing} onClick={this.handleEditExpand.bind(this)} aria-label="Edit">
-                                <EditIcon color={this.state.expanded ? "secondary" : "inherit"} disabled={refreshing} />
+                            <IconButton onClick={() => this.expandEdit()} aria-label="Edit">
+                                <EditIcon color={this.state.expanded ? "secondary" : "inherit"} />
                             </IconButton>
-                            <IconButton disabled={refreshing} onClick={this.handleDeleteClick.bind(this)}  aria-label="Delete">
+                            <IconButton onClick={() => this.openDeleteDialog()}  aria-label="Delete">
                                 <DeleteIcon color={this.state.deleteDialogOpen ? "secondary" : "inherit"} />
                             </IconButton>
                         </div>
-                    } */}
+                    }
 
                 </CardActions>
                 {/* {refreshing && <LinearProgress />} */}
 
-                {/* <Collapse in={this.state.expanded} timeout="auto">
-                    <CourseEditContent setImageUrl={this.setImageUrl.bind(this)} handleEditError={this.handleEditError.bind(this)} handleEditLoading={this.handleEditLoading.bind(this)} handleEditSuccess={this.handleEditSuccess.bind(this)} handleEditExpand={this.handleEditExpand.bind(this)} classes={classes} course={course} />
-                </Collapse> */}
+                {/* <Collapse in={this.state.expanded} timeout="auto"> */}
+                    {/* setImageUrl={this.setImageUrl.bind(this)}  */}
+                    {/* <CourseEditContent handleEditError={this.handleEditError.bind(this)} handleEditLoading={this.handleEditLoading.bind(this)} handleEditSuccess={this.handleEditSuccess.bind(this)} handleEditExpand={this.handleEditExpand.bind(this)} classes={classes} course={course} /> */}
+                {/* </Collapse> */}
             </Card>
         );
     }
