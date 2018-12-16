@@ -88,16 +88,18 @@ class Api::V1::UsersController < ApplicationController
     @user = User.new users_params
 
     if @user.save!
-      render status: :ok
+      render status: :ok, json: { token: "Bearer: get_token(@user)" }
     else
-      # render json: { messages: error_messages(@user, "danger") }, status: 400
-      # json: { errors: @user.errors.as_json(full_messages: true) }, 
       
       render status: :bad_request
     end
   end
 
   private
+
+  def get_token(user)
+    Knock::AuthToken.new(payload: { sub: user.id }).token
+  end
 
   def users_params
     params.require(:user).permit(:email, :username, :password, :password_confirmation)

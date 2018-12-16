@@ -1,20 +1,26 @@
 import { Validator } from './Validator';
-import { IUserForm, IUserFormErrors } from '../User/SignUp';
+import { IUserForm } from 'src/Services/UserService';
+
+export interface IUserFormErrors {
+    email: Array<String>,
+    username: Array<String>,
+    password: Array<String>
+}
 
 export class UserValidator extends Validator {
 
     private getEmail: () => string;
     private getUsername: () => string;
     private getPassword: () => string;
-    private getPasswordConfirmation: () => string;
+    private getpassword_confirmation: () => string;
 
-    constructor(form: IUserForm) {
+    constructor(getForm: () => IUserForm) {
         super();
 
-        this.getEmail = () => form.email;
-        this.getUsername = () => form.username;
-        this.getPassword = () => form.password;
-        this.getPasswordConfirmation = () => form.passwordConfirmation;
+        this.getEmail = () => getForm().email;
+        this.getUsername = () => getForm().username;
+        this.getPassword = () => getForm().password;
+        this.getpassword_confirmation = () => getForm().password_confirmation;
     }
 
     private getUsernameErrors(): Array<String> {
@@ -44,13 +50,7 @@ export class UserValidator extends Validator {
             errors.push("Please enter a password between 6 and 20 characters..");
         }
 
-        return errors;
-    }
-
-    private getPasswordConfirmationErrors(): Array<String> {
-        const errors = new Array<String>();
-
-        if(!super.match(this.getPassword(), this.getPasswordConfirmation())) {
+        if(!super.match(this.getPassword(), this.getpassword_confirmation())) {
             errors.push("Passwords should match.");
         }
 
@@ -61,8 +61,7 @@ export class UserValidator extends Validator {
         return {
             email: this.getEmailErrors(),
             username: this.getUsernameErrors(),
-            password: this.getPasswordErrors(),
-            passwordConfirmation: this.getPasswordConfirmationErrors()
+            password: this.getPasswordErrors()
         }
     }
 }
