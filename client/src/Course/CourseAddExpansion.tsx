@@ -4,8 +4,9 @@ import * as React from 'react';
 // import { CardContent, Typography, CardActions, Collapse, Card, Button, FormControl, TextField, CircularProgress, FormHelperText, MenuItem, InputAdornment, Grid, Tooltip, IconButton, CardMedia } from '@material-ui/core';
 
 // import PropTypes from 'prop-types';
-// import PhotoCamera from '@material-ui/icons/PhotoCamera';
-import { Collapse, Dialog, DialogTitle, DialogActions, Button, Card, Typography, CardMedia, CardContent, FormControl, TextField, FormHelperText, Theme, withStyles, createStyles, InputAdornment, MenuItem } from '@material-ui/core';
+import PhotoCamera from '@material-ui/icons/PhotoCamera';
+import { Collapse, Dialog, DialogTitle, DialogActions, Button, Card, Typography, CardMedia, CardContent, FormControl, TextField, FormHelperText, Theme, withStyles, createStyles, MenuItem, Grid, Tooltip, IconButton, CardActions } from '@material-ui/core';
+import { IAddCourseForm } from 'src/Services/CourseService';
 
 const bookImage = require('../images/book.jpeg');
 
@@ -37,37 +38,37 @@ const styles = ({ spacing }: Theme) => createStyles({
         marginRight: spacing.unit,
         minWidth: 200,  
     },
+    wrapper: {
+        margin: spacing.unit,
+        position: 'relative',
+    },
 });
-
-interface IAddCourseForm {
-    title: string,
-    author: string,
-    courseUrl: string,
-    description: string,
-    category: string
-}
 
 interface ICourseAddFormErrors {
     title: Array<String>,
     author: Array<String>,
     courseUrl: Array<String>,
+    image: Array<String>,
     description: Array<String>,
     category: Array<String>
 }
 
 interface IImage {
     fileName: string,
-    image: any
+    imageUrl: any
 }
 
 interface IPropTypes {
-    onCancel: Function,
+    onCancel: () => any,
+    onSuccess: (form: IAddCourseForm) => any,
     expanded: boolean,
     classes: {
         root: string,
         media: string,
         card: string,
-        textField: string
+        textField: string,
+        formControl: string,
+        wrapper: string
     }
 }
 
@@ -81,6 +82,9 @@ interface IStateTypes {
 }
 
 class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
+
+    private upload: HTMLInputElement | null;
+
     constructor(props: IPropTypes) {
         super(props);
 
@@ -99,12 +103,13 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
                 title: [],
                 author: [],
                 courseUrl: [],
+                image: [],
                 description: [],
                 category: []
             },
             image: {
                 fileName: "",
-                image: bookImage
+                imageUrl: bookImage
             }
         }
     }
@@ -128,7 +133,11 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
         this.clearState();
     }
 
-    handleCourseAdd() {
+    handleSubmit() {
+        const course = this.state.form;
+
+        console.log("add")
+        console.log(course)
         // const { course, loading, success } = this.state;
 
         // const file = this.upload.files[0];
@@ -178,8 +187,8 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
             // });
     }
 
-    handleInputChange({ currentTarget }: React.ChangeEvent<HTMLInputElement>) {
-        const { name, value } = currentTarget;
+    handleInputChange({ target }: React.ChangeEvent<HTMLInputElement>) {
+        const { name, value } = target;
 
         this.setState({ form: { ...this.state.form, [name]: value } });
     }
@@ -196,58 +205,28 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
     //     this.setState({ dialog_open: true });
     // }
     
-    // shouldMarkError(paramName) {
-    //     const errors = this.state.errors[paramName] || [];
-    //     return errors.length != 0;
-    // }
+    handleFileChange() {
+        if(this.upload && this.upload.files && this.upload.files.length > 0) {
+            const file = this.upload.files[0];
 
-    // handleFileChange() {
-    //     const uploadInput = this.upload 
-    //     const file = uploadInput && uploadInput.files.length !== 0 ? uploadInput.files[0] : false;
-
-    //     // const image = this.upload && this.upload.files.length != 0 ? URL.createObjectURL(this.upload.files[0]) : profile.banner_url;
-        
-    //     if(file) {
-    //         if(this.validateFile(file)) {
-    //             this.setState(prevState => ({
-    //                 image: {
-    //                     ...prevState.image,
-    //                     file_name: file.name,
-    //                     url: URL.createObjectURL(file)
-    //                 }
-    //             }));
-    //         } else {
-    //             this.setState(prevState => ({
-    //                 // ...prevState,
-    //                 errors: {
-    //                     ...prevState.errors,
-    //                     image: [file.type + " is not a valid file format"]
-    //                 },
-    //                 image: {
-    //                     url: bookImage,
-    //                     file_name: file.name
-    //                 }
-    //             }));
-    //         }
-    //     }
-    //     else {
-    //         this.setState(prevState => ({
-    //             image: {
-    //                 ...prevState.image,
-    //                 url: bookImage,
-    //                 file_name: ""
-    //             }
-    //         }));
-    //     }   
-    // }
+            this.setState({
+                image: {
+                    fileName: file.name,
+                    imageUrl: URL.createObjectURL(file)
+                }
+            });
+        }
+    }
 
     // validateFile(file) {
     //     return (/\.(gif|jpg|jpeg|tiff|png)$/i).test(file.name);
     // }
 
-    // handleUpload() {
-    //     this.upload.click();
-    // }
+    handleUpload() {
+        if(this.upload) {
+            this.upload.click();
+        }
+    }
 
     render() {
         // classes,
@@ -255,7 +234,7 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
         // errors, image, course, loading,
         // success,
         const { dialogOpen, errors, image } = this.state;
-        const { title, author, category } = this.state.form;
+        const { title, author, category, courseUrl, description } = this.state.form;
         // const addBtnClassName = success != undefined ? (success ? classes.buttonSuccess : classes.buttonError) : "";
         
         // classNames({
@@ -283,7 +262,7 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
                      <CardMedia
                          style={{margin: "20px 0px 20px 0px"}}
                          className={classes.media}
-                         image={image.image}
+                         image={image.imageUrl}
                          title="Contemplative Reptile"
                      />
                      <CardContent>
@@ -297,10 +276,10 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
                              <FormHelperText className={classes.textField}>{errors.author.length > 0 ? errors.author[0] : ""}</FormHelperText>
                          </FormControl>
 
-                         {/* <FormControl error={errors. > 0}>
-                             <TextField error={shouldMarkError.url} value={course.url} onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.handleInputChange(e)} name="url" className={classes.textField} label="Link" type="url" placeholder="http://"></TextField>
-                             <FormHelperText className={classes.textField}>{shouldMarkError.url ? errors.url[0] : ""}</FormHelperText>
-                         </FormControl> */}
+                         <FormControl error={errors.courseUrl.length > 0}>
+                             <TextField error={errors.courseUrl.length > 0} value={courseUrl} onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.handleInputChange(e)} name="courseUrl" className={classes.textField} label="Link" type="url" placeholder="http://"></TextField>
+                             <FormHelperText className={classes.textField}>{errors.courseUrl.length > 0 ? errors.courseUrl[0] : ""}</FormHelperText>
+                         </FormControl>
 
                          <FormControl error={errors.category.length > 0}>
                              <TextField 
@@ -311,97 +290,92 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
                                  label="Category"
                                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.handleInputChange(e)}
                                  value={category}
-                                  InputProps={{
-                                      startAdornment: <InputAdornment position="start">Category</InputAdornment>,
-                                  }}
                              >
-                                 {categories.map((option, i) => {
+                                {categories.map((option, i) => {
                                      return (
                                          <MenuItem 
                                             key={i}
                                             value={option.value}
-                                            >
+                                        >
                                             {option.label}
-                                         </MenuItem>
+                                        </MenuItem>
                                      );
                                  })}
                              </TextField>
                              <FormHelperText className={classes.textField}>{errors.category.length > 0 ? errors.category[0] : ""}</FormHelperText>
                         </FormControl>
-                    </CardContent>
+
+                        <FormControl error={errors.image.length > 0} className={classes.formControl}>
+                             <Grid container spacing={0}>
+                                 <Grid item xl={6}>
+                                     <input accept="image/*" onChange={() => this.handleFileChange()} type="file"  ref={(ref) => this.upload = ref} style={{ display: 'none' }} />
+                                     <Tooltip disableHoverListener={image.fileName == ""} title={image.fileName}>
+                                         <TextField
+                                         value={image.fileName}
+                                         name="image"
+                                         margin="normal"
+                                         className={classes.textField}
+                                         label="Image"
+                                         disabled
+                                         error={errors.image.length > 0}
+                                         color="primary"
+                                         />
+                                     </Tooltip>
+                                 </Grid>
+                                 <Grid item xl={2}>
+                                     <IconButton
+                                         // style={{display: "inline"}}
+                                         className="floatingButton"
+                                         onClick={() => this.handleUpload()}
+                                         style={{ marginTop: "25px", marginLeft: "5px"}}
+                                         // style={{flex: ""}}
+                                         // variant="fab"
+                                         // mini
+                                         aria-label="Upload"
+                                     >
+                                     <PhotoCamera />
+                                 </IconButton>
+                                 </Grid>
+                                 <Grid container spacing={0}>
+                                     <Grid item xl={12}>
+                                         <FormHelperText className={classes.textField}>{errors.image.length > 0 ? errors.image[0] : ""}</FormHelperText>
+                                     </Grid>
+                                 </Grid>
+                             </Grid>
+                         </FormControl>
+
+                         <FormControl error={errors.description.length > 0} margin="normal" fullWidth>
+                             <TextField
+                             error={errors.description.length > 0} 
+                             value={description} 
+                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.handleInputChange(e)}
+                             label="Description" 
+                             name="description"
+                             className={classes.textField}
+                             multiline
+                             fullWidth
+                             // value={this.state.profile.summary}
+                             margin="normal"
+                             />
+                             <FormHelperText className={classes.textField}>{errors.description.length > 0 ? errors.description[0] : ""}</FormHelperText>
+                         </FormControl>
+                        <CardActions style={{ padding: "0px" }}>
+                            <div className={classes.wrapper}>
+                            {/* disabled={loading} */}
+                            {/* className={addBtnClassName} */}
+                                <Button  variant="contained"  onClick={() => this.handleSubmit()} size="small" color="primary">
+                                    Add Course
+                                </Button>
+                                {/* {loading && <CircularProgress size={24} className={classes.buttonProgress} />} */}
+                            </div>
+                            <Button onClick={() => this.props.onCancel()} size="small" color="primary">
+                                Cancel
+                            </Button>
+                        </CardActions>
+                    </CardContent>  
                 </Card>
             </Collapse>
         );
-                        
-    //                     <FormControl error={shouldMarkError.image} className={classes.formControl}>
-    //                         <Grid container spacing={0}>
-    //                             <Grid item xl={6}>
-    //                                 <input accept="image/*" onChange={this.handleFileChange.bind(this)} type="file"  ref={(ref) => this.upload = ref} style={{ display: 'none' }} />
-    //                                 <Tooltip disableHoverListener={image.file_name == ""} title={image.file_name}>
-    //                                     <TextField
-    //                                     value={image.file_name}
-    //                                     name="image"
-    //                                     margin="normal"
-    //                                     className={classes.textField}
-    //                                     label="Image"
-    //                                     disabled
-    //                                     error={shouldMarkError.image}
-    //                                     color="primary"
-    //                                     />
-    //                                 </Tooltip>
-    //                             </Grid>
-    //                             <Grid item xl={2}>
-    //                                 <IconButton
-    //                                     // style={{display: "inline"}}
-    //                                     className="floatingButton"
-    //                                     onClick={this.handleUpload.bind(this) }
-    //                                     style={{ marginTop: "25px", marginLeft: "5px"}}
-    //                                     // style={{flex: ""}}
-    //                                     // variant="fab"
-    //                                     // mini
-    //                                     aria-label="Upload"
-    //                                 >
-    //                                 <PhotoCamera />
-    //                             </IconButton>
-    //                             </Grid>
-    //                             <Grid container spacing={0}>
-    //                                 <Grid item xl={12}>
-    //                                     <FormHelperText className={classes.textField}>{shouldMarkError.image ? errors.image[0] : ""}</FormHelperText>
-    //                                 </Grid>
-    //                             </Grid>
-    //                         </Grid>
-    //                     </FormControl>
-
-    //                     <FormControl error={shouldMarkError.description} margin="normal" fullWidth>
-    //                         <TextField
-    //                         error={shouldMarkError.description} 
-    //                         value={course.description} 
-    //                         onChange={this.handleCourseChange.bind(this)}
-    //                         label="Description" 
-    //                         name="description"
-    //                         className={classes.textField}
-    //                         multiline
-    //                         fullWidth
-    //                         // value={this.state.profile.summary}
-    //                         margin="normal"
-    //                         />
-    //                         <FormHelperText className={classes.textField}>{shouldMarkError.description ? errors.description[0] : ""}</FormHelperText>
-    //                     </FormControl>
-    //                 </CardContent>
-    //                 <CardActions>
-    //                 <div className={classes.wrapper}>
-    //                     <Button className={addBtnClassName} variant="contained" disabled={loading} onClick={this.handleCourseAdd.bind(this)} size="small" color="primary">
-    //                         Add Course
-    //                     </Button>
-    //                     {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
-    //                 </div>
-    //                 <Button onClick={this.props.handleCancel.bind(this)} size="small" color="primary">
-    //                     Cancel
-    //                 </Button>
-    //                 </CardActions>
-    //             </Card>
-    //         </Collapse>
-    //     );
     }
 }
 

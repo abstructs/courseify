@@ -1,6 +1,14 @@
 import { Service } from './Service';
 import axios from 'axios';
 
+export interface IAddCourseForm {
+    title: string,
+    author: string,
+    courseUrl: string,
+    description: string,
+    category: string
+}
+
 export class CourseService extends Service {
     constructor() {
         super();

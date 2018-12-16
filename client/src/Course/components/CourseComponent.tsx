@@ -7,6 +7,7 @@ import { Grid, List, ListItem, ListItemText, Divider, ListSubheader, Typography,
 // import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import green from '@material-ui/core/colors/green';
 import CourseAddExpansion from '../CourseAddExpansion';
+import { IAddCourseForm } from 'src/Services/CourseService';
 // import red from '@material-ui/core/colors/green';
 // import CourseCard from '../CourseCard';
 // import CourseAddExpansion from '../CourseAddExpansion';
@@ -164,7 +165,8 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
     //     this.setState({[name]: value});
     // }
 
-    handleCourseAddSuccess() {
+    addCourse(form: IAddCourseForm) {
+        console.log(form);
         this.setState({ expanded: false });
         // this.setState({ expanded: false, loading: true }, _ => this.getCourses());
     }
@@ -268,7 +270,7 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
                             {/* showSnackbar={this.showSnackbar.bind(this)}  */}
                                 <Grid item xs={12}>
                                 {/* handleSuccess={() => this.handleCourseAddSuccess()}   */}
-                                    <CourseAddExpansion onCancel={() => this.handleCancel()} expanded={expanded} />
+                                    <CourseAddExpansion onSuccess={(form: IAddCourseForm) => this.addCourse(form)} onCancel={() => this.handleCancel()} expanded={expanded} />
                                 </Grid>
                         </Grid>
                         {/* {loading ?
