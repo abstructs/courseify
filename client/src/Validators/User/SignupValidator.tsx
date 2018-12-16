@@ -40,7 +40,7 @@ export class SignupValidator extends Validator<ISignupForm, ISignupFormErrors> {
     private getEmailErrors(): Array<String> {
         const errors = new Array<String>();
 
-        if(!super.validEmail(this.getEmail())) {
+        if(!super.isAValidEmail(this.getEmail())) {
             errors.push("Please enter a valid email.");
         }
 
@@ -54,7 +54,7 @@ export class SignupValidator extends Validator<ISignupForm, ISignupFormErrors> {
             errors.push("Please enter a password between 6 and 20 characters..");
         }
 
-        if(!super.match(this.getPassword(), this.getPasswordConfirmation())) {
+        if(!super.matches(this.getPassword(), this.getPasswordConfirmation())) {
             errors.push("Passwords should match.");
         }
 

@@ -22,7 +22,7 @@ export class LoginValidator extends Validator<ILoginForm, ILoginFormErrors> {
     private getEmailErrors(): Array<String> {
         const errors = new Array<String>();
 
-        if(!super.validEmail(this.getEmail())) {
+        if(!super.isAValidEmail(this.getEmail())) {
             errors.push("Invalid email");
         }
 

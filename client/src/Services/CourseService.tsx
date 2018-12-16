@@ -6,7 +6,13 @@ export interface IAddCourseForm {
     author: string,
     courseUrl: string,
     description: string,
-    category: string
+    category: string,
+    image: IImage
+}
+
+export interface IImage {
+    fileName: string,
+    imageUrl: string
 }
 
 export class CourseService extends Service {
