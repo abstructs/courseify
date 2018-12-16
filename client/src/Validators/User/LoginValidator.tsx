@@ -33,7 +33,7 @@ export class LoginValidator extends Validator<ILoginForm, ILoginFormErrors> {
         const errors = new Array<String>();
 
         if(!super.inRange(this.getPassword(), 6, 20)) {
-            errors.push("Invalid password.");
+            errors.push("Invalid password");
         }
 
         return errors;

@@ -1,5 +1,5 @@
 import { Validator } from '../Validator';
-import { ISignupForm } from 'src/Services/UserService';
+import { ISignupForm, UserService } from 'src/Services/UserService';
 
 export interface ISignupFormErrors {
     email: Array<String>,
@@ -14,6 +14,8 @@ export class SignupValidator extends Validator<ISignupForm, ISignupFormErrors> {
     private getPassword: () => string;
     private getPasswordConfirmation: () => string;
 
+    private userService: UserService;
+
     constructor(getForm: () => ISignupForm) {
         super();
 
@@ -21,6 +23,8 @@ export class SignupValidator extends Validator<ISignupForm, ISignupFormErrors> {
         this.getUsername = () => getForm().username;
         this.getPassword = () => getForm().password;
         this.getPasswordConfirmation = () => getForm().password_confirmation;
+
+        this.userService = new UserService();
     }
 
     private getUsernameErrors(): Array<String> {
@@ -57,10 +61,34 @@ export class SignupValidator extends Validator<ISignupForm, ISignupFormErrors> {
         return errors;
     }
 
+    public getAsyncEmailError(callback: (emailErrors: Array<String>) => void) {
+        this.userService.emailTaken(this.getEmail(), (emailTaken: boolean) => {
+            const errors = new Array<String>();
+
+            if(emailTaken) {
+                errors.push("Email already in use");
+            }
+
+            callback(errors);
+        });
+    }
+
+    public getAsyncUsernameError(callback: (usernameErrors: Array<String>) => void) {
+        this.userService.usernameTaken(this.getUsername(), (usernameTaken: boolean) => {
+            const errors = new Array<String>();
+
+            if(usernameTaken) {
+                errors.push("Username already in use");
+            }
+
+            callback(errors);
+        });
+    }
+
     public getErrors(): ISignupFormErrors {
         return {
             email: this.getEmailErrors(),
-            username: this.getUsernameErrors(),
+            username: this.getUsernameErrors().concat(),
             password: this.getPasswordErrors()
         }
     }

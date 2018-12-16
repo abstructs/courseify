@@ -80,9 +80,32 @@ class SignUp extends React.Component<IPropTypes, IStateTypes> {
     }
 
     setErrors(callback: () => void): void {
-        this.setState({
-            errors: this.signupValidator.getErrors()
-        }, callback);
+        const getEmailErrors = new Promise<Array<String>>((resolve, reject) => this.signupValidator.getAsyncEmailError((emailErrors: Array<String>) => {
+            resolve(emailErrors);
+        }));
+
+        const getUsernameErrors = new Promise<Array<String>>((resolve, reject) => this.signupValidator.getAsyncUsernameError((usernameErrors: Array<String>) => {
+            resolve(usernameErrors);
+        }));
+
+        const errors = this.signupValidator.getErrors();
+
+        Promise.all([getEmailErrors, getUsernameErrors])
+        .then(([emailErrors, usernameErrors]) => {
+            this.setState({
+                errors: {
+                    ...errors,
+                    email: [
+                        ...emailErrors,
+                        ...errors.email
+                    ],
+                    username: [
+                        ...usernameErrors,
+                        ...errors.username
+                    ]
+                }
+            }, callback);
+        });
     }
 
     getFieldsWithErrors(): Array<String> {

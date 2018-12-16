@@ -28,6 +28,36 @@ export class UserService extends Service {
         return Cookies.get("token") != null;
     }
 
+    public usernameTaken(username: string, callback: (usernameTaken: boolean) => void) {
+        const payload = {
+            user: {
+                username
+            }
+        }
+
+        axios.post(`${super.getApiUrl()}/api/v1/users/username_taken`, payload)
+        .then(res => {
+            if(res.data) {
+                callback(res.data.username_taken);
+            }
+        });
+    }
+
+    public emailTaken(email: string, callback: (emailTaken: boolean) => void) {
+        const payload = {
+            user: {
+                email
+            }
+        }
+
+        axios.post(`${super.getApiUrl()}/api/v1/users/email_taken`, payload)
+        .then(res => {
+            if(res.data) {
+                callback(res.data.email_taken);
+            }
+        });
+    }
+
     public authenticate(loginForm: ILoginForm, onSuccess: (res: AxiosResponse) => void, onReject: (reason: any) => void) {
         const payload = {
             auth: {
@@ -35,7 +65,7 @@ export class UserService extends Service {
             }
         }
 
-        axios.post(`${process.env.REACT_APP_API_URL}/api/v1/users/user_token`, payload)
+        axios.post(`${super.getApiUrl()}/api/v1/users/user_token`, payload)
         .then(res => {
             if(res.data) {
                 this.storeToken(res.data.jwt);
@@ -55,7 +85,7 @@ export class UserService extends Service {
             }
         }
 
-        axios.post(`${process.env.REACT_APP_API_URL}/api/v1/users/`, payload)
+        axios.post(`${super.getApiUrl()}/api/v1/users/`, payload)
         .then(res => {
             if(res.data) {
                 this.storeToken(res.data.jwt);

@@ -84,8 +84,20 @@ class Api::V1::UsersController < ApplicationController
     end
   end
 
+  def username_taken
+    username = user_params[:username]
+
+    render json: { username_taken: User.exists?(username: username) }
+  end
+
+  def email_taken
+    email = user_params[:email]
+
+    render json: { email_taken: User.exists?(email: email) }
+  end
+
   def create
-    @user = User.new users_params
+    @user = User.new user_params
 
     if @user.save!
       render status: :ok, json: { jwt: get_token(@user) }
@@ -101,7 +113,7 @@ class Api::V1::UsersController < ApplicationController
     Knock::AuthToken.new(payload: { sub: user.id }).token
   end
 
-  def users_params
+  def user_params
     params.require(:user).permit(:email, :username, :password, :password_confirmation)
   end
 
