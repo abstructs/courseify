@@ -14,14 +14,39 @@ export interface ILoginForm {
     password: string
 }
 
+export interface IUser {
+    id: number,
+    email: string,
+    username: string,
+    first_name: string,
+    last_name: string,
+    education: string,
+    country: string,
+    industry: string,
+    summary: string
+}
+
 export class UserService extends Service {
 
     constructor() {
         super();
     }
 
+    public getAll(callback: (users: Array<IUser>) => void) {
+        axios.get(`${super.getApiUrl()}/api/v1/users`)
+        .then(res => {
+            const users: Array<IUser> = res.data.users;
+            
+            callback(users);
+        })
+    }
+
     private storeToken(token: string): void {
         Cookies.set("token", token);
+    }
+
+    public static revokeToken() {
+        Cookies.remove("token");
     }
 
     public isAuthenticated(): boolean {

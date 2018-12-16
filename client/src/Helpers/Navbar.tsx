@@ -29,7 +29,7 @@ interface IPropTypes {
         root: string,
         menuButton: string
     },
-    isAuthenticated: boolean
+    isAuthenticated: () => boolean
 }
 
 interface IStateTypes {
@@ -81,7 +81,7 @@ class Navbar extends React.Component<IPropTypes, IStateTypes> {
                         <Typography variant="title" color="inherit" className={classes.flex}>
                             Courseify
                     </Typography>
-                        {isAuthenticated ?
+                        {isAuthenticated() ?
                             <div>
                                 <Button href="/" color="inherit">Home</Button>
                                 <Button href="/logout" color="inherit">Logout</Button>

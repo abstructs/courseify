@@ -16,10 +16,11 @@ import {
 
 import SignUp from './User/SignUp';
 import Login from './User/Login';
-// import LogOut from './User/LogOut';
+import Logout from './User/Logout';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
-import LandingPage from './Home/containers/LandingPage';
+// import LandingPage from './Home/containers/LandingPage';
 import { UserService } from './Services/UserService';
+import HomePage from './Home/containers/HomePage';
 // import Auth from './User/Auth';
 
 // import RecommendationCreateModal from './Recommendation/RecommendationCreateModal';
@@ -83,13 +84,13 @@ const blueTheme = createMuiTheme({
 
 const userService: UserService = new UserService();
 
-const isAuthenticated = userService.isAuthenticated();
+const isAuthenticated: () => boolean = () => userService.isAuthenticated();
 
 const App = () => (
   <Router>
     <MuiThemeProvider theme={blueTheme}>
       <Navbar isAuthenticated={isAuthenticated} />
-      <Route exact path="/" component={LandingPage}/>
+      <Route exact path="/" component={HomePage}/>
       {/* <Route path="/recommend" component={RecommendationContainer}/>
      */}
       {/* <Route exact path="/profile" component={ProfileContainer}/> */}
@@ -105,7 +106,7 @@ const App = () => (
 
       <Route path="/signup" component={SignUp}/>
       <Route path="/login" component={Login}/>
-      {/* <Route path="/logout" component={LogOut}/> */}
+      <Route path="/logout" component={Logout}/>
       {/* <Footer /> */}
     </MuiThemeProvider>
   </Router>
