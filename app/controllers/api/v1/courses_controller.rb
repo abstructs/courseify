@@ -33,9 +33,9 @@ class Api::V1::CoursesController < ApplicationController
     # @course.user_id = current_user.id
     # @course.user = current_user
 
-    valid_image = if course_params.has_key?(:image) then valid_image_type?(course_params[:image]) else nil end
+    valid_image = if course_params.has_key?(:image) then valid_image_type?(course_params[:image]) else true end
 
-    if @course.valid? && valid_image != false
+    if @course.valid? && valid_image
       if course_params.has_key?(:image) then @course.image.attach(course_params[:image]) end
       @course.save!
 
@@ -43,7 +43,7 @@ class Api::V1::CoursesController < ApplicationController
     else
       if(!valid_image) then @course.errors.add(:image, 'must be jpeg, jpg, or png') end
       
-      puts @course.errors
+      puts @course.errors.messages
 
       render status: :unprocessable_entity
     end
@@ -64,7 +64,7 @@ class Api::V1::CoursesController < ApplicationController
     else
       if(!valid_image) then @course.errors.add(:image, 'must be jpeg, jpg, or png') end
 
-      puts @course.errors
+      puts @course.errors.messages
       
       render status: :bad_request
     end 

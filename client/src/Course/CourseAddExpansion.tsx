@@ -6,14 +6,15 @@ import * as React from 'react';
 // import PropTypes from 'prop-types';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import { Collapse, Dialog, DialogTitle, DialogActions, Button, Card, Typography, CardMedia, CardContent, FormControl, TextField, FormHelperText, Theme, withStyles, createStyles, MenuItem, Grid, Tooltip, IconButton, CardActions } from '@material-ui/core';
-import { IAddCourseForm, IImage } from 'src/Services/CourseService';
+import { IAddCourseForm, IImage, CourseService } from 'src/Services/CourseService';
 import { ICourseAddFormErrors, AddValidator } from 'src/Validators/Course/AddValidator';
 
 const bookImage = require('../images/book.jpeg');
 
 const defaultImageState: IImage = {
     fileName: "",
-    imageUrl: bookImage
+    imageUrl: bookImage,
+    file: null
 }
 
 const categories = [
@@ -73,57 +74,47 @@ interface IStateTypes {
     errors: ICourseAddFormErrors
 }
 
+const defaultState = {
+    form: {
+        title: "",
+        author: "",
+        url: "",
+        image: defaultImageState,
+        description: "",
+        category: ""
+    },
+    loading: false,
+    success: false,
+    dialogOpen: false,
+    errors: {
+        title: [],
+        author: [],
+        url: [],
+        image: [],
+        description: [],
+        category: []
+    }
+}
+
 class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
 
     private upload: HTMLInputElement | null;
     private courseValidator: AddValidator;
+    private courseService: CourseService;
 
     constructor(props: IPropTypes) {
         super(props);
 
-        this.state = {
-            form: {
-                title: "",
-                author: "",
-                courseUrl: "",
-                image: defaultImageState,
-                description: "",
-                category: ""
-            },
-            loading: false,
-            success: false,
-            dialogOpen: false,
-            errors: {
-                title: [],
-                author: [],
-                courseUrl: [],
-                image: [],
-                description: [],
-                category: []
-            }
-        }
+        this.state = defaultState;
 
         this.courseValidator = new AddValidator(() => this.state.form);
-    }
-
-    clearState() {
-        this.setState({
-            form: {
-                title: "",
-                author: "",
-                courseUrl: "",
-                image: defaultImageState,
-                description: "",
-                category: ""
-            },
-            loading: false,
-            success: false,
-            dialogOpen: false
-        });
+        this.courseService = new CourseService();
     }
 
     componentWillUnmount() {
-        this.clearState();
+        this.setState({
+            ...defaultState
+        });
     }
 
     getFieldsWithErrors(): Array<String> {
@@ -139,15 +130,20 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
 
         this.setState({ errors }, callback);
     }
-    
 
     handleSubmit() {
         // const course = this.state.form;
 
         this.setErrors(() => {
             if(this.thereAreNoErrors()) {
-                console.log(this.state.form);
-                console.log("success")
+                this.courseService.addCourse(this.state.form, (res) => {
+                    this.close();
+                }, (err) => {
+                    console.error("something went wrong");
+                });
+                // this.courseService
+                // console.log(this.state.form);
+                // console.log("success")
                 // this.userService.signup(this.state.form, this.onSuccess.bind(this), this.onError);
             }
         });
@@ -156,13 +152,12 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
         // console.log(course)
         // const { course, loading, success } = this.state;
 
-        // const file = this.upload.files[0];
-        // var formData = new FormData();
+
+        
+        
         // if(file) formData.append("image", file, file.name);
 
-        // Object.keys(course).map(key => {
-        //     formData.append(key, course[key]);
-        // });
+
 
         // if(!loading && !success) {
         //     this.setState({
@@ -209,8 +204,8 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
         this.setState({ form: { ...this.state.form, [name]: value } });
     }
 
-    handleCancel() {
-        this.setState({ dialogOpen: false }, () => this.props.onCancel());
+    close() {
+        this.setState({ ...defaultState, dialogOpen: false }, () => this.props.onCancel());
     }
 
     closeDialog() {
@@ -230,7 +225,8 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
                     ...this.state.form,
                     image: {
                         fileName: file.name,
-                        imageUrl: URL.createObjectURL(file)
+                        imageUrl: URL.createObjectURL(file),
+                        file
                     }
                 }
             });
@@ -256,7 +252,7 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
         // errors, image, course, loading,
         // success,
         const { dialogOpen, errors } = this.state;
-        const { title, author, category, courseUrl, description, image } = this.state.form;
+        const { title, author, category, url, description, image } = this.state.form;
 
         // const addBtnClassName = success != undefined ? (success ? classes.buttonSuccess : classes.buttonError) : "";
         
@@ -273,7 +269,7 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
                         <Button onClick={() => this.closeDialog()} color="primary" autoFocus>
                             Keep Changes
                         </Button>
-                        <Button onClick={() => this.handleCancel()} color="secondary">
+                        <Button onClick={() => this.close()} color="secondary">
                                 Cancel
                         </Button>
                      </DialogActions>
@@ -299,9 +295,9 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
                              <FormHelperText className={classes.textField}>{errors.author.length > 0 ? errors.author[0] : ""}</FormHelperText>
                          </FormControl>
 
-                         <FormControl error={errors.courseUrl.length > 0}>
-                             <TextField error={errors.courseUrl.length > 0} value={courseUrl} onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.handleInputChange(e)} name="courseUrl" className={classes.textField} label="Link" type="url" placeholder="http://"></TextField>
-                             <FormHelperText className={classes.textField}>{errors.courseUrl.length > 0 ? errors.courseUrl[0] : ""}</FormHelperText>
+                         <FormControl error={errors.url.length > 0}>
+                             <TextField error={errors.url.length > 0} value={url} onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.handleInputChange(e)} name="url" className={classes.textField} label="Link" type="url" placeholder="http://"></TextField>
+                             <FormHelperText className={classes.textField}>{errors.url.length > 0 ? errors.url[0] : ""}</FormHelperText>
                          </FormControl>
 
                          <FormControl error={errors.category.length > 0}>

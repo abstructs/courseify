@@ -4,7 +4,7 @@ import { IAddCourseForm } from 'src/Services/CourseService';
 export interface ICourseAddFormErrors {
     title: Array<String>,
     author: Array<String>,
-    courseUrl: Array<String>,
+    url: Array<String>,
     image: Array<String>,
     description: Array<String>,
     category: Array<String>
@@ -32,7 +32,7 @@ export class AddValidator extends Validator<IAddCourseForm, ICourseAddFormErrors
 
         this.getTitle = () => getForm().title;
         this.getAuthor = () => getForm().author;
-        this.getCourseUrl = () => getForm().courseUrl;
+        this.getCourseUrl = () => getForm().url;
         this.getImageFileName = () => getForm().image.fileName;
         this.getCategory = () => getForm().category;
         this.getDescription = () => getForm().description;
@@ -42,8 +42,8 @@ export class AddValidator extends Validator<IAddCourseForm, ICourseAddFormErrors
     private getTitleErrors(): Array<String> {
         const errors = new Array<String>();
 
-        if(!super.inRange(this.getTitle(), 1, 20)) {
-            errors.push("Invalid title");
+        if(!super.inRange(this.getTitle(), 5, 30)) {
+            errors.push("Title must be 5 to 30 characters long");
         }
 
         return errors;
@@ -62,8 +62,8 @@ export class AddValidator extends Validator<IAddCourseForm, ICourseAddFormErrors
     private getCourseUrlErrors(): Array<String> {
         const errors = new Array<String>();
 
-        if(super.isEmpty(this.getCourseUrl())) {
-            errors.push("Url cannot be empty");
+        if(super.isValidUrl(this.getCourseUrl())) {
+            errors.push("Not a valid url");
         }
 
         return errors;
@@ -72,9 +72,7 @@ export class AddValidator extends Validator<IAddCourseForm, ICourseAddFormErrors
     private getImageErrors(): Array<String> {
         const errors = new Array<String>();
 
-        console.log(this.getImageFileName());
-
-        if(!super.isImageType(this.getImageFileName())) {
+        if(!this.isEmpty(this.getImageFileName()) && !super.isImageType(this.getImageFileName())) {
             errors.push("Invalid file type");
         }
 
@@ -105,7 +103,7 @@ export class AddValidator extends Validator<IAddCourseForm, ICourseAddFormErrors
         return {
             title: this.getTitleErrors(),
             author: this.getAuthorErrors(),
-            courseUrl: this.getCourseUrlErrors(),
+            url: this.getCourseUrlErrors(),
             description: this.getDescriptionErrors(),
             image: this.getImageErrors(),
             category: this.getCategoryErrors()
