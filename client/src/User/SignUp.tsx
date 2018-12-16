@@ -3,8 +3,8 @@ import '../App.css';
 import { Redirect } from 'react-router';
 import { Grid, withStyles, Typography, TextField, FormControl, Button, Theme, createStyles, FormHelperText } from '@material-ui/core';
 
-import { UserValidator, IUserFormErrors } from 'src/Validators/UserValidator';
-import { IUserForm, UserService } from 'src/Services/UserService';
+import { SignupValidator, ISignupFormErrors } from 'src/Validators/User/SignupValidator';
+import { ISignupForm, UserService } from 'src/Services/UserService';
 // import SimpleSnackbar from '../Helpers/SimpleSnackbar';
 
 const styles = ({ spacing, palette }: Theme) => createStyles({
@@ -41,14 +41,14 @@ interface IPropTypes {
 }
 
 interface IStateTypes {
-    form: IUserForm,
-    errors: IUserFormErrors,
+    form: ISignupForm,
+    errors: ISignupFormErrors,
     redirect: boolean
 }
 
 class SignUp extends React.Component<IPropTypes, IStateTypes> {
 
-    private userValidator: UserValidator;
+    private signupValidator: SignupValidator;
     private userService: UserService;
 
     constructor(props: IPropTypes) {
@@ -69,7 +69,7 @@ class SignUp extends React.Component<IPropTypes, IStateTypes> {
             redirect: false
         }
 
-        this.userValidator = new UserValidator(() => this.state.form);
+        this.signupValidator = new SignupValidator(() => this.state.form);
         this.userService = new UserService();
     }
 
@@ -81,7 +81,7 @@ class SignUp extends React.Component<IPropTypes, IStateTypes> {
 
     setErrors(callback: () => void): void {
         this.setState({
-            errors: this.userValidator.getErrors()
+            errors: this.signupValidator.getErrors()
         }, callback);
     }
 
@@ -106,7 +106,7 @@ class SignUp extends React.Component<IPropTypes, IStateTypes> {
     handleSubmit() {
         this.setErrors(() => {
             if(this.thereAreNoErrors()) {
-                this.userService.signup(this.state.form, this.onSuccess, this.onError);
+                this.userService.signup(this.state.form, this.onSuccess.bind(this), this.onError);
             }
         });
     }

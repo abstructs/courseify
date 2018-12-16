@@ -88,7 +88,7 @@ class Api::V1::UsersController < ApplicationController
     @user = User.new users_params
 
     if @user.save!
-      render status: :ok, json: { token: "Bearer: get_token(@user)" }
+      render status: :ok, json: { jwt: get_token(@user) }
     else
       
       render status: :bad_request

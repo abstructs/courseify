@@ -1,102 +1,114 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import '../App.css';
-// import axios from 'axios';
 import { Redirect } from 'react-router';
-import Auth from './Auth';
-import PropTypes from 'prop-types';
-// import Alert from './Alert';
-import { Grid, withStyles, Typography, TextField, FormControl, Button, FormHelperText } from '@material-ui/core';
-import SimpleSnackbar from '../Helpers/SimpleSnackbar';
+import { Grid, withStyles, Typography, TextField, FormControl, Button, FormHelperText, Theme, createStyles } from '@material-ui/core';
+// import SimpleSnackbar from '../Helpers/SimpleSnackbar';
+import { ILoginForm, UserService } from 'src/Services/UserService';
+import { ILoginFormErrors, LoginValidator } from 'src/Validators/User/LoginValidator';
 
-const styles = theme => ({
+const styles = ({ spacing, palette }: Theme) => createStyles({
     root: {
       flexGrow: 1,
     },
     paper: {
-      padding: theme.spacing.unit * 2,
+      padding: spacing.unit * 2,
       textAlign: 'center',
-      color: theme.palette.text.secondary,
+      color: palette.text.secondary,
     },
     container: {
         display: 'flex',
         flexWrap: 'wrap',
     },
         textField: {
-        marginLeft: theme.spacing.unit,
-        marginRight: theme.spacing.unit,
-        width: "25%",
+        marginLeft: spacing.unit,
+        marginRight: spacing.unit
     },
 });
-  
 
-class LogIn extends Component {
-    constructor(props) {
+interface IPropTypes {
+    classes: {
+        root: string,
+        textField: string,
+        button: string
+    }
+}
+
+interface IStateTypes {
+    form: ILoginForm,
+    errors: ILoginFormErrors,
+    redirect: boolean
+}
+
+class Login extends React.Component<IPropTypes, IStateTypes> {
+    
+    private loginValidator: LoginValidator;
+    private userService: UserService; 
+
+    constructor(props: IPropTypes) {
         super(props);
+
         this.state = {
-            username: "",
-            email: "",
-            password: "",
-            errors: {},
+            form: {
+                email: "",
+                password: ""
+            },
+            errors: {
+                email: [],
+                password: []
+            },
             redirect: false
         }
+
+        this.loginValidator = new LoginValidator(() => this.state.form);
+        this.userService = new UserService();
     }
 
-    handleInputChange(event) {
-        const target = event.target;
-        const value = target.value;
-        const name = target.name;
+    handleInputChange({ currentTarget }: React.ChangeEvent<HTMLInputElement>) {
+        const { name, value } = currentTarget;
 
+        this.setState({ form: { ...this.state.form, [name]: value } });
+    }
+
+    setErrors(callback: () => void): void {
         this.setState({
-            [name]: value
+            errors: this.loginValidator.getErrors()
+        }, callback);
+    }
+
+    getFieldsWithErrors(): Array<String> {
+        return Object.keys(this.state.errors).filter(key => this.state.errors[key].length > 0);
+    }
+
+    thereAreNoErrors(): boolean {
+        return this.getFieldsWithErrors().length == 0;
+    }
+
+    onSuccess() {
+        this.setState({
+            redirect: true
         });
     }
 
-    formIsValid() {
-        const { email, password } = this.state;
-        
-        const validEmail = email.length() > 0;
-        const validPassword = password.length() >= 6 && password.length() <= 20;
-        
-        return validEmail && validPassword;
+    onError() {
+        console.error("Something went wrong");
     }
 
-    handleSubmit(event) {
-        const req = {
-            "email": this.state.email,
-            "password": this.state.password
-        }
-
-        if(!this.formIsValid()) {
-            // this.setState({ errors },
-            this.showSnackbar("We couldn't log you in, are you missing something?", "error");
-        } else {
-            Auth().authenticate(req)
-            .then(res => {
-                this.setState({ redirect: true });
-            })
-            .catch(err => {
-                this.showSnackbar("Something went wrong.", "error");
-            });
-        }
+    handleSubmit() {
+        this.setErrors(() => {
+            if(this.thereAreNoErrors()) {
+                this.userService.authenticate(this.state.form, this.onSuccess.bind(this), this.onError);
+            }
+        });
     }
 
-    showSnackbar = (message, variant) => {
-        this.snackbar.handleClick(message, variant);
-        // this.setState({ snackbarClicked: true, message });
-    }
-
-    shouldMarkError(paramName) {
-        const errors = this.state.errors[paramName] || [];
-        return errors.length != 0;
-    }
+    // showSnackbar = (message, variant) => {
+    //     this.snackbar.handleClick(message, variant);
+    //     // this.setState({ snackbarClicked: true, message });
+    // }
 
     render() {
         const { classes } = this.props;
         const { redirect, errors } = this.state;
-        const shouldMarkError = {
-            email: this.shouldMarkError("email"),
-            password: this.shouldMarkError("password")
-        }
         
         if (redirect) {
             return <Redirect to='/' />;
@@ -104,9 +116,10 @@ class LogIn extends Component {
 
         return (
         <div className={classes.root}>
-            <SimpleSnackbar onRef={ref => this.snackbar = ref} message={this.state.message} />
+            {/* <SimpleSnackbar onRef={ref => this.snackbar = ref} message={this.state.message} /> */}
+
             <Grid container spacing={24}>
-                <Grid item xs={12} align="center">
+                <Grid item xs={12}>
                     <Typography align="center" style={{color: "black", marginTop: "50px", marginBottom: "20px"}} variant="display2">
                         Login
                     </Typography>
@@ -117,25 +130,27 @@ class LogIn extends Component {
                         Login
                     </Paper> */}
                 </Grid>
-                <Grid item xs={12} align="center">
+                <Grid item xs={3} />
+                <Grid item xs={6}>
                     {/* <Paper align="center"> */}
-                        <FormControl error={shouldMarkError.email} margin="normal" fullWidth>
-                            <TextField error={shouldMarkError.email} name="email" onChange={this.handleInputChange.bind(this)} fullWidth={true} className={classes.textField} label="Email" type="email" placeholder="Email"></TextField>
-                            <FormHelperText className={classes.textField}>{shouldMarkError.email ? errors.email[0] : ""}</FormHelperText>
+                        <FormControl error={errors.email.length > 0} margin="normal" fullWidth>
+                            <TextField error={errors.email.length > 0} name="email" onChange={this.handleInputChange.bind(this)} fullWidth={true} className={classes.textField} label="Email" type="email" placeholder="Email"></TextField>
+                            <FormHelperText className={classes.textField}>{errors.email.length > 0 ? errors.email[0] : ""}</FormHelperText>
                         </FormControl>
                         {/* <FormControl>
                             <TextField className={classes.textField} label="Email" type="text" placeholder="Email"></TextField>
                         </FormControl>
                         <br/> */}
-                        <FormControl error={shouldMarkError.password} margin="normal" fullWidth>
-                            <TextField error={shouldMarkError.password} name="password" onChange={this.handleInputChange.bind(this)} fullWidth className={classes.textField} label="Password" type="password" placeholder="Password"></TextField>
-                            <FormHelperText className={classes.textField}>{shouldMarkError.password ? errors.password[0] : ""}</FormHelperText>
+                        <FormControl error={errors.password.length > 0} margin="normal" fullWidth>
+                            <TextField error={errors.password.length > 0} name="password" onChange={this.handleInputChange.bind(this)} fullWidth className={classes.textField} label="Password" type="password" placeholder="Password"></TextField>
+                            <FormHelperText className={classes.textField}>{errors.password.length > 0 ? errors.password[0] : ""}</FormHelperText>
                         </FormControl>
                         {/* <FormControl>
                             <TextField className={classes.textField} label="Password Confirmation" type="password" placeholder="Password Confirmation"></TextField>
                         </FormControl> */}
                     {/* </Paper> */}
                 </Grid>
+                <Grid item xs={3} />
                 <Button onClick={this.handleSubmit.bind(this)} style={{margin: "auto", marginTop: "30px"}} variant="contained" size="large" color="primary" className={classes.button}>
                     Login
                 </Button>
@@ -177,8 +192,4 @@ class LogIn extends Component {
     }
 }
 
-LogIn.propTypes = {
-    classes: PropTypes.object.isRequired,
-};
-
-export default withStyles(styles)(LogIn);
+export default withStyles(styles)(Login);

@@ -1,26 +1,26 @@
-import { Validator } from './Validator';
-import { IUserForm } from 'src/Services/UserService';
+import { Validator } from '../Validator';
+import { ISignupForm } from 'src/Services/UserService';
 
-export interface IUserFormErrors {
+export interface ISignupFormErrors {
     email: Array<String>,
     username: Array<String>,
     password: Array<String>
 }
 
-export class UserValidator extends Validator {
+export class SignupValidator extends Validator<ISignupForm, ISignupFormErrors> {
 
     private getEmail: () => string;
     private getUsername: () => string;
     private getPassword: () => string;
-    private getpassword_confirmation: () => string;
+    private getPasswordConfirmation: () => string;
 
-    constructor(getForm: () => IUserForm) {
+    constructor(getForm: () => ISignupForm) {
         super();
 
         this.getEmail = () => getForm().email;
         this.getUsername = () => getForm().username;
         this.getPassword = () => getForm().password;
-        this.getpassword_confirmation = () => getForm().password_confirmation;
+        this.getPasswordConfirmation = () => getForm().password_confirmation;
     }
 
     private getUsernameErrors(): Array<String> {
@@ -50,14 +50,14 @@ export class UserValidator extends Validator {
             errors.push("Please enter a password between 6 and 20 characters..");
         }
 
-        if(!super.match(this.getPassword(), this.getpassword_confirmation())) {
+        if(!super.match(this.getPassword(), this.getPasswordConfirmation())) {
             errors.push("Passwords should match.");
         }
 
         return errors;
     }
 
-    public getErrors(): IUserFormErrors {
+    public getErrors(): ISignupFormErrors {
         return {
             email: this.getEmailErrors(),
             username: this.getUsernameErrors(),

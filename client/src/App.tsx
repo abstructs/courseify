@@ -15,7 +15,7 @@ import {
 // import * as ReactRouter from 'react-router';
 
 import SignUp from './User/SignUp';
-// import LogIn from './User/LogIn';
+import Login from './User/Login';
 // import LogOut from './User/LogOut';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 import LandingPage from './Home/containers/LandingPage';
@@ -104,7 +104,7 @@ const App = () => (
       {/* <Route strict exact path="/people/:username/recommendations" component={RecommendationsContainer}/> */}
 
       <Route path="/signup" component={SignUp}/>
-      {/* <Route path="/login" component={LogIn}/> */}
+      <Route path="/login" component={Login}/>
       {/* <Route path="/logout" component={LogOut}/> */}
       {/* <Footer /> */}
     </MuiThemeProvider>
