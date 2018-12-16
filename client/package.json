@@ -12,6 +12,7 @@
     "@material-ui/core": "^1.4.0",
     "@material-ui/icons": "^1.1.0",
     "@types/jest": "^23.3.10",
+    "@types/js-cookie": "^2.2.0",
     "@types/node": "^10.12.15",
     "@types/react": "^16.7.17",
     "@types/react-dom": "^16.0.11",

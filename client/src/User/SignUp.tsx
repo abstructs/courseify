@@ -94,10 +94,9 @@ class SignUp extends React.Component<IPropTypes, IStateTypes> {
     }
 
     onSuccess() {
-        console.log("success")
-        // this.setState({
-        //     redirect: true
-        // });
+        this.setState({
+            redirect: true
+        });
     }
 
     onError() {
@@ -107,7 +106,7 @@ class SignUp extends React.Component<IPropTypes, IStateTypes> {
     handleSubmit() {
         this.setErrors(() => {
             if(this.thereAreNoErrors()) {
-                this.userService.authenticate(this.state.form, this.onSuccess, this.onError);
+                this.userService.signup(this.state.form, this.onSuccess, this.onError);
             }
         });
     }

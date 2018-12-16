@@ -10,15 +10,20 @@ export interface IUserForm {
 }
 
 export class UserService extends Service {
+
     constructor() {
         super();
     }
 
     private storeToken(token: string): void {
-        document.cookie
+        Cookies.set("token", token);
     }
 
-    public authenticate(userForm: IUserForm, onSuccess: (res: AxiosResponse) => void, onReject: (reason: any) => void) {
+    public isAuthenticated(): boolean {
+        return Cookies.get("token") != null;
+    }
+
+    public signup(userForm: IUserForm, onSuccess: (res: AxiosResponse) => void, onReject: (reason: any) => void) {
         const payload = {
             user: {
                 ...userForm

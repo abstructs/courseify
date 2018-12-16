@@ -19,6 +19,7 @@ import SignUp from './User/SignUp';
 // import LogOut from './User/LogOut';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 import LandingPage from './Home/containers/LandingPage';
+import { UserService } from './Services/UserService';
 // import Auth from './User/Auth';
 
 // import RecommendationCreateModal from './Recommendation/RecommendationCreateModal';
@@ -80,12 +81,14 @@ const blueTheme = createMuiTheme({
 //   }
 // }
 
-// const isLoggedIn = Auth().isAuthenticated;
+const userService: UserService = new UserService();
+
+const isAuthenticated = userService.isAuthenticated();
 
 const App = () => (
   <Router>
     <MuiThemeProvider theme={blueTheme}>
-      <Navbar isAuthenticated={false} />
+      <Navbar isAuthenticated={isAuthenticated} />
       <Route exact path="/" component={LandingPage}/>
       {/* <Route path="/recommend" component={RecommendationContainer}/>
      */}
