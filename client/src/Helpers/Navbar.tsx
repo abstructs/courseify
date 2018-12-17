@@ -61,7 +61,7 @@ class Navbar extends React.Component<IPropTypes, IStateTypes> {
             <div className={classes.root}>
                 <AppBar position="static" color="primary">
                     <Toolbar>
-                        <IconButton onClick={this.handleClick} className={classes.menuButton} color="inherit" aria-label="Menu">
+                        <IconButton onClick={(e) => this.handleClick(e)} className={classes.menuButton} color="inherit" aria-label="Menu">
                             <MenuIcon />
                             <Menu
                                 id="fade-menu"

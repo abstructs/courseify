@@ -14,9 +14,10 @@ import PeopleIcon from '@material-ui/icons/SupervisorAccount';
 import CourseInfoContent from './CourseInfoContent';
 
 // import RecommendationDialog from '../Recommendation/RecommendationDialog';
-import { ICourse } from 'src/Services/CourseService';
+import { ICourse, IEditCourseForm } from 'src/Services/CourseService';
 // Collapse
-import { Card, Dialog, DialogTitle, DialogActions, Button, DialogContent, DialogContentText, TextField, CardHeader, Avatar, CardActions, withStyles, IconButton } from '@material-ui/core';
+import { Card, Dialog, DialogTitle, DialogActions, Button, DialogContent, DialogContentText, TextField, CardHeader, Avatar, CardActions, withStyles, IconButton, Collapse } from '@material-ui/core';
+import CourseEditContent from './CourseEditExpansion';
 // import { PropTypes } from '@material-ui/core';
 
 const styles = {
@@ -46,7 +47,7 @@ interface IStateTypes {
     deleteDialogOpen: boolean,
     edit: boolean,
     loading: boolean,
-    expanded: boolean,
+    editFormExpanded: boolean,
     deleted: boolean,
     openRecommendations: boolean,
     openShare: boolean
@@ -58,7 +59,7 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
 
         this.state = {
             deleteDialogOpen: false,
-            expanded: false,
+            editFormExpanded: false,
             edit: false,
             loading: false,
             deleted: false,
@@ -68,8 +69,16 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
         }
     }
 
-    expandEdit() {
-        this.setState({ expanded: !this.state.expanded });
+    expandEditForm() {
+        this.setState({ editFormExpanded: true });
+    }
+
+    toggleEditFormExpand() {
+        this.setState({ editFormExpanded: !this.state.editFormExpanded });
+    }
+
+    closeEditForm() {
+        this.setState({ editFormExpanded: false });
     }
 
     openDeleteDialog() {
@@ -184,6 +193,15 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
         }
     }
 
+    onEditSuccess(form: IEditCourseForm) {
+        this.setState({ 
+            course: { 
+                ...this.state.course,
+                ...form
+            }
+        }, this.closeEditForm);
+    }
+
     // setImageUrl(new_url) {
     //     console.log("set url called")
     //     this.setState(prevState => ({
@@ -197,7 +215,7 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
  
     render() {
         const { classes } = this.props;
-        const { course, deleted } = this.state;
+        const { course, deleted, editFormExpanded } = this.state;
         // const isLoggedIn = Auth().isAuthenticated();
 
         // const current_user_recommended = this.state.course.recommendations.filter(recommendation => {
@@ -214,14 +232,16 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
         return (
             <Card className={classes.card}>
                 {/* <SimpleSnackbar message={"hi"} /> */}
+
                 {/* <RecommendationDialog recommendations={course.recommendations} onClose={this.handleRecommendationsClose.bind(this)} course_id={course.id} open={this.state.openRecommendations} /> */}
+
                 <Dialog open={this.state.deleteDialogOpen} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
                     <DialogTitle id="alert-dialog-title">{"Are you sure you want to remove this course?"}</DialogTitle>
                     <DialogActions>
                         <Button onClick={() => this.deleteCourse()} color="primary" autoFocus>
                             Yes, remove it
                         </Button>
-                        <Button onClick={this.handleCancel.bind(this)}>
+                        <Button onClick={() => this.handleCancel()}>
                             Cancel
                         </Button>
                     </DialogActions>
@@ -277,15 +297,15 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
 
                 <CardActions className={classes.actions} disableActionSpacing>
                         <IconButton color={true ? "secondary" : "default"} 
-                        // onClick={true ? this.handleUnrecommendClick.bind(this) : this.handleRecommendClick.bind(this)} 
-                        aria-label="Recommend this course"
-                        //disabled={refreshing}
+                            // onClick={true ? this.handleUnrecommendClick.bind(this) : this.handleRecommendClick.bind(this)} 
+                            aria-label="Recommend this course"
+                            //disabled={refreshing}
                         >
                             <FavoriteIcon />
                         </IconButton>
                         {/*  */}
                     <IconButton onClick={() => this.openShareDialog()} aria-label="Share">
-                        <ShareIcon color={this.state.openShare ? "secondary" : "inherit"}  />
+                        <ShareIcon color={this.state.openShare ? "secondary" : "inherit"} />
                     </IconButton>
                     <IconButton onClick={() => this.openRecommendationsDialog()}  aria-label="Delete">
                         <PeopleIcon color={this.state.openRecommendations ? "secondary" : "inherit"} />
@@ -293,22 +313,22 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
                     {
                         // current_user.id === course.user_id &&   
                         <div>
-                            <IconButton onClick={() => this.expandEdit()} aria-label="Edit">
-                                <EditIcon color={this.state.expanded ? "secondary" : "inherit"} />
+                            <IconButton onClick={() => this.toggleEditFormExpand()} aria-label="Edit">
+                                <EditIcon color={this.state.editFormExpanded ? "secondary" : "inherit"} />
                             </IconButton>
                             <IconButton onClick={() => this.openDeleteDialog()}  aria-label="Delete">
                                 <DeleteIcon color={this.state.deleteDialogOpen ? "secondary" : "inherit"} />
                             </IconButton>
                         </div>
                     }
-
                 </CardActions>
                 {/* {refreshing && <LinearProgress />} */}
 
-                {/* <Collapse in={this.state.expanded} timeout="auto"> */}
+                <Collapse in={editFormExpanded} timeout="auto">
                     {/* setImageUrl={this.setImageUrl.bind(this)}  */}
-                    {/* <CourseEditContent handleEditError={this.handleEditError.bind(this)} handleEditLoading={this.handleEditLoading.bind(this)} handleEditSuccess={this.handleEditSuccess.bind(this)} handleEditExpand={this.handleEditExpand.bind(this)} classes={classes} course={course} /> */}
-                {/* </Collapse> */}
+                    {/* handleEditError={this.handleEditError.bind(this)} handleEditLoading={this.handleEditLoading.bind(this)} handleEditSuccess={this.handleEditSuccess.bind(this)} handleEditExpand={this.handleEditExpand.bind(this)}  */}
+                    <CourseEditContent onSuccess={(newCourse: IEditCourseForm) => this.onEditSuccess(newCourse)} onCancel={() => this.closeEditForm()}  course={course} />
+                </Collapse>
             </Card>
         );
     }

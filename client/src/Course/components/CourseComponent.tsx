@@ -217,8 +217,6 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
         this.setState({ currentTab: newTab });
     } 
 
-    
-
     render() {
         const { classes } = this.props;
 

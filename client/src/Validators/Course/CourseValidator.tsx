@@ -1,14 +1,5 @@
 import { Validator } from '../Validator';
-import { IAddCourseForm } from 'src/Services/CourseService';
-
-export interface ICourseAddFormErrors {
-    title: Array<String>,
-    author: Array<String>,
-    url: Array<String>,
-    image: Array<String>,
-    description: Array<String>,
-    category: Array<String>
-}
+import { IAddCourseForm, ICourseFormErrors } from 'src/Services/CourseService';
 
 // export interface IAddCourseForm {
 //     title: string,
@@ -18,7 +9,7 @@ export interface ICourseAddFormErrors {
 //     category: string
 // }
 
-export class AddValidator extends Validator<IAddCourseForm, ICourseAddFormErrors> {
+export class CourseValidator extends Validator<IAddCourseForm, ICourseFormErrors> {
 
     private getTitle: () => string;
     private getAuthor: () => string;
@@ -99,7 +90,7 @@ export class AddValidator extends Validator<IAddCourseForm, ICourseAddFormErrors
         return errors;
     }
 
-    public getErrors(): ICourseAddFormErrors {
+    public getErrors(): ICourseFormErrors {
         return {
             title: this.getTitleErrors(),
             author: this.getAuthorErrors(),

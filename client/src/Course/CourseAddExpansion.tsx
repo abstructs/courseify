@@ -5,9 +5,10 @@ import * as React from 'react';
 
 // import PropTypes from 'prop-types';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
-import { Collapse, Dialog, DialogTitle, DialogActions, Button, Card, Typography, CardMedia, CardContent, FormControl, TextField, FormHelperText, Theme, withStyles, createStyles, MenuItem, Grid, Tooltip, IconButton, CardActions } from '@material-ui/core';
-import { IAddCourseForm, IImage, CourseService } from 'src/Services/CourseService';
-import { ICourseAddFormErrors, AddValidator } from 'src/Validators/Course/AddValidator';
+import { Collapse, Dialog, DialogTitle, DialogActions, Button, Card, Typography, CardMedia, CardContent, FormControl, TextField, FormHelperText, Theme, withStyles, createStyles, MenuItem, Grid, Tooltip, IconButton, CardActions, CircularProgress } from '@material-ui/core';
+import { IAddCourseForm, IImage, CourseService, ICourseFormErrors } from 'src/Services/CourseService';
+import { CourseValidator } from 'src/Validators/Course/CourseValidator';
+import { green } from '@material-ui/core/colors';
 
 const bookImage = require('../images/book.jpeg');
 
@@ -28,7 +29,7 @@ const categories = [
     }
 ];
 
-const styles = ({ spacing }: Theme) => createStyles({
+const styles = ({ spacing, palette }: Theme) => createStyles({
     root: {
         flexGrow: 1
     },
@@ -49,6 +50,26 @@ const styles = ({ spacing }: Theme) => createStyles({
         margin: spacing.unit,
         position: 'relative',
     },
+    buttonProgress: {
+        // color: "",
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        marginTop: -12,
+        marginLeft: -12,
+    },
+    buttonSuccess: {
+        backgroundColor: green[500],
+        '&:hover': {
+          backgroundColor: green[700],
+        },
+    },
+    buttonError: {
+        backgroundColor: palette.error.dark,
+        // '&:hover': {
+        //   backgroundColor: red[222],
+        // },
+    },
 });
 
 
@@ -62,7 +83,10 @@ interface IPropTypes {
         card: string,
         textField: string,
         formControl: string,
-        wrapper: string
+        wrapper: string,
+        buttonProgress: string,
+        buttonSuccess: string,
+        buttonError: string
     }
 }
 
@@ -71,7 +95,7 @@ interface IStateTypes {
     loading: boolean,
     success: boolean,
     dialogOpen: boolean,
-    errors: ICourseAddFormErrors
+    errors: ICourseFormErrors
 }
 
 const defaultState = {
@@ -99,7 +123,7 @@ const defaultState = {
 class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
 
     private upload: HTMLInputElement | null;
-    private courseValidator: AddValidator;
+    private courseValidator: CourseValidator;
     private courseService: CourseService;
 
     constructor(props: IPropTypes) {
@@ -107,7 +131,7 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
 
         this.state = defaultState;
 
-        this.courseValidator = new AddValidator(() => this.state.form);
+        this.courseValidator = new CourseValidator(() => this.state.form);
         this.courseService = new CourseService();
     }
 
@@ -131,71 +155,21 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
         this.setState({ errors }, callback);
     }
 
-    handleSubmit() {
-        // const course = this.state.form;
+    addCourse() {
+        this.courseService.addCourse(this.state.form, (res) => {
+            this.setState({ loading: false}, () => this.close());
+        }, (err) => {
+            this.setState({ loading: false}, this.close);
+            console.error("something went wrong");
+        });
+    }
 
+    handleSubmit() {
         this.setErrors(() => {
             if(this.thereAreNoErrors()) {
-                this.courseService.addCourse(this.state.form, (res) => {
-                    this.close();
-                }, (err) => {
-                    console.error("something went wrong");
-                });
-                // this.courseService
-                // console.log(this.state.form);
-                // console.log("success")
-                // this.userService.signup(this.state.form, this.onSuccess.bind(this), this.onError);
+                this.setState({ loading: true }, this.addCourse);
             }
         });
-
-        // console.log("add")
-        // console.log(course)
-        // const { course, loading, success } = this.state;
-
-
-        
-        
-        // if(file) formData.append("image", file, file.name);
-
-
-
-        // if(!loading && !success) {
-        //     this.setState({
-        //         loading: true, 
-        //         success: false,
-        //     }, 
-        //     _ => {
-        //         new Promise(resolve => {
-        //             setTimeout(_ => {
-        //                 axios({
-        //                     method: 'post',
-        //                     url: `${process.env.REACT_APP_API_URL}/api/v1/courses`,
-        //                     data: formData,
-        //                     config: { headers: {'Content-Type': 'multipart/form-data' }}
-        //                     })
-        //                     .then(res => {
-        //                         this.setState({ loading: false, success: true, errors: {} }, resolve);
-        //                         this.props.showSnackbar("Succesfully added course", "success");
-        //                     })
-        //                     .catch(err => {
-        //                         const { errors } = err.response.data;
-        //                         console.log(errors)
-        //                         this.setState(
-        //                             { loading: false, success: false , errors }, 
-        //                             _ => new Error());
-        //                         this.props.showSnackbar("Something went wrong, check the form for details", "error");
-        //                     })
-        //                 })
-        //             }, 1000)
-        //             .then(_ => {
-        //                 setTimeout(_ => {
-        //                     this.props.handleCourseAddSuccess();
-        //                 }, 1000);
-        //             })
-                // .catch(err => {
-                //     console.log(err)
-                // })
-            // });
     }
 
     handleInputChange({ target }: React.ChangeEvent<HTMLInputElement>) {
@@ -247,14 +221,13 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
     }
 
     render() {
-        // classes,
         const { expanded, classes } = this.props;
         // errors, image, course, loading,
         // success,
-        const { dialogOpen, errors } = this.state;
+        const { dialogOpen, errors, loading } = this.state;
         const { title, author, category, url, description, image } = this.state.form;
 
-        // const addBtnClassName = success != undefined ? (success ? classes.buttonSuccess : classes.buttonError) : "";
+        const saveBtnClassName = this.thereAreNoErrors() ? "" : classes.buttonError;
         
         // classNames({
         //     [classes.buttonSuccess]: success,
@@ -287,17 +260,17 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
                      <CardContent>
                          <FormControl error={errors.title.length > 0}>
                              <TextField error={errors.title.length > 0} value={title} onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.handleInputChange(e)} name="title" className={classes.textField} label="Title" type="text" placeholder="Title"></TextField>
-                             <FormHelperText className={classes.textField}>{errors.title.length > 0 ? errors.title[0] : ""}</FormHelperText>
+                             <FormHelperText className={classes.textField}>{errors.title.length > 0 && errors.title[0]}</FormHelperText>
                          </FormControl>
 
                          <FormControl error={errors.author.length > 0}>
                              <TextField error={errors.author.length > 0} value={author} onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.handleInputChange(e)} name="author" className={classes.textField} label="Author" type="text" placeholder="Author"></TextField>
-                             <FormHelperText className={classes.textField}>{errors.author.length > 0 ? errors.author[0] : ""}</FormHelperText>
+                             <FormHelperText className={classes.textField}>{errors.author.length > 0 && errors.author[0]}</FormHelperText>
                          </FormControl>
 
                          <FormControl error={errors.url.length > 0}>
                              <TextField error={errors.url.length > 0} value={url} onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.handleInputChange(e)} name="url" className={classes.textField} label="Link" type="url" placeholder="http://"></TextField>
-                             <FormHelperText className={classes.textField}>{errors.url.length > 0 ? errors.url[0] : ""}</FormHelperText>
+                             <FormHelperText className={classes.textField}>{errors.url.length > 0 && errors.url[0]}</FormHelperText>
                          </FormControl>
 
                          <FormControl error={errors.category.length > 0}>
@@ -321,7 +294,7 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
                                      );
                                  })}
                              </TextField>
-                             <FormHelperText className={classes.textField}>{errors.category.length > 0 ? errors.category[0] : ""}</FormHelperText>
+                             <FormHelperText className={classes.textField}>{errors.category.length > 0 && errors.category[0]}</FormHelperText>
                         </FormControl>
 
                         <FormControl error={errors.image.length > 0} className={classes.formControl}>
@@ -357,7 +330,7 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
                                  </Grid>
                                  <Grid container spacing={0}>
                                      <Grid item xl={12}>
-                                         <FormHelperText className={classes.textField}>{errors.image.length > 0 ? errors.image[0] : ""}</FormHelperText>
+                                         <FormHelperText className={classes.textField}>{errors.image.length > 0 && errors.image[0]}</FormHelperText>
                                      </Grid>
                                  </Grid>
                              </Grid>
@@ -365,27 +338,25 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
 
                          <FormControl error={errors.description.length > 0} margin="normal" fullWidth>
                              <TextField
-                             error={errors.description.length > 0} 
-                             value={description} 
-                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.handleInputChange(e)}
-                             label="Description" 
-                             name="description"
-                             className={classes.textField}
-                             multiline
-                             fullWidth
-                             // value={this.state.profile.summary}
-                             margin="normal"
+                                error={errors.description.length > 0} 
+                                value={description} 
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.handleInputChange(e)}
+                                label="Description" 
+                                name="description"
+                                className={classes.textField}
+                                multiline
+                                fullWidth
+                                // value={this.state.profile.summary}
+                                margin="normal"
                              />
-                             <FormHelperText className={classes.textField}>{errors.description.length > 0 ? errors.description[0] : ""}</FormHelperText>
+                             <FormHelperText className={classes.textField}>{errors.description.length > 0 && errors.description[0]}</FormHelperText>
                          </FormControl>
                         <CardActions style={{ padding: "0px" }}>
                             <div className={classes.wrapper}>
-                            {/* disabled={loading} */}
-                            {/* className={addBtnClassName} */}
-                                <Button  variant="contained"  onClick={() => this.handleSubmit()} size="small" color="primary">
+                                <Button className={saveBtnClassName} disabled={loading} variant="contained"  onClick={() => this.handleSubmit()} size="small" color="primary">
                                     Add Course
                                 </Button>
-                                {/* {loading && <CircularProgress size={24} className={classes.buttonProgress} />} */}
+                                {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
                             </div>
                             <Button onClick={() => this.props.onCancel()} size="small" color="primary">
                                 Cancel
