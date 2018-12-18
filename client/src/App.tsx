@@ -19,7 +19,7 @@ import Login from './User/Login';
 import Logout from './User/Logout';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 // import LandingPage from './Home/containers/LandingPage';
-import { UserService } from './Services/UserService';
+import { UserService, ICurrentUser } from './Services/UserService';
 import HomePage from './Home/containers/HomePage';
 // import Auth from './User/Auth';
 
@@ -84,18 +84,20 @@ const blueTheme = createMuiTheme({
 
 const userService: UserService = new UserService();
 
-const isAuthenticated: () => boolean = () => userService.isAuthenticated();
+// const isAuthenticated: () => boolean = () => userService.isAuthenticated();
+
+const getCurrentUser: () => ICurrentUser | null = () => userService.getCurrentUser();
 
 const App = () => (
   <Router>
     <MuiThemeProvider theme={blueTheme}>
-      <Navbar isAuthenticated={isAuthenticated} />
+      <Navbar isAuthenticated={() => getCurrentUser() != null} />
       <Route exact path="/" component={HomePage}/>
       {/* <Route path="/recommend" component={RecommendationContainer}/>
      */}
       {/* <Route exact path="/profile" component={ProfileContainer}/> */}
 
-      <Route exact path="/courses" component={CourseComponent} />
+      <Route exact path="/courses" component={(props: any) => <CourseComponent getCurrentUser={() => getCurrentUser()} {...props} />} />
 
       {/* <Route path="/courses/:id" component={CourseContainer} /> */}
 

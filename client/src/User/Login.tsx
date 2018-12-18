@@ -5,6 +5,8 @@ import { Grid, withStyles, Typography, TextField, FormControl, Button, FormHelpe
 // import SimpleSnackbar from '../Helpers/SimpleSnackbar';
 import { ILoginForm, UserService } from 'src/Services/UserService';
 import { ILoginFormErrors, LoginValidator } from 'src/Validators/User/LoginValidator';
+import AppSnackbar, { Variant } from 'src/Helpers/AppSnackbar';
+// import { SnackbarClassKey } from '@material-ui/core/Snackbar';
 
 const styles = ({ spacing, palette }: Theme) => createStyles({
     root: {
@@ -43,6 +45,7 @@ class Login extends React.Component<IPropTypes, IStateTypes> {
     
     private loginValidator: LoginValidator;
     private userService: UserService; 
+    private showSnackbar: (message: string, variant: Variant) => void;
 
     constructor(props: IPropTypes) {
         super(props);
@@ -59,8 +62,16 @@ class Login extends React.Component<IPropTypes, IStateTypes> {
             redirect: false
         }
 
+        // this.snackbar = React.createRef();
+
         this.loginValidator = new LoginValidator(() => this.state.form);
         this.userService = new UserService();
+
+        // this.snackbar
+    }
+
+    componentDidMount() {
+        // this.snackbar    
     }
 
     handleInputChange({ currentTarget }: React.ChangeEvent<HTMLInputElement>) {
@@ -97,8 +108,14 @@ class Login extends React.Component<IPropTypes, IStateTypes> {
         this.setErrors(() => {
             if(this.thereAreNoErrors()) {
                 this.userService.authenticate(this.state.form, this.onSuccess.bind(this), this.onError);
+            } else {
+                this.showSnackbar("Invalid credentials", Variant.Error);
             }
         });
+    }
+
+    setShowSnackbar(openSnackbar: (message: string, variant: string) => void) {
+        this.showSnackbar = openSnackbar;
     }
 
     // showSnackbar = (message, variant) => {
@@ -110,14 +127,15 @@ class Login extends React.Component<IPropTypes, IStateTypes> {
         const { classes } = this.props;
         const { redirect, errors } = this.state;
         
-        if (redirect) {
+        if(redirect) {
             return <Redirect to='/' />;
         }
 
         return (
         <div className={classes.root}>
-            {/* <SimpleSnackbar onRef={ref => this.snackbar = ref} message={this.state.message} /> */}
-
+         {/* message={this.state.message}  */}
+         {/* onRef={(ref: AppSnackBar) => this.snackbar = ref} */}
+            <AppSnackbar setOpenSnackbar={this.setShowSnackbar.bind(this)} />
             <Grid container spacing={24}>
                 <Grid item xs={12}>
                     <Typography align="center" style={{color: "black", marginTop: "50px", marginBottom: "20px"}} variant="display2">

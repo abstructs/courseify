@@ -6,6 +6,7 @@ import { CardContent, Button, FormControl, TextField, FormHelperText, MenuItem, 
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import { ICourse, ICourseFormErrors, IEditCourseForm, IImage } from 'src/Services/CourseService';
 import { CourseValidator } from 'src/Validators/Course/CourseValidator';
+import { Variant } from 'src/Helpers/AppSnackbar';
 
 const bookImage = require('../images/book.jpeg');
 
@@ -37,6 +38,7 @@ interface IPropTypes {
     close: () => any,
     onSuccess: (newCourse: IEditCourseForm) => any,
     updateCourse: (form: IEditCourseForm, onSuccess: () => void, onError: () => void) => any,
+    showSnackbar: (message: string, variant: Variant) => void,
     course: ICourse,
     classes: {
         formControl: string,
@@ -58,6 +60,15 @@ const defaultImageState: IImage = {
     file: null
 }
 
+const defaultErrorState: ICourseFormErrors = {
+    title: [],
+    author: [],
+    url: [],
+    image: [],
+    description: [],
+    category: []
+}
+
 class CourseEditExpansion extends React.Component<IPropTypes, IStateTypes> {
 
     private upload: HTMLInputElement | null;
@@ -72,14 +83,7 @@ class CourseEditExpansion extends React.Component<IPropTypes, IStateTypes> {
                 ...props.course,
                 image: defaultImageState
             },
-            errors: {
-                title: [],
-                author: [],
-                url: [],
-                image: [],
-                description: [],
-                category: []
-            },
+            errors: defaultErrorState,
             loading: false
         }       
 
@@ -138,10 +142,12 @@ class CourseEditExpansion extends React.Component<IPropTypes, IStateTypes> {
     }
 
     onSuccess() {
+        this.props.showSnackbar("Course has been updated", Variant.Success);
         this.setState({ loading: false }, this.props.onSuccess(this.state.form));
     }
 
     onError() {
+        this.props.showSnackbar("Something went wrong", Variant.Error);
         this.setState({ loading: false });
     }
 
@@ -157,6 +163,16 @@ class CourseEditExpansion extends React.Component<IPropTypes, IStateTypes> {
                 this.setState({ loading: true }, this.updateCourse);
             }
         });
+    }
+
+    close() {
+        this.setState({ 
+            form: {
+                ...this.props.course,
+                image: defaultImageState
+            },
+            errors: defaultErrorState
+        }, this.props.close);
     }
 
     // setImageUrl(url)
@@ -308,7 +324,7 @@ class CourseEditExpansion extends React.Component<IPropTypes, IStateTypes> {
                 <div style={{marginTop: "20px"}}>
                     <Button disabled={loading} className={saveBtnClassName} onClick={() => this.handleSubmit()} variant="contained" color="primary">Save</Button>
                     {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
-                    <Button onClick={() => this.props.close()}>Cancel</Button>
+                    <Button onClick={() => this.close()}>Cancel</Button>
                 </div>
             </CardContent>
         );

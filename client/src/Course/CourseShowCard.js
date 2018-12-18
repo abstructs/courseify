@@ -13,7 +13,7 @@ import CourseCard from './CourseCard';
 import CourseAddExpansion from './CourseAddExpansion';
 import RecommendationDialog from '../Recommendation/RecommendationDialog';
 import classNames from 'classnames';
-import SimpleSnackbar from '../Helpers/SimpleSnackbar';
+import SimpleSnackbar from '../Helpers/AppSnackbar';
 
 axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
 

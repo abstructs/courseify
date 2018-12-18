@@ -4,6 +4,7 @@ import { Collapse, Dialog, DialogTitle, DialogActions, Button, Card, Typography,
 import { IAddCourseForm, IImage, ICourseFormErrors } from 'src/Services/CourseService';
 import { CourseValidator } from 'src/Validators/Course/CourseValidator';
 import { green } from '@material-ui/core/colors';
+import { Variant } from 'src/Helpers/AppSnackbar';
 
 const bookImage = require('../images/book.jpeg');
 
@@ -66,6 +67,7 @@ const styles = ({ spacing, palette }: Theme) => createStyles({
 interface IPropTypes {
     close: () => any,
     addCourse: (form: IAddCourseForm, onSuccess: () => void, onError: () => void) => any,
+    showSnackbar: (message: string, variant: Variant) => void,
     expanded: boolean,
     classes: {
         root: string,
@@ -144,10 +146,12 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
     }
 
     onSuccess() {
+        this.props.showSnackbar("Course has been added", Variant.Success);
         this.setState({ loading: false }, this.close);
     }
 
     onError() {
+        this.props.showSnackbar("Something went wrong", Variant.Error);
         this.setState({ loading: false });
     }
 
@@ -344,7 +348,7 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
                                 Cancel
                             </Button>
                         </CardActions>
-                    </CardContent>  
+                    </CardContent>
                 </Card>
             </Collapse>
         );

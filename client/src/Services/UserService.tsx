@@ -26,6 +26,10 @@ export interface IUser {
     summary: string
 }
 
+export interface ICurrentUser {
+    id: number
+}
+
 export class UserService extends Service {
 
     constructor() {
@@ -51,6 +55,37 @@ export class UserService extends Service {
 
     public isAuthenticated(): boolean {
         return Cookies.get("token") != null;
+    }
+
+    private getParsedJwt(): object | null {
+        // try {
+        const token = super.getToken();
+        
+        if(token) {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace('-', '+').replace('_', '/');
+
+            return JSON.parse(window.atob(base64));
+        }
+        // }
+        // catch(error) {
+            // return {};
+        // }
+
+        return null;
+    }
+
+
+    public getCurrentUser(): ICurrentUser | null {
+        const parsedJwt = this.getParsedJwt();
+
+        if(parsedJwt) {
+            return {
+                id: parsedJwt['sub']["user"]['id']
+            }
+        }
+        
+        return null;
     }
 
     public usernameTaken(username: string, callback: (usernameTaken: boolean) => void) {

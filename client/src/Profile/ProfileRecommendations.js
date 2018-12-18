@@ -5,7 +5,7 @@ import Auth from '../User/Auth';
 import RecommendationCard from '../Recommendation/RecommendationCard';
 import CourseCard from '../Course/CourseCard';
 import { Grid } from '@material-ui/core';
-import SimpleSnackbar from '../Helpers/SimpleSnackbar';
+import SimpleSnackbar from '../Helpers/AppSnackbar';
 // import { Redirect, matchPath } from 'react-router';
 // import teacherImage from './images/laptop.jpeg';
 // import $ from 'jquery';

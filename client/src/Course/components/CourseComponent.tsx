@@ -2,8 +2,10 @@ import * as React from 'react';
 import { Grid, List, ListItem, ListItemText, Divider, ListSubheader, Typography, withStyles,Theme, createStyles, Fade, Button } from '@material-ui/core';
 import green from '@material-ui/core/colors/green';
 import CourseAddExpansion from '../CourseAddExpansion';
-import { IAddCourseForm, CourseService, ICourse, IEditCourseForm } from 'src/Services/CourseService';
+import { IAddCourseForm, CourseService, ICourse, IEditCourseForm, Category } from 'src/Services/CourseService';
 import CourseCard from '../CourseCard';
+import { ICurrentUser } from 'src/Services/UserService';
+import AppSnackbar from 'src/Helpers/AppSnackbar';
 
 const styles = ({ spacing, palette}: Theme) => createStyles({
     root: {
@@ -69,20 +71,15 @@ const styles = ({ spacing, palette}: Theme) => createStyles({
 //     data_science: { id: 3, value: "data_science" }
 // }
 
-enum Tab {
-    All = "all",
-    ComputerScience = "computer_science",
-    DataScience = "data_science"
-}
-
 interface IPropTypes {
+    getCurrentUser: () => ICurrentUser | null,
     classes: {
         root: string
     }
 }
 
 interface IStateTypes {
-    currentTab: Tab,
+    category: Category,
     expanded: boolean,
     loading: boolean,
     courses: ICourse[]
@@ -91,6 +88,7 @@ interface IStateTypes {
 class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
 
     private courseService: CourseService;
+    private showSnackbar: (message: string, variant: string) => void;
 
     constructor(props: IPropTypes) {
         super(props);
@@ -101,7 +99,7 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
             expanded: false,
             loading: false,
             // recommendationsOpen: false,
-            currentTab: Tab.All,
+            category: Category.All,
             // show: false
         }        
 
@@ -115,8 +113,12 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
         //     this.getCourse(id);
         // } 
         // else {
-        this.getCourses(() => {});
+        this.getCourses(Category.All, () => {});
         // }
+    }
+
+    setShowSnackbar(openSnackbar: (message: string, variant: string) => void) {
+        this.showSnackbar = openSnackbar;
     }
 
     // getCourse(id) {
@@ -136,8 +138,8 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
 
     // }
 
-    getCourses(onSuccess: () => void) {
-        this.courseService.getAll((courses: ICourse[]) => {
+    getCourses(category: Category, onSuccess: () => void) {
+        this.courseService.getByCategory(category, (courses: ICourse[]) => {
             this.setState({
                 courses
             }, onSuccess);
@@ -156,7 +158,7 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
 
     addCourse(form: IAddCourseForm, onSuccess: () => void, onError: () => void) {
         this.courseService.addCourse(form, (res) => {
-            this.setState({ expanded: false}, () => this.getCourses(() => {
+            this.setState({ expanded: false}, () => this.getCourses(this.state.category, () => {
                 onSuccess();
             }));
         }, (err) => {
@@ -170,6 +172,10 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
         }, (err) => {
             onError();
         });
+    }
+
+    deleteCourse(courseId: number, onSuccess: () => void, onError: () => void) {
+        this.courseService.deleteCourse(courseId, onSuccess, onError);
     }
 
     closeAddExpand() {
@@ -198,17 +204,12 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
     //     }, 1000);
     // }
 
-    handleTab = (newTab: Tab) => () => {
-        // _ => this.getCourses()
-        // , loading: true 
-
-        this.setState({ currentTab: newTab });
-    } 
+    handleTabClick(newCategory: Category) {
+        this.setState({ category: newCategory }, () => this.getCourses(newCategory, () => {}));
+    }
 
     render() {
         const { classes } = this.props;
-
-        // , courses, show, course
 
         const { loading, expanded, courses } = this.state;
 
@@ -230,21 +231,21 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
         return (
             <div className={classes.root}>
                 {/* <SimpleSnackbar onRef={ref => this.snackbar = ref} /> */}
-
+                <AppSnackbar setOpenSnackbar={this.setShowSnackbar.bind(this)} />
                 <Grid container spacing={0} justify="space-between">
                     <Grid item md={3}>
                         <List component="nav" subheader={<ListSubheader component="div">Categories</ListSubheader>}>
                             <Divider />
-                            <ListItem button onClick={() => this.handleTab(Tab.All)}>
+                            <ListItem button onClick={() => this.handleTabClick(Category.All)}>
                                 <ListItemText primary="All" />
                             </ListItem>
-                            <ListItem button onClick={() => this.handleTab(Tab.ComputerScience)}>
+                            <ListItem button onClick={() => this.handleTabClick(Category.ComputerScience)}>
                                 {/* <ListItemIcon>
                                     <LibraryBooksIcon />
                                 </ListItemIcon> */}
                                 <ListItemText primary="Computer Science" />
                             </ListItem>
-                            <ListItem button onClick={() => this.handleTab(Tab.DataScience)} >
+                            <ListItem button onClick={() => this.handleTabClick(Category.DataScience)} >
                                 {/* <ListItemIcon>
                                     <LibraryBooksIcon />
                                 </ListItemIcon> */}
@@ -272,6 +273,7 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
                                     <CourseAddExpansion 
                                         addCourse={(form: IAddCourseForm, onSuccess: () => void, onError: () => void) => this.addCourse(form, onSuccess, onError)} 
                                         close={() => this.closeAddExpand()}
+                                        showSnackbar={this.showSnackbar}
                                         expanded={expanded}
                                     />
                                 </Grid>
@@ -284,16 +286,17 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
 
                         } */}
                             {
-                                // showSnackbar={this.showSnackbar.bind(this)} 
-                                // current_user={current_user} 
                                 courses.map((course: ICourse) => {
                                     // editCourse={(form: IEditCourseForm) => this.editCourse()}
                                     return (
-                                                <CourseCard 
-                                                    key={course.id} 
-                                                    course={course} 
-                                                    updateCourse={(form: IEditCourseForm, onSuccess: () => void, onError: () => void) => this.updateCourse(form, onSuccess, onError)} 
-                                                />
+                                        <CourseCard 
+                                            key={course.id}
+                                            currentUser={this.props.getCurrentUser()}
+                                            course={course} 
+                                            showSnackbar={this.showSnackbar.bind(this)}
+                                            updateCourse={(form: IEditCourseForm, onSuccess: () => void, onError: () => void) => this.updateCourse(form, onSuccess, onError)} 
+                                            deleteCourse={(courseId: number, onSuccess: () => void, onError: () => void) => this.deleteCourse(courseId, onSuccess, onError)}
+                                        />
                                     );
                                 })
                             }

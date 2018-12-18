@@ -48,6 +48,12 @@ export interface IImage {
     file: File | null
 }
 
+export enum Category {
+    All = "all",
+    ComputerScience = "computer_science",
+    DataScience = "data_science"
+}
+
 export class CourseService extends Service {
 
     constructor() {
@@ -61,9 +67,11 @@ export class CourseService extends Service {
         .catch(onError);
     }
 
-    getByCategory(category: string, callback: (res: any) => void) {
+    getByCategory(category: Category, onSuccess: (courses: ICourse[]) => void, onError: (reason: any) => void) {
         axios.get(`${super.getApiUrl()}/api/v1/courses?category=${category}`)
-        .then(callback);
+        .then(res => res.data.courses)
+        .then(onSuccess)
+        .catch(onError);
     }
 
     addCourse(course: IAddCourseForm, onSuccess: (res: any) => void, onError: (reason: any) => void) {
@@ -106,6 +114,13 @@ export class CourseService extends Service {
         // .then((res) => {
         //     console.log(res)
         // })
+        .then(onSuccess)
+        .catch(onError);
+    }
+
+    deleteCourse(courseId: number, onSuccess: (res: any) => void, onError: (reason: any) => void) {
+        axios.delete(`${super.getApiUrl()}/api/v1/courses/${courseId}`, 
+            { headers: { 'Content-Type': 'multipart/form-data', ...super.getAuthHeader() }})
         .then(onSuccess)
         .catch(onError);
     }

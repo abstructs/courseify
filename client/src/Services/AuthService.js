@@ -31,7 +31,6 @@ const Auth = () => ({
       catch(error) {
         return {};
       }
-
     }
 });
 

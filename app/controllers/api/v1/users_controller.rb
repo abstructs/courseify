@@ -110,7 +110,7 @@ class Api::V1::UsersController < ApplicationController
   private
 
   def get_token(user)
-    Knock::AuthToken.new(payload: { sub: user.id }).token
+    Knock::AuthToken.new(payload: { sub: { user: { user_id: user.id } } }).token
   end
 
   def user_params
