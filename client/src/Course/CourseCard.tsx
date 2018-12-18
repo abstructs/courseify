@@ -35,6 +35,7 @@ const styles = {
 
 interface IPropTypes {
     course: ICourse,
+    updateCourse: (form: IEditCourseForm, onSuccess: () => void, onError: () => void) => any,
     classes: {
         card: string,
         avatar: string,
@@ -86,7 +87,7 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
     }
 
     deleteCourse() {
-        console.log("delete")
+        console.log("delete");
         // axios.delete(`${process.env.REACT_APP_API_URL}/api/v1/courses/${this.state.course.id}`)
         // .then(res => {
         //     this.setState({ refreshing: true, deleteDialogOpen: false }, _ => setTimeout(_ => {
@@ -97,7 +98,9 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
     }
 
     handleCancel() {
-        this.setState({ deleteDialogOpen: false }, () => this.handleCloseDialog());
+        this.setState({ 
+            deleteDialogOpen: false
+        }, () => this.handleCloseDialog());
     }
 
     handleCloseDialog() {
@@ -327,7 +330,7 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
                 <Collapse in={editFormExpanded} timeout="auto">
                     {/* setImageUrl={this.setImageUrl.bind(this)}  */}
                     {/* handleEditError={this.handleEditError.bind(this)} handleEditLoading={this.handleEditLoading.bind(this)} handleEditSuccess={this.handleEditSuccess.bind(this)} handleEditExpand={this.handleEditExpand.bind(this)}  */}
-                    <CourseEditContent onSuccess={(newCourse: IEditCourseForm) => this.onEditSuccess(newCourse)} onCancel={() => this.closeEditForm()}  course={course} />
+                    <CourseEditContent onSuccess={(newCourse: IEditCourseForm) => this.onEditSuccess(newCourse)} updateCourse={this.props.updateCourse} close={() => this.closeEditForm()}  course={course} />
                 </Collapse>
             </Card>
         );

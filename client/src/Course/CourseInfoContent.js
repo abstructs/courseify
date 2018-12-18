@@ -22,7 +22,7 @@ class CourseInfoContent extends Component {
         const { classes } = this.props;
         const { course } = this.props;
 
-        console.log(course)
+        // console.log(course)
 
         return (
             <div>

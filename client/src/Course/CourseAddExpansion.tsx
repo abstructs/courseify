@@ -1,12 +1,7 @@
-/* tslint:disable */
-
 import * as React from 'react';
-// import { CardContent, Typography, CardActions, Collapse, Card, Button, FormControl, TextField, CircularProgress, FormHelperText, MenuItem, InputAdornment, Grid, Tooltip, IconButton, CardMedia } from '@material-ui/core';
-
-// import PropTypes from 'prop-types';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import { Collapse, Dialog, DialogTitle, DialogActions, Button, Card, Typography, CardMedia, CardContent, FormControl, TextField, FormHelperText, Theme, withStyles, createStyles, MenuItem, Grid, Tooltip, IconButton, CardActions, CircularProgress } from '@material-ui/core';
-import { IAddCourseForm, IImage, CourseService, ICourseFormErrors } from 'src/Services/CourseService';
+import { IAddCourseForm, IImage, ICourseFormErrors } from 'src/Services/CourseService';
 import { CourseValidator } from 'src/Validators/Course/CourseValidator';
 import { green } from '@material-ui/core/colors';
 
@@ -34,7 +29,6 @@ const styles = ({ spacing, palette }: Theme) => createStyles({
         flexGrow: 1
     },
     card: {
-        // maxWidth: 800,
         marginBottom: "40px"
     },
     media: {
@@ -51,7 +45,6 @@ const styles = ({ spacing, palette }: Theme) => createStyles({
         position: 'relative',
     },
     buttonProgress: {
-        // color: "",
         position: 'absolute',
         top: '50%',
         left: '50%',
@@ -65,17 +58,14 @@ const styles = ({ spacing, palette }: Theme) => createStyles({
         },
     },
     buttonError: {
-        backgroundColor: palette.error.dark,
-        // '&:hover': {
-        //   backgroundColor: red[222],
-        // },
+        backgroundColor: palette.error.dark
     },
 });
 
 
 interface IPropTypes {
-    onCancel: () => any,
-    onSuccess: (form: IAddCourseForm) => any,
+    close: () => any,
+    addCourse: (form: IAddCourseForm, onSuccess: () => void, onError: () => void) => any,
     expanded: boolean,
     classes: {
         root: string,
@@ -124,7 +114,6 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
 
     private upload: HTMLInputElement | null;
     private courseValidator: CourseValidator;
-    private courseService: CourseService;
 
     constructor(props: IPropTypes) {
         super(props);
@@ -132,7 +121,6 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
         this.state = defaultState;
 
         this.courseValidator = new CourseValidator(() => this.state.form);
-        this.courseService = new CourseService();
     }
 
     componentWillUnmount() {
@@ -155,13 +143,18 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
         this.setState({ errors }, callback);
     }
 
+    onSuccess() {
+        this.setState({ loading: false }, this.close);
+    }
+
+    onError() {
+        this.setState({ loading: false });
+    }
+
     addCourse() {
-        this.courseService.addCourse(this.state.form, (res) => {
-            this.setState({ loading: false}, () => this.close());
-        }, (err) => {
-            this.setState({ loading: false}, this.close);
-            console.error("something went wrong");
-        });
+        const course = this.state.form;
+
+        this.props.addCourse(course, () => this.onSuccess(), () => this.onError())
     }
 
     handleSubmit() {
@@ -179,16 +172,16 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
     }
 
     close() {
-        this.setState({ ...defaultState, dialogOpen: false }, () => this.props.onCancel());
+        this.setState({ ...defaultState, dialogOpen: false }, () => this.props.close());
     }
 
     closeDialog() {
         this.setState({ dialogOpen: false });
     }
 
-    // handleOpenDialog(e) {
-    //     this.setState({ dialog_open: true });
-    // }
+    openConfirmationDialog() {
+        this.setState({ dialogOpen: true });
+    }
     
     handleFileChange() {
         if(this.upload && this.upload.files && this.upload.files.length > 0) {
@@ -222,17 +215,11 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
 
     render() {
         const { expanded, classes } = this.props;
-        // errors, image, course, loading,
-        // success,
+
         const { dialogOpen, errors, loading } = this.state;
         const { title, author, category, url, description, image } = this.state.form;
 
         const saveBtnClassName = this.thereAreNoErrors() ? "" : classes.buttonError;
-        
-        // classNames({
-        //     [classes.buttonSuccess]: success,
-        //     // [classes.buttonError]: !success && !loading
-        // });
 
         return (
             <Collapse in={expanded} timeout="auto" unmountOnExit>
@@ -316,13 +303,9 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
                                  </Grid>
                                  <Grid item xl={2}>
                                      <IconButton
-                                         // style={{display: "inline"}}
                                          className="floatingButton"
                                          onClick={() => this.handleUpload()}
                                          style={{ marginTop: "25px", marginLeft: "5px"}}
-                                         // style={{flex: ""}}
-                                         // variant="fab"
-                                         // mini
                                          aria-label="Upload"
                                      >
                                      <PhotoCamera />
@@ -346,7 +329,6 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
                                 className={classes.textField}
                                 multiline
                                 fullWidth
-                                // value={this.state.profile.summary}
                                 margin="normal"
                              />
                              <FormHelperText className={classes.textField}>{errors.description.length > 0 && errors.description[0]}</FormHelperText>
@@ -358,7 +340,7 @@ class CourseAddExpansion extends React.Component<IPropTypes, IStateTypes> {
                                 </Button>
                                 {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
                             </div>
-                            <Button onClick={() => this.props.onCancel()} size="small" color="primary">
+                            <Button onClick={() => this.openConfirmationDialog()} size="small" color="primary">
                                 Cancel
                             </Button>
                         </CardActions>

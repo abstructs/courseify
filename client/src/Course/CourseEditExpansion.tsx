@@ -1,17 +1,11 @@
 /* tslint:disable */
 
 import * as React from 'react';
-// import '../App.css';
-// import axios from 'axios';
-// import { Redirect, matchPath } from 'react-router';
-// import bookImage from '../images/book.jpeg';
-// import PropTypes from 'prop-types';
 
 import { CardContent, Button, FormControl, TextField, FormHelperText, MenuItem, withStyles, Grid, Tooltip, IconButton, Theme, createStyles, CircularProgress } from '@material-ui/core';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
-import { ICourse, ICourseFormErrors, IEditCourseForm, IImage, CourseService } from 'src/Services/CourseService';
+import { ICourse, ICourseFormErrors, IEditCourseForm, IImage } from 'src/Services/CourseService';
 import { CourseValidator } from 'src/Validators/Course/CourseValidator';
-// import { green } from '@material-ui/core/colors';
 
 const bookImage = require('../images/book.jpeg');
 
@@ -27,32 +21,22 @@ const categories = [
 ];
 
 const styles = ({ palette }: Theme) => createStyles({
-    // media: {
-    //     height: 0,
-    //     paddingTop: '56.25%', // 16:9
-    // }
-    // buttonSuccess: {
-    //     backgroundColor: green[500],
-    //     '&:hover': {
-    //         backgroundColor: green[700],
-    //     },
-    // },
     buttonError: {
         backgroundColor: palette.error.dark,
     },
     buttonProgress: {
-        // color: "",
         position: 'absolute',
         top: '50%',
         left: '50%',
         marginTop: -12,
-        marginLeft: -12,
+        marginLeft: -12
     },
 });
 
 interface IPropTypes {
-    onCancel: () => any,
-    onSuccess: (form: IEditCourseForm) => any,
+    close: () => any,
+    onSuccess: (newCourse: IEditCourseForm) => any,
+    updateCourse: (form: IEditCourseForm, onSuccess: () => void, onError: () => void) => any,
     course: ICourse,
     classes: {
         formControl: string,
@@ -78,7 +62,7 @@ class CourseEditExpansion extends React.Component<IPropTypes, IStateTypes> {
 
     private upload: HTMLInputElement | null;
     private courseValidator: CourseValidator;
-    private courseService: CourseService;
+    // private courseService: CourseService;
     
     constructor(props: IPropTypes) {
         super(props);
@@ -100,7 +84,7 @@ class CourseEditExpansion extends React.Component<IPropTypes, IStateTypes> {
         }       
 
         this.courseValidator = new CourseValidator(() => this.state.form);
-        this.courseService = new CourseService();
+        // this.courseService = new CourseService();
     }
 
     handleInputChange({ target }: React.ChangeEvent<HTMLInputElement>) {
@@ -153,13 +137,18 @@ class CourseEditExpansion extends React.Component<IPropTypes, IStateTypes> {
         this.setState({ errors }, callback);
     }
 
+    onSuccess() {
+        this.setState({ loading: false }, this.props.onSuccess(this.state.form));
+    }
+
+    onError() {
+        this.setState({ loading: false });
+    }
+
     updateCourse() {
-        this.courseService.updateCourse(this.state.form, (res) => {
-            this.setState({ loading: false}, () => this.props.onSuccess(this.state.form));
-        }, (err) => {
-            this.setState({ loading: false });
-            console.error("something went wrong");
-        });
+        const course = this.state.form;
+
+        this.props.updateCourse(course, () => this.onSuccess(), () => this.onError())
     }
 
     handleSubmit() {
@@ -169,107 +158,6 @@ class CourseEditExpansion extends React.Component<IPropTypes, IStateTypes> {
             }
         });
     }
-
-    // handleSave(e) {
-    //     console.log(this.state.course)
-    //     this.props.handleEditLoading();
-
-    //     const file = this.upload.files[0];
-    //     var formData = new FormData();
-    //     if(file) formData.append("image", file, file.name);
-
-    //     Object.keys(this.state.course).map(key => {
-    //         formData.append(key, this.state.course[key]);
-    //     });
-
-    //     axios({
-    //         method: 'put',
-    //         url: `${process.env.REACT_APP_API_URL}/v1/courses/${this.state.course.id}`,
-    //         data: formData,
-    //         config: { headers: {'Content-Type': 'multipart/form-data' }}
-    //     })
-    //     .then(res => {
-    //         // this.setState({ loading: false, success: true, errors: {} }, resolve);
-    //         // this.props.showSnackbar("Succesfully added course", "success");
-    //         this.props.handleEditSuccess();
-    //     })
-    //     .catch(err => {
-    //         const { errors } = err.response.data;
-    //         console.log(err.response)
-    //         this.setState({ errors }, _ => this.props.handleEditError(errors));
-    //     });
-
-    //     // setTimeout(() => {
-    //     //     axios.put(`${process.env.REACT_APP_API_URL}/api/v1/courses/${this.state.course.id}`, { ... this.state })
-    //     //     .then(res => {
-    //     //         this.props.handleEditSuccess();
-    //     //     })
-    //     //     .catch(err => {
-    //     //         const { errors } = err.response.data;
-    //     //         console.log(errors)
-    //     //         this.setState({ errors }, _ => this.props.handleEditError(errors));
-    //     //     });
-    //     // }, 500); 
-    // }
-
-    // handleCancel(event) {
-    //     this.props.handleEditExpand();
-    // }
-
-    // shouldMarkError(paramName) {
-    //     const errors = this.state.errors[paramName] || [];
-    //     return errors.length != 0;
-    // }
-
-    // handleUpload() {
-    //     this.upload.click();
-    // }
-
-    // validateFile(file) {
-    //     return (/\.(gif|jpg|jpeg|tiff|png)$/i).test(file.name);
-    // }
-
-    // handleFileChange() {
-    //     const uploadInput = this.upload 
-    //     const file = uploadInput && uploadInput.files.length !== 0 ? uploadInput.files[0] : false;
-
-    //     // const image = this.upload && this.upload.files.length != 0 ? URL.createObjectURL(this.upload.files[0]) : profile.banner_url;
-        
-    //     if(file) {
-    //         if(this.validateFile(file)) {
-    //             this.setState(prevState => ({
-    //                 image: {
-    //                     ...prevState.image,
-    //                     file_name: file.name,
-    //                 }
-    //             }), _ => {
-    //                 console.log("hi")
-    //                 this.props.setImageUrl(URL.createObjectURL(file));
-    //             });
-    //         } else {
-    //             this.setState(prevState => ({
-    //                 // ...prevState,
-    //                 errors: {
-    //                     ...prevState.errors,
-    //                     image: [file.type + " is not a valid file format"]
-    //                 },
-    //                 image: {
-    //                     url: bookImage,
-    //                     file_name: file.name
-    //                 }
-    //             }));
-    //         }
-    //     }
-    //     else {
-    //         this.setState(prevState => ({
-    //             image: {
-    //                 ...prevState.image,
-    //                 url: bookImage,
-    //                 file_name: ""
-    //             }
-    //         }));
-    //     }   
-    // }
 
     // setImageUrl(url)
     render() {
@@ -420,7 +308,7 @@ class CourseEditExpansion extends React.Component<IPropTypes, IStateTypes> {
                 <div style={{marginTop: "20px"}}>
                     <Button disabled={loading} className={saveBtnClassName} onClick={() => this.handleSubmit()} variant="contained" color="primary">Save</Button>
                     {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
-                    <Button onClick={() => this.props.onCancel()}>Cancel</Button>
+                    <Button onClick={() => this.props.close()}>Cancel</Button>
                 </div>
             </CardContent>
         );

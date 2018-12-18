@@ -81,9 +81,9 @@ export class CourseService extends Service {
 
         axios.post(`${super.getApiUrl()}/api/v1/courses/`, formData, 
             { headers: { 'Content-Type': 'multipart/form-data', ...super.getAuthHeader() }})
-        .then((res) => {
-            console.log(res)
-        })
+        // .then((res) => {
+        //     console.log(res)
+        // })
         .then(onSuccess)
         .catch(onError);
     }
@@ -103,9 +103,9 @@ export class CourseService extends Service {
 
         axios.put(`${super.getApiUrl()}/api/v1/courses/${course.id}`, formData, 
             { headers: { 'Content-Type': 'multipart/form-data', ...super.getAuthHeader() }})
-        .then((res) => {
-            console.log(res)
-        })
+        // .then((res) => {
+        //     console.log(res)
+        // })
         .then(onSuccess)
         .catch(onError);
     }

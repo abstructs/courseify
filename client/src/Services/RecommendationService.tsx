@@ -9,7 +9,7 @@ export class RecommendationService extends Service {
     getAll(callback: (res: any) => void) {
         axios.get(`${super.getApiUrl()}/api/v1/recommendations`)
         .then(res => {
-            console.log(res);
+            // console.log(res);
         })
     }
 }

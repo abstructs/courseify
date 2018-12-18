@@ -1,22 +1,9 @@
-/* tslint:disable */
-
 import * as React from 'react';
-// import '../App.css';
 import { Grid, List, ListItem, ListItemText, Divider, ListSubheader, Typography, withStyles,Theme, createStyles, Fade, Button } from '@material-ui/core';
-// Button, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, CircularProgress, Fade, Snackbar, Icon, SnackbarContent, 
-// import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import green from '@material-ui/core/colors/green';
 import CourseAddExpansion from '../CourseAddExpansion';
-import { IAddCourseForm, CourseService, ICourse } from 'src/Services/CourseService';
+import { IAddCourseForm, CourseService, ICourse, IEditCourseForm } from 'src/Services/CourseService';
 import CourseCard from '../CourseCard';
-// import red from '@material-ui/core/colors/green';
-// import CourseCard from '../CourseCard';
-// import CourseAddExpansion from '../CourseAddExpansion';
-// import RecommendationDialog from '../../Recommendation/RecommendationDialog';
-// import classNames from 'classnames';
-// import SimpleSnackbar from '../../Helpers/SimpleSnackbar';
-
-// axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
 
 const styles = ({ spacing, palette}: Theme) => createStyles({
     root: {
@@ -26,7 +13,6 @@ const styles = ({ spacing, palette}: Theme) => createStyles({
         margin: spacing.unit * 2
     },
     card: {
-        // maxWidth: 800,
         marginBottom: "40px"
     },
     media: {
@@ -48,10 +34,7 @@ const styles = ({ spacing, palette}: Theme) => createStyles({
         },
     },
     buttonError: {
-        backgroundColor: palette.error.dark,
-        // '&:hover': {
-        //   backgroundColor: red[222],
-        // },
+        backgroundColor: palette.error.dark
     },
     wrapper: {
         margin: spacing.unit,
@@ -132,7 +115,7 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
         //     this.getCourse(id);
         // } 
         // else {
-        this.getCourses();
+        this.getCourses(() => {});
         // }
     }
 
@@ -153,21 +136,14 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
 
     // }
 
-    getCourses() {
+    getCourses(onSuccess: () => void) {
         this.courseService.getAll((courses: ICourse[]) => {
             this.setState({
                 courses
-            })
+            }, onSuccess);
         }, (err) => {
             console.error(err);
         });
-        // this.course
-            // axios.get(`${process.env.REACT_APP_API_URL}/api/v1/courses`)
-            // .then(res => {
-            //     const courses = JSON.parse(res.data.courses);
-                
-            //     this.setState({ courses, loading: false });
-            // });
     }
 
     // handleCourseChange(event) {  
@@ -178,13 +154,25 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
     //     this.setState({[name]: value});
     // }
 
-    addCourse(form: IAddCourseForm) {
-        console.log(form);
-        this.setState({ expanded: false });
-        // this.setState({ expanded: false, loading: true }, _ => this.getCourses());
+    addCourse(form: IAddCourseForm, onSuccess: () => void, onError: () => void) {
+        this.courseService.addCourse(form, (res) => {
+            this.setState({ expanded: false}, () => this.getCourses(() => {
+                onSuccess();
+            }));
+        }, (err) => {
+            onError();
+        });
     }
 
-    handleCancel() {
+    updateCourse(form: IEditCourseForm, onSuccess: () => void, onError: () => void) {
+        this.courseService.updateCourse(form, (res) => {
+            onSuccess();
+        }, (err) => {
+            onError();
+        });
+    }
+
+    closeAddExpand() {
         this.setState({ expanded: false });
     }
 
@@ -281,7 +269,11 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
                             {/* showSnackbar={this.showSnackbar.bind(this)}  */}
                                 <Grid item xs={12}>
                                 {/* handleSuccess={() => this.handleCourseAddSuccess()}   */}
-                                    <CourseAddExpansion onSuccess={(form: IAddCourseForm) => this.addCourse(form)} onCancel={() => this.handleCancel()} expanded={expanded} />
+                                    <CourseAddExpansion 
+                                        addCourse={(form: IAddCourseForm, onSuccess: () => void, onError: () => void) => this.addCourse(form, onSuccess, onError)} 
+                                        close={() => this.closeAddExpand()}
+                                        expanded={expanded}
+                                    />
                                 </Grid>
                         </Grid>
                         {/* {loading ?
@@ -295,7 +287,14 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
                                 // showSnackbar={this.showSnackbar.bind(this)} 
                                 // current_user={current_user} 
                                 courses.map((course: ICourse) => {
-                                    return <CourseCard key={course.id} course={course} />;
+                                    // editCourse={(form: IEditCourseForm) => this.editCourse()}
+                                    return (
+                                                <CourseCard 
+                                                    key={course.id} 
+                                                    course={course} 
+                                                    updateCourse={(form: IEditCourseForm, onSuccess: () => void, onError: () => void) => this.updateCourse(form, onSuccess, onError)} 
+                                                />
+                                    );
                                 })
                             }
                     </Grid>
