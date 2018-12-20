@@ -1,5 +1,3 @@
-/* tslint:disable */
-
 import * as React from 'react';
 
 import { CardContent, Button, FormControl, TextField, FormHelperText, MenuItem, withStyles, Grid, Tooltip, IconButton, Theme, createStyles, CircularProgress } from '@material-ui/core';

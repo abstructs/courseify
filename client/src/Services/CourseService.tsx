@@ -34,6 +34,7 @@ export interface ICourse {
     user_id: number,
     title: string,
     author: string,
+    image: IImage,
     url: string,
     description: string,
     category: string,

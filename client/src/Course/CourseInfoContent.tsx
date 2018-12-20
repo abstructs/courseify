@@ -1,34 +1,42 @@
 /* tslint:disable */
 
-import React, { Component } from 'react';
-import '../App.css';
-import bookImage from '../images/book.jpeg';
+import * as React from 'react';
 import { CardMedia, CardContent, Typography, Button, withStyles } from '@material-ui/core';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
-import PropTypes from 'prop-types';
 
-const styles = theme => ({
+const bookImage = require('../images/book.jpeg');
+
+const styles = {
     media: {
         height: 0,
         paddingTop: '56.25%', // 16:9
-    },
-});
+    }
+}
 
-class CourseInfoContent extends Component {
-    constructor(props) {
+interface IPropTypes {
+    course: {
+        url: string,
+        description: string,
+        image_url: string | null
+    },
+    classes: {
+        media: string
+    }
+}
+
+class CourseInfoContent extends React.Component<IPropTypes, {}> {
+    constructor(props: IPropTypes) {
         super(props);
     }
-    render() {
-        const { classes } = this.props;
-        const { course } = this.props;
 
-        // console.log(course)
+    render() {
+        const { course, classes } = this.props;
 
         return (
             <div>
                 <CardMedia
                     className={classes.media}
-                    image={course.image_url ? course.image_url : bookImage}
+                    image={course.image_url || bookImage}
                     title="Books"
                 />
                 <CardContent>
@@ -40,17 +48,13 @@ class CourseInfoContent extends Component {
                         Take Course
                     </Button>
                     
-                    <Typography style={{paddingTop: "10px", marginBottom: "20px"}} color="textSecondary" component="subheading" gutterBottom>
+                    {/* <Typography style={{paddingTop: "10px", marginBottom: "20px"}} color="textSecondary" gutterBottom>
                         {course.recommendations.length} {course.recommendations.length == 1 ? ` person recommends this` : ` people recommend this`}
-                    </Typography>
+                    </Typography> */}
                 </CardContent>
             </div>
         );
     }
 }
-
-CourseInfoContent.propTypes = {
-    classes: PropTypes.object.isRequired
-};
 
 export default withStyles(styles)(CourseInfoContent);
