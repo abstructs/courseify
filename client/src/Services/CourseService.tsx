@@ -40,7 +40,8 @@ export interface ICourse {
     category: string,
     image_url: string | null,
     created_at: string,
-    updated_at: string
+    updated_at: string,
+    current_user_recommended: boolean
 }
 
 export interface IImage {
@@ -62,18 +63,41 @@ export class CourseService extends Service {
     }
 
     getAll(onSuccess: (courses: ICourse[]) => void, onError: (reason: any) => void) {
-        axios.get(`${super.getApiUrl()}/api/v1/courses?category=all`)
+        axios.get(`${super.getApiUrl()}/api/v1/courses?category=all`, 
+        { headers: { 'Content-Type': 'multipart/form-data', ...super.getAuthHeader() }})
         .then(res => res.data.courses)
         .then(onSuccess)
         .catch(onError);
     }
 
     getByCategory(category: Category, onSuccess: (courses: ICourse[]) => void, onError: (reason: any) => void) {
-        axios.get(`${super.getApiUrl()}/api/v1/courses?category=${category}`)
-        .then(res => res.data.courses)
+        axios.get(`${super.getApiUrl()}/api/v1/courses?category=${category}`, 
+        { headers: { 'Content-Type': 'multipart/form-data', ...super.getAuthHeader() }})
+        .then(res => { 
+            console.log("hi")
+            console.log(res.data);
+            return res.data.courses;
+        })
         .then(onSuccess)
         .catch(onError);
     }
+
+    recommendCourse(courseId: number, onSuccess: () => void, onError: () => void) {
+        const payload = {
+            course_id: courseId
+        }
+
+        axios.post(`${super.getApiUrl()}/api/v1/recommendations`, payload, 
+        { headers: { ...super.getAuthHeader() } })
+        .then(onSuccess)
+        .then(onError);
+    } 
+
+    unrecommendCourse(courseId: number, onSuccess: () => void, onError: () => void) {
+        axios.delete(`${super.getApiUrl()}/api/v1/recommendations/${courseId}`, { headers: { ...super.getAuthHeader() } })
+        .then(onSuccess)
+        .then(onError);
+    } 
 
     addCourse(course: IAddCourseForm, onSuccess: (res: any) => void, onError: (reason: any) => void) {
         const formData = new FormData();
@@ -112,9 +136,6 @@ export class CourseService extends Service {
 
         axios.put(`${super.getApiUrl()}/api/v1/courses/${course.id}`, formData, 
             { headers: { 'Content-Type': 'multipart/form-data', ...super.getAuthHeader() }})
-        // .then((res) => {
-        //     console.log(res)
-        // })
         .then(onSuccess)
         .catch(onError);
     }

@@ -39,8 +39,10 @@ interface IPropTypes {
     course: ICourse,
     currentUser: ICurrentUser | null,
     showSnackbar: (message: string, variant: Variant) => void,
-    updateCourse: (form: IEditCourseForm, onSuccess: () => void, onError: () => void) => any,
-    deleteCourse: (courseId: number, onSuccess: () => void, onError: () => void) => any,
+    unrecommendCourse: (courseId: number, onSuccess: () => void, onError: () => void) => void,
+    recommendCourse: (courseId: number, onSuccess: () => void, onError: () => void) => void,
+    updateCourse: (form: IEditCourseForm, onSuccess: () => void, onError: () => void) => void,
+    deleteCourse: (courseId: number, onSuccess: () => void, onError: () => void) => void,
     classes: {
         card: string,
         avatar: string,
@@ -209,12 +211,34 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
     }
 
     onEditSuccess(form: IEditCourseForm) {
-        this.setState({ 
+        this.setState({
             course: { 
                 ...this.state.course,
                 ...form
             }
         }, this.closeEditForm);
+    }
+
+    unrecommend() {
+        this.props.unrecommendCourse(this.state.course.id, () => {
+            this.setState({ 
+                course: {
+                    ...this.state.course,
+                    current_user_recommended: false
+                }
+             })
+        }, () => {});
+    }
+
+    recommend() {
+        this.props.recommendCourse(this.state.course.id, () => {
+            this.setState({ 
+                course: {
+                    ...this.state.course,
+                    current_user_recommended: true
+                }
+            })
+        }, () => {});
     }
 
     // setImageUrl(new_url) {
@@ -312,12 +336,13 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
                 <CourseInfoContent course={course} />
 
                 <CardActions className={classes.actions} disableActionSpacing>
-                        <IconButton color={true ? "secondary" : "default"} 
-                            // onClick={true ? this.handleUnrecommendClick.bind(this) : this.handleRecommendClick.bind(this)} 
+                        <IconButton color={course.current_user_recommended ? "secondary" : "default"} 
                             aria-label="Recommend this course"
                             //disabled={refreshing}
                         >
-                            <FavoriteIcon />
+                            <FavoriteIcon 
+                                onClick={course.current_user_recommended ? () => this.unrecommend() : () => this.recommend()}
+                            />
                         </IconButton>
                         {/*  */}
                     <IconButton onClick={() => this.openShareDialog()} aria-label="Share">

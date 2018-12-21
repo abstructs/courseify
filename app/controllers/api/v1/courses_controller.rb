@@ -4,21 +4,9 @@ class Api::V1::CoursesController < ApplicationController
 
   # GET /courses
   def index
+    courses = if params[:category] == "all" then Course.all else Course.where(category: params[:category]) end
 
-    @courses = if params[:category] == "all" then Course.all else Course.where(category: params[:category]) end
-
-    # @courses = @courses.map { |course| 
-    #   if course.image.attached?
-    #     course.image_url = url_for(course.image)
-    #   else
-    #     course.image_url = ""
-    #   end
-    #   course
-    # }
-    # puts "fk1"
-    # puts @courses[0].image_url
-    # render json: { courses: as_json(@courses) } 
-    render json: { courses: @courses.reverse.collect { |c| json_with_image(c) }  }
+    render json: { courses: as_json(courses)  } #.reverse.collect { |c| json_with_image(c) }  }
   end
 
   # GET /courses/1
@@ -86,30 +74,32 @@ class Api::V1::CoursesController < ApplicationController
       params.permit(:title, :url, :description, :author, :category, :image)
     end
 
-    def as_json(course)
-      course.to_json(include: {
-                                recommendations: { 
-                                  include: { 
-                                    user: { 
-                                      only: [:id, :username] 
-                                    } 
-                                  } 
-                                }
-                              }
-                )
+    def as_json(courses)
+      courses.map { |course| 
+        course.current_user_recommended = current_user_recommended(course)
+        course.image_url = image_url(course)
+
+        course
+      }
     end
 
     private 
 
-    def json_with_image(course) 
-      course.as_json.merge({image_url: (if course.image.attached? then url_for(course.image) else false end)})
+    def current_user_recommended course
+      if current_user
+
+        course.recommendations.exists?({ user_id: current_user.id })
+      else 
+        false
+      end
+    end
+
+    def image_url course
+      if course.image.attached? then url_for(course.image) else nil end
     end
 
     def valid_image_type?(image_blob)
       return image_blob.content_type.downcase.in?(%w(image/jpeg image/png image/jpg))
     end
 
-    # def as_json
-    #   {}
-    # end
 end

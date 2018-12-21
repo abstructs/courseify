@@ -166,6 +166,14 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
         });
     }
 
+    recommendCourse(courseId: number, onSuccess: () => void, onError: () => void) {
+        this.courseService.recommendCourse(courseId, onSuccess, onError);
+    }
+
+    unrecommendCourse(courseId: number, onSuccess: () => void, onError: () => void) {
+        this.courseService.unrecommendCourse(courseId, onSuccess, onError);
+    }
+
     updateCourse(form: IEditCourseForm, onSuccess: () => void, onError: () => void) {
         this.courseService.updateCourse(form, (res) => {
             onSuccess();
@@ -294,6 +302,8 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
                                             currentUser={this.props.getCurrentUser()}
                                             course={course} 
                                             showSnackbar={this.showSnackbar.bind(this)}
+                                            recommendCourse={(courseId: number, onSuccess: () => void, onError: () => void) => this.recommendCourse(courseId, onSuccess, onError)}
+                                            unrecommendCourse={(courseId: number, onSuccess: () => void, onError: () => void) => this.unrecommendCourse(courseId, onSuccess, onError)}
                                             updateCourse={(form: IEditCourseForm, onSuccess: () => void, onError: () => void) => this.updateCourse(form, onSuccess, onError)} 
                                             deleteCourse={(courseId: number, onSuccess: () => void, onError: () => void) => this.deleteCourse(courseId, onSuccess, onError)}
                                         />

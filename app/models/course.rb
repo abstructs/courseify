@@ -1,6 +1,9 @@
 class Course < ApplicationRecord  
   include Rails.application.routes.url_helpers
 
+  attr_accessor :image_url
+  attr_accessor :current_user_recommended
+
   URL_REGEXP = /^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/ix
   enum category: [:computer_science, :data_science, :other]
   belongs_to :user
@@ -12,19 +15,17 @@ class Course < ApplicationRecord
   validates :description, presence: true
   validates :url, :format => URI::regexp(%w(http https))
 
-  def image_url
-    # as_json.merge({image_url: "hi"})
-    # Rails.application.routes.url_helpers.course_url(image)
-  end
-
   def as_json(options={})
-    super(options.merge(include: {
-      recommendations: { 
-        include: { 
-          user: { 
-            only: [:id, :username] 
+    super(options.merge({
+      methods: [:image_url, :current_user_recommended],
+      include: {
+        recommendations: { 
+          include: {
+            user: {
+              only: [:id, :username] 
+            } 
           } 
-        } 
+        }
       }
     }))
   end
