@@ -1,5 +1,6 @@
 import { Service } from './Service';
 import axios from 'axios';
+import { IUser } from './UserService';
 
 export interface IAddCourseForm {
     title: string,
@@ -29,6 +30,13 @@ export interface ICourseFormErrors {
     category: Array<String>
 }
 
+export interface IRecommendation {
+    id: number,
+    user_id: number,
+    course_id: number,
+    user: IUser
+}
+
 export interface ICourse {
     id: number,
     user_id: number,
@@ -41,7 +49,8 @@ export interface ICourse {
     image_url: string | null,
     created_at: string,
     updated_at: string,
-    current_user_recommended: boolean
+    current_user_recommended: boolean,
+    recommendations: Array<IRecommendation>
 }
 
 export interface IImage {

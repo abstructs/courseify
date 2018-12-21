@@ -9,6 +9,7 @@ import DoneIcon from '@material-ui/icons/Done';
 import EditIcon from '@material-ui/icons/Create';
 import DeleteIcon from '@material-ui/icons/Delete';
 import PeopleIcon from '@material-ui/icons/SupervisorAccount';
+import PersonIcon from '@material-ui/icons/Person';
 // import CourseEditContent from './CourseEditContent';
 
 import CourseInfoContent from './CourseInfoContent';
@@ -16,10 +17,11 @@ import CourseInfoContent from './CourseInfoContent';
 // import RecommendationDialog from '../Recommendation/RecommendationDialog';
 import { ICourse, IEditCourseForm } from 'src/Services/CourseService';
 // Collapse
-import { Card, Dialog, DialogTitle, DialogActions, Button, DialogContent, DialogContentText, TextField, CardHeader, Avatar, CardActions, withStyles, IconButton, Collapse } from '@material-ui/core';
+import { Card, Dialog, DialogTitle, DialogActions, Button, DialogContent, DialogContentText, TextField, CardHeader, Avatar, CardActions, withStyles, IconButton, Collapse, List, ListItem, ListItemAvatar, ListItemText } from '@material-ui/core';
 import CourseEditContent from './CourseEditExpansion';
 import { ICurrentUser } from 'src/Services/UserService';
 import { Variant } from 'src/Helpers/AppSnackbar';
+import { blue } from '@material-ui/core/colors';
 // import { PropTypes } from '@material-ui/core';
 
 const styles = {
@@ -30,8 +32,9 @@ const styles = {
     actions: {
         display: 'flex',
     },
-    avatar: {
-    //   backgroundColor: red[500],
+    userAvatar: {
+        backgroundColor: blue[100],
+        color: blue[600],
     }
 }
 
@@ -47,6 +50,7 @@ interface IPropTypes {
     classes: {
         card: string,
         avatar: string,
+        userAvatar: string,
         actions: string
     }
 }
@@ -134,7 +138,7 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
                 }
             })
         }, () => {
-        
+
         });
         // console.log("refresh")
 
@@ -231,27 +235,11 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
     }
 
     unrecommend() {
-        this.props.unrecommendCourse(this.state.course.id, () => {
-            this.setState({ 
-                course: {
-                    ...this.state.course,
-                    current_user_recommended: false
-                }
-             })
-        }, () => {});
+        this.props.unrecommendCourse(this.state.course.id, () => this.refresh(), () => this.refresh());
     }
 
     recommend() {
-        console.log(this.state.course.current_user_recommended)
-
-        this.props.recommendCourse(this.state.course.id, () => {
-            this.setState({ 
-                course: {
-                    ...this.state.course,
-                    current_user_recommended: true
-                }
-            })
-        }, () => {});
+        this.props.recommendCourse(this.state.course.id, () => this.refresh(), () => this.refresh());
     }
 
     // setImageUrl(new_url) {
@@ -267,7 +255,7 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
  
     render() {
         const { classes, currentUser } = this.props;
-        const { course, deleted, editFormExpanded, deleteDialogOpen, openShare } = this.state;
+        const { course, deleted, editFormExpanded, deleteDialogOpen, openShare, openRecommendations } = this.state;
         // const isLoggedIn = Auth().isAuthenticated();
 
         // const current_user_recommended = this.state.course.recommendations.filter(recommendation => {
@@ -285,7 +273,25 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
             <Card className={classes.card}>
                 {/* <SimpleSnackbar message={"hi"} /> */}
 
-                {/* <RecommendationDialog recommendations={course.recommendations} onClose={this.handleRecommendationsClose.bind(this)} course_id={course.id} open={this.state.openRecommendations} /> */}
+                {/* <RecommendationDialog recommendations={course.recommendations} onClose={() => this.closeRecommendationsDialog()} course_id={course.id} open={this.state.openRecommendations} /> */}
+                <Dialog onClose={() => this.closeRecommendationsDialog()} open={openRecommendations}>
+                <DialogTitle id="simple-dialog-title">People Who Recommended This Course</DialogTitle>
+                <div>
+                    <List>
+                    {course.recommendations.map(recommendation => (
+                        <ListItem key={recommendation.id}>
+                            <ListItemAvatar>
+                                <Avatar className={`${classes.userAvatar}`}>
+                                    <PersonIcon />
+                                </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText primary={recommendation.user.username} />
+                            <Button href={`/people/${recommendation.user.username}`}>View Profile</Button>
+                        </ListItem>
+                    ))}
+                    </List>
+                </div>
+            </Dialog>
 
                 <Dialog open={deleteDialogOpen} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
                     <DialogTitle id="alert-dialog-title">{"Are you sure you want to remove this course?"}</DialogTitle>
