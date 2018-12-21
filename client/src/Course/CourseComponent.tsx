@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Grid, List, ListItem, ListItemText, Divider, ListSubheader, Typography, withStyles,Theme, createStyles, Fade, Button } from '@material-ui/core';
 import green from '@material-ui/core/colors/green';
-import CourseAddExpansion from '../CourseAddExpansion';
-import { IAddCourseForm, CourseService, ICourse, IEditCourseForm, Category } from 'src/Services/CourseService';
-import CourseCard from '../CourseCard';
-import { ICurrentUser } from 'src/Services/UserService';
-import AppSnackbar from 'src/Helpers/AppSnackbar';
+import CourseAddExpansion from './CourseAddExpansion';
+import { IAddCourseForm, CourseService, ICourse, IEditCourseForm, Category } from '../Services/CourseService';
+import CourseCard from './CourseCard';
+import { ICurrentUser } from '../Services/UserService';
+import AppSnackbar from '../Helpers/AppSnackbar';
 
 const styles = ({ spacing, palette}: Theme) => createStyles({
     root: {
@@ -32,8 +32,8 @@ const styles = ({ spacing, palette}: Theme) => createStyles({
     buttonSuccess: {
         backgroundColor: green[500],
         '&:hover': {
-          backgroundColor: green[700],
-        },
+            backgroundColor: green[700],
+        }
     },
     buttonError: {
         backgroundColor: palette.error.dark
@@ -101,7 +101,7 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
             // recommendationsOpen: false,
             category: Category.All,
             // show: false
-        }        
+        }
 
         this.courseService = new CourseService();
     }

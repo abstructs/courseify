@@ -4,7 +4,7 @@ import * as React from 'react';
 import Navbar from './Helpers/Navbar';
 // import Footer from './Helpers/Footer';
 // import ProfileContainer from './Profile/ProfileContainer';
-import CourseComponent from './Course/components/CourseComponent';
+import CourseComponent from './Course/CourseComponent';
 // import RecommendationsContainer from './Recommendation/RecommendationsContainer';
 import {
   BrowserRouter as Router,
@@ -21,6 +21,7 @@ import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 // import LandingPage from './Home/containers/LandingPage';
 import { UserService, ICurrentUser } from './Services/UserService';
 import HomePage from './Home/containers/HomePage';
+import ProfileComponent from './Profile/ProfileComponent';
 // import Auth from './User/Auth';
 
 // import RecommendationCreateModal from './Recommendation/RecommendationCreateModal';
@@ -103,7 +104,7 @@ const App = () => (
 
       {/* <Route strict exact path="/people" component={ProfileContainer} /> */}
       {/* <Route strict exact path="/profile/recommendations" component={RecommendationsContainer}/> */}
-      {/* <Route strict exact path="/people/:username" component={ProfileContainer} /> */}
+      <Route strict exact path="/profile/:username" component={ProfileComponent} />
       {/* <Route strict exact path="/people/:username/recommendations" component={RecommendationsContainer}/> */}
 
       <Route path="/signup" component={SignUp}/>

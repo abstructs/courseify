@@ -21,9 +21,11 @@ export interface IUser {
     first_name: string,
     last_name: string,
     education: string,
+    headline: string,
     country: string,
     industry: string,
-    summary: string
+    summary: string,
+    banner_url: string
 }
 
 export interface ICurrentUser {
@@ -34,6 +36,14 @@ export class UserService extends Service {
 
     constructor() {
         super();
+    }
+
+    public getOne(username: string, onSuccess: (user: IUser) => void, onError: () => void) {
+        axios.get(`${super.getApiUrl()}/api/v1/users/${username}`)
+        .then(res => res.data.user)
+        .then(onSuccess)
+        .catch(onError);
+            
     }
 
     public getAll(callback: (users: Array<IUser>) => void) {
