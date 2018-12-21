@@ -62,9 +62,17 @@ export class CourseService extends Service {
         super();
     }
 
+    getOne(courseId: number, onSuccess: (course: ICourse) => void, onError: (reason: any) => void) {
+        axios.get(`${super.getApiUrl()}/api/v1/courses/${courseId}`, 
+        { headers: { ...super.getAuthHeader() }})
+        .then(res => res.data.course)
+        .then(onSuccess)
+        .then(onError);
+    }
+
     getAll(onSuccess: (courses: ICourse[]) => void, onError: (reason: any) => void) {
         axios.get(`${super.getApiUrl()}/api/v1/courses?category=all`, 
-        { headers: { 'Content-Type': 'multipart/form-data', ...super.getAuthHeader() }})
+        { headers: { ...super.getAuthHeader() }})
         .then(res => res.data.courses)
         .then(onSuccess)
         .catch(onError);
@@ -72,7 +80,7 @@ export class CourseService extends Service {
 
     getByCategory(category: Category, onSuccess: (courses: ICourse[]) => void, onError: (reason: any) => void) {
         axios.get(`${super.getApiUrl()}/api/v1/courses?category=${category}`, 
-        { headers: { 'Content-Type': 'multipart/form-data', ...super.getAuthHeader() }})
+        { headers: { ...super.getAuthHeader() }})
         .then(res => { 
             console.log("hi")
             console.log(res.data);

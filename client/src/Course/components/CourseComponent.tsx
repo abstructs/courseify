@@ -148,13 +148,9 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
         });
     }
 
-    // handleCourseChange(event) {  
-    //     const target = event.target;
-    //     const value = target.value;
-    //     const name = target.name;
-
-    //     this.setState({[name]: value});
-    // }
+    getCourse(courseId: number, onSuccess: (course: ICourse) => void, onError: () => void) {
+        this.courseService.getOne(courseId, onSuccess, onError);
+    }
 
     addCourse(form: IAddCourseForm, onSuccess: () => void, onError: () => void) {
         this.courseService.addCourse(form, (res) => {
@@ -306,6 +302,7 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
                                             unrecommendCourse={(courseId: number, onSuccess: () => void, onError: () => void) => this.unrecommendCourse(courseId, onSuccess, onError)}
                                             updateCourse={(form: IEditCourseForm, onSuccess: () => void, onError: () => void) => this.updateCourse(form, onSuccess, onError)} 
                                             deleteCourse={(courseId: number, onSuccess: () => void, onError: () => void) => this.deleteCourse(courseId, onSuccess, onError)}
+                                            getCourse={(courseId: number, onSuccess: (course: ICourse) => void, onError: () => void) => this.getCourse(courseId, onSuccess, onError)}
                                         />
                                     );
                                 })

@@ -43,6 +43,7 @@ interface IPropTypes {
     recommendCourse: (courseId: number, onSuccess: () => void, onError: () => void) => void,
     updateCourse: (form: IEditCourseForm, onSuccess: () => void, onError: () => void) => void,
     deleteCourse: (courseId: number, onSuccess: () => void, onError: () => void) => void,
+    getCourse: (courseId: number, onSuccess: (course: ICourse) => void, onError: () => void) => void,
     classes: {
         card: string,
         avatar: string,
@@ -126,7 +127,17 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
     }
 
     refresh() {
-        console.log("refresh")
+        this.props.getCourse(this.state.course.id, (course: ICourse) => {
+            this.setState({
+                course: {
+                    ...course
+                }
+            })
+        }, () => {
+        
+        });
+        // console.log("refresh")
+
         // axios.get(`${process.env.REACT_APP_API_URL}/api/v1/courses/${this.state.course.id}`)
         // .then(res => {
         //     const { course } = res.data;
@@ -231,6 +242,8 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
     }
 
     recommend() {
+        console.log(this.state.course.current_user_recommended)
+
         this.props.recommendCourse(this.state.course.id, () => {
             this.setState({ 
                 course: {
@@ -341,7 +354,7 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
                             //disabled={refreshing}
                         >
                             <FavoriteIcon 
-                                onClick={course.current_user_recommended ? () => this.unrecommend() : () => this.recommend()}
+                                onClick={() => course.current_user_recommended ? this.unrecommend() : this.recommend()}
                             />
                         </IconButton>
                         {/*  */}

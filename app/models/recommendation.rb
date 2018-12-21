@@ -15,8 +15,7 @@ class Recommendation < ApplicationRecord
                 } 
               } 
             }
-          },
-          # methods: :image_url
+          }
         }
       } 
     ))

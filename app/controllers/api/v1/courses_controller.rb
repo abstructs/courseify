@@ -11,7 +11,11 @@ class Api::V1::CoursesController < ApplicationController
 
   # GET /courses/1
   def show
-    render json: { course: json_with_image(@course) }
+    course_id = params[:id]
+
+    course = Course.find(course_id)
+
+    render json: { course: get_json(course) }
   end
 
   # POST /courses
@@ -76,11 +80,15 @@ class Api::V1::CoursesController < ApplicationController
 
     def as_json(courses)
       courses.map { |course| 
-        course.current_user_recommended = current_user_recommended(course)
-        course.image_url = image_url(course)
-
-        course
+        get_json(course)
       }
+    end
+
+    def get_json(course) 
+      course.current_user_recommended = current_user_recommended(course)
+      course.image_url = image_url(course)
+
+      course
     end
 
     private 
