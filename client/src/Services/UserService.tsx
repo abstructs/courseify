@@ -14,6 +14,37 @@ export interface ILoginForm {
     password: string
 }
 
+export interface IUserEditForm {
+    id: number,
+    email: string,
+    // username: string,
+    first_name: string,
+    last_name: string,
+    education: string,
+    headline: string,
+    country: string,
+    industry: string,
+    summary: string,
+}
+
+export interface IUserFormErrors {
+    id: number,
+    email: string,
+    // username: string,
+    first_name: string,
+    last_name: string,
+    education: string,
+    headline: string,
+    country: string,
+    industry: string,
+    summary: string,
+    // banner_url: string
+}
+
+export interface IUserEditFormErrors {
+
+}
+
 export interface IUser {
     id: number,
     email: string,
