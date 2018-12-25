@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { Theme, CardMedia, CardContent, Typography, withStyles, Button, createStyles } from '@material-ui/core';
-import { IUser } from 'src/Services/UserService';
+import { IUser, ICurrentUser } from 'src/Services/UserService';
 // import { CardMedia, CardContent, Typography, Button, withStyles } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Create';
+import { Variant } from 'src/Helpers/AppSnackbar';
 // import ProfileEditContent from './ProfileEditContent';
 // import ProfileEditContent from './containers/ProfileEditContent';
 
@@ -48,7 +49,9 @@ interface IStateTypes {
 }
 
 interface IPropTypes {
+    getCurrentUser: () => ICurrentUser | null,
     user: IUser,
+    showSnackbar: (message: string, variant: Variant) => void,
     openEdit: () => void,
     classes: {
         media: string,
@@ -117,12 +120,14 @@ class ProfileInfoContent extends React.Component<IPropTypes, IStateTypes> {
     // }
 
     render() {
-        const { classes, user } = this.props;
+        const { classes, user, getCurrentUser } = this.props;
         // const { editMode } = this.state;
 
         // const isLoggedIn = Auth().isAuthenticated();
         // const is_current_user_profile = isLoggedIn ? Auth().paraseJwt().sub.user.id === profile.id : false;
-        const is_current_user_profile = true;
+        const currentUser = getCurrentUser();
+
+        const is_current_user_profile = currentUser != null ? currentUser.id === user.id : false;
 
         return (
             <div>

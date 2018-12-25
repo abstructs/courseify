@@ -6,8 +6,9 @@ import * as React from 'react';
 import { withStyles, Theme, Grid, List, ListItem, ListItemIcon, ListItemText, Divider, Card, AppBar, Tabs, Tab } from '@material-ui/core';
 import PersonIcon from '@material-ui/icons/Person';
 // import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
-import { IUser, UserService, IEditUserForm } from 'src/Services/UserService';
+import { IUser, UserService, IEditUserForm, ICurrentUser } from 'src/Services/UserService';
 import ProfileContent from './ProfileContent';
+import AppSnackbar, { Variant } from '../../Helpers/AppSnackbar';
 
 const styles = ({ spacing, palette }: Theme) => ({
     root: {
@@ -42,6 +43,7 @@ const styles = ({ spacing, palette }: Theme) => ({
 });
 
 interface IPropTypes {
+    getCurrentUser: () => ICurrentUser | null,
     classes: {
         card: string,
         root: string
@@ -54,32 +56,28 @@ interface IPropTypes {
 }
 
 interface IStateTypes {
-    current_user: {
-        id: number
-    },
     user: IUser,
     // editMode: boolean, 
     tab: IProfileTab,
+    userFound: boolean,
     loading: boolean
 }
 
 enum IProfileTab {
-    Main = "Info",
-    Following = "Following", 
-    Followers = "Followers"
+    Main = 1,
+    Following = 2, 
+    Followers = 3
 }
 
 class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
 
     private userService: UserService;
+    private showSnackbar: (message: string, variant: string) => void;
 
     constructor(props: IPropTypes) {
         super(props);
 
         this.state = {
-            current_user: {
-                id: -1
-            },
             // editMode: false,
             tab: IProfileTab.Main,
 
@@ -96,7 +94,7 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
                 summary: "",
                 banner_url: ""
             },
-
+            userFound: false,
             loading: true
         }
 
@@ -104,28 +102,45 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
     }
 
     componentDidMount() {
-        this.getUser();
+        this.getUser(() => {});
+    }
+
+    setShowSnackbar(openSnackbar: (message: string, variant: string) => void) {
+        this.showSnackbar = openSnackbar;
     }
 
     getUsername() {
         return this.props.match.params.username;
     }
 
-    getUser() {
-        const username = this.getUsername();
+    onUserNotFound() {
+        this.setState({
+            loading: false,
+            userFound: false
+        }, () => this.showSnackbar("Couldn't find that user.", Variant.Error));
+    }
 
-        this.userService.getOne(username, (user: IUser) => {
-            if(user) {
-                this.setState({
-                    user
-                });
-                console.log("found user")
-            }
-        }, () => {
-            console.log("Couldn't find that user.");
-        });
+    onUserFound(user: IUser, onSuccess: () => void) {
+        if(user) {
+            this.setState({
+                user,
+                loading: false,
+                userFound: true
+            }, onSuccess);
+        }
+    }
 
-        // console.log(username);
+    getUser(onSuccess: () => void) {
+        let username = this.getUsername();
+        const currentUser = this.props.getCurrentUser();
+
+        if(username) {
+            this.userService.getOne(username, (user: IUser) => this.onUserFound(user, onSuccess), () => this.onUserNotFound());
+        } else if(currentUser) {
+            this.userService.getCurrentUserProfile((user: IUser) => this.onUserFound(user, onSuccess), () => this.onUserNotFound());
+        } else {    
+            this.onUserNotFound();
+        }
     }
 
     // toggleEditMode() {
@@ -220,7 +235,7 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
 
     updateUser(form: IEditUserForm, onSuccess: () => void, onError: () => void) {
         this.userService.updateUser(form, (res) => {
-            onSuccess();
+            this.getUser(onSuccess);
         }, (err) => {
             onError();
         });
@@ -228,7 +243,14 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
 
     render() {
         const { classes } = this.props;
-        const { user } = this.state;
+        const { user, userFound, loading } = this.state;
+
+        if(!loading && !userFound) {
+            return (
+                <div>User not found.</div>
+            )
+        }
+
         // const current_user = isLoggedIn ? Auth().paraseJwt().sub.user : {};
         
         // if(!isLoggedIn && !this.getMatch()) {
@@ -243,6 +265,8 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
 
         return (
             <div className={classes.root}>
+                <AppSnackbar setOpenSnackbar={this.setShowSnackbar.bind(this)} />
+
                 <Grid container spacing={0} >
                     <Grid item xl={3} style={{marginRight: "50px"}}>
                         <List component="nav">
@@ -269,7 +293,7 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
                                     <AppBar position="static">
                                         <Tabs value={this.state.tab} >
                                         {/* onClick={this.handleTab(1).bind(this)}  */}
-                                            <Tab value={1} label="Info" />
+                                            <Tab value={IProfileTab.Main} label="Info" />
                                             {/* <Tab value={2} label={`Following (${!loading && profile_info.followingCount || 0})`} /> */}
                                             {/* <Tab value={3} label={`Followers (${!loading && profile_info.followerCount || 0})`} /> */}
                                         </Tabs>
@@ -279,11 +303,11 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
                                         (() => {
                                             switch(this.state.tab) {
                                                 case IProfileTab.Main: 
-                                                    // if()
-                                                // toggleEdit={this.toggleEdit.bind(this)} toggleCurrentUserIsFollowing={this.toggleCurrentUserIsFollowing.bind(this)} incrementFollowers={this.incrementFollowers.bind(this)}  profile={profile_info} classes={classes}
                                                     return (
-                                                        <ProfileContent 
+                                                        <ProfileContent
+                                                            getCurrentUser={this.props.getCurrentUser}
                                                             user={user}
+                                                            showSnackbar={(message: string, variant: Variant) => this.showSnackbar(message, variant)}
                                                             updateUser={(form: IEditUserForm, onSuccess: () => void, onError: () => void) => this.updateUser(form, onSuccess, onError)} 
                                                         /> 
                                                     );

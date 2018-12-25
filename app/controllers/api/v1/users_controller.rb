@@ -9,20 +9,26 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def update
-    @user = current_user
+    # @user = current_user
+    user = User.find(params[:id])
 
-    @user.assign_attributes(update_params.except(:banner))
+    user.assign_attributes(update_params.except(:banner))
+
     valid_banner = if update_params.has_key?(:banner) then valid_banner_type?(update_params[:banner]) else nil end
-  
-    if current_user[:id].to_i == params[:id].to_i && @user.valid? && valid_banner != false
-      if update_params.has_key?(:banner) then @user.banner.attach(update_params[:banner]) end
-        
-      @user.save
-      render status: 200
-    else
-      if(!valid_banner) then @user.errors.add(:banner, 'must be jpeg, jpg, or png') end
 
-      puts @user.errors
+    if current_user[:id] != user[:id]
+
+      render status: :unauthorized
+    elsif user.valid? && valid_banner != false
+
+      if update_params.has_key?(:banner) then user.banner.attach(update_params[:banner]) end
+      
+      user.save
+      render status: :ok
+    else
+      if(!valid_banner) then user.errors.add(:banner, 'must be jpeg, jpg, or png') end
+
+      puts user.errors
       
       render status: :bad_request
     end 
@@ -48,19 +54,17 @@ class Api::V1::UsersController < ApplicationController
     @user = User.find_by(username: params[:id])
 
     if @user
-      u = user_data(@user)
-      # u[:follow_info] = follow_info = if current_user 
-      #                                 then { 
-      #                                   follow_id: current_user.active_follows.find_by(followed_id: @user.id).try(:id),
-      #                                   is_following: current_user.following?(@user) }
-      #                                 else { is_following: false }
-      #                                 end
+      user_json = user_data(@user)
+
       if(current_user)
-        # u[:is_current_user_profile] = current_user.id == @user.id
-        u[:current_user_is_following] = current_user.following?(@user)
+        user_json[:current_user_is_following] = current_user.following?(@user)
+      else 
+        user_json[:current_user_is_following] = false
       end
 
-      render json: { user: u }
+      render json: { user: user_json }
+    else 
+      render status: :not_found
     end
   end
 
@@ -68,11 +72,11 @@ class Api::V1::UsersController < ApplicationController
     @user = current_user
 
     if @user
-      u = user_data(@user)
+      user_json = user_data(@user)
 
-      u[:is_current_user_profile] = true
+      user_json[:current_user_is_following] = false
       
-      render json: { user: u }
+      render json: { user: user_json }
     end
   end
 

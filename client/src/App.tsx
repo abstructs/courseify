@@ -104,7 +104,8 @@ const App = () => (
 
       {/* <Route strict exact path="/people" component={ProfileContainer} /> */}
       {/* <Route strict exact path="/profile/recommendations" component={RecommendationsContainer}/> */}
-      <Route strict exact path="/profile/:username" component={ProfileComponent} />
+      <Route exact path="/profile" component={(props: any) => <ProfileComponent getCurrentUser={() => getCurrentUser()} {...props} />} />
+      <Route strict exact path="/profile/:username" component={(props: any) => <ProfileComponent getCurrentUser={() => getCurrentUser()} {...props} />} />
       {/* <Route strict exact path="/people/:username/recommendations" component={RecommendationsContainer}/> */}
 
       <Route path="/signup" component={SignUp}/>

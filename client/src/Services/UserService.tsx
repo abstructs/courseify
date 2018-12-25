@@ -80,7 +80,14 @@ export class UserService extends Service {
         .then(res => res.data.user)
         .then(onSuccess)
         .catch(onError);
-            
+    }
+
+    public getCurrentUserProfile(onSuccess: (user: IUser) => void, onError: () => void) {
+        axios.post(`${super.getApiUrl()}/api/v1/users/profile`, {},
+            { headers: { 'Content-Type': 'multipart/form-data', ...super.getAuthHeader() }})
+        .then(res => res.data.user)
+        .then(onSuccess)
+        .catch(onError);
     }
 
     public getAll(callback: (users: Array<IUser>) => void) {

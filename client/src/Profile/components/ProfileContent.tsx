@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { Theme, withStyles } from '@material-ui/core';
-import { IUser, IEditUserForm } from 'src/Services/UserService';
+import { IUser, IEditUserForm, ICurrentUser } from 'src/Services/UserService';
 // import { CardMedia, CardContent, Typography, Button, withStyles } from '@material-ui/core';
 // import EditIcon from '@material-ui/icons/Create';
 import ProfileEditContent from '../containers/ProfileEditContent';
 import ProfileInfoContent from '../containers/ProfileInfoContent';
+import { Variant } from 'src/Helpers/AppSnackbar';
 // import ProfileEditContent from './containers/ProfileEditContent';
 
 // const bookImage = require('../../images/book.jpeg');
@@ -44,7 +45,9 @@ interface IStateTypes {
 }
 
 interface IPropTypes {
+    getCurrentUser: () => ICurrentUser | null,
     updateUser: (form: IEditUserForm, onSuccess: () => void, onError: () => void) => void,
+    showSnackbar: (message: string, variant: Variant) => void,
     user: IUser,
     classes: {
         media: string,
@@ -130,12 +133,13 @@ class ProfileContent extends React.Component<IPropTypes, IStateTypes> {
             return (
                 <ProfileEditContent
                     user={user}
+                    showSnackbar={this.props.showSnackbar}
                     updateUser={this.props.updateUser}
                     closeEdit={() => this.closeEdit()} 
                 />
             );
         } else {
-            return <ProfileInfoContent openEdit={() => this.openEdit()} user={user} />
+            return <ProfileInfoContent getCurrentUser={this.props.getCurrentUser} showSnackbar={this.props.showSnackbar} openEdit={() => this.openEdit()} user={user} />
         }
     }
 }

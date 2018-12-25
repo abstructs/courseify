@@ -5,6 +5,7 @@ import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import { Theme, CardMedia, CardContent, FormControl, TextField, FormHelperText, Grid, IconButton, Button, withStyles, createStyles, Tooltip } from '@material-ui/core';
 import { IUser, IUserEditFormErrors, IEditUserForm } from 'src/Services/UserService';
 import { UserValidator } from 'src/Validators/User/UserValidator';
+import { Variant } from 'src/Helpers/AppSnackbar';
 const bookImage = require('../../images/book.jpeg');
 
 // axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
@@ -63,6 +64,7 @@ interface IStateTypes {
 
 interface IPropTypes {
     updateUser: (form: IEditUserForm, onSuccess: () => void, onError: () => void) => void,
+    showSnackbar: (message: string, variant: Variant) => void,
     user: IUser,
     closeEdit: () => void,
     classes: {
@@ -253,12 +255,16 @@ class ProfileEditContent extends React.Component<IPropTypes, IStateTypes> {
     updateUser() {
         const user = this.state.form;
 
-        this.props.updateUser(user, () => {
-            console.log("success");
-            this.props.closeEdit();
-        }, () => {
-            console.log("an error occured");
-        })
+        this.props.updateUser(user, () => this.onSuccess(), () => this.onError());
+    }
+
+    onError() {
+        this.props.showSnackbar("Something went wrong", Variant.Error);
+    }
+
+    onSuccess() {
+        this.props.closeEdit();
+        this.props.showSnackbar("Your profile has been updated", Variant.Success);
     }
 
     handleSubmit() {
@@ -267,7 +273,8 @@ class ProfileEditContent extends React.Component<IPropTypes, IStateTypes> {
                 // this.setState({ loading: true }, this.updateCourse);
                 this.updateUser();
             } else {
-                console.log(this.state.errors);
+                // this.props.showSnackbar("")
+                // console.log(this.state.errors);
             }
         });
     }
@@ -302,7 +309,7 @@ class ProfileEditContent extends React.Component<IPropTypes, IStateTypes> {
                             id="first_name"
                             name="first_name"
                             label="First Name"
-                            value={first_name}
+                            value={first_name || ""}
                             margin="dense"
                             error={errors.first_name.length > 0}
                         />
@@ -314,7 +321,7 @@ class ProfileEditContent extends React.Component<IPropTypes, IStateTypes> {
                             id="last_name"
                             name="last_name"
                             label="Last Name"
-                            value={last_name}
+                            value={last_name || ""}
                             error={errors.last_name.length > 0}
                             margin="dense"
                         />
@@ -341,7 +348,7 @@ class ProfileEditContent extends React.Component<IPropTypes, IStateTypes> {
                             id="country"
                             label="Country"
                             name="country"
-                            value={country}
+                            value={country || ""}
                             margin="dense"
                             error={errors.country.length > 0}
                         />
@@ -354,7 +361,7 @@ class ProfileEditContent extends React.Component<IPropTypes, IStateTypes> {
                             id="headline"
                             label="Headline"
                             name="headline"
-                            value={headline}
+                            value={headline || ""}
                             fullWidth={true}
                             margin="dense"
                             error={errors.headline.length > 0}
@@ -369,7 +376,7 @@ class ProfileEditContent extends React.Component<IPropTypes, IStateTypes> {
                             id="education"
                             label="Education"
                             name="education"
-                            value={education}
+                            value={education || ""}
                             fullWidth={true}
                             margin="dense"
                             error={errors.education.length > 0}
@@ -383,7 +390,7 @@ class ProfileEditContent extends React.Component<IPropTypes, IStateTypes> {
                             id="industry"
                             label="Industry"
                             name="industry"
-                            value={industry}
+                            value={industry || ""}
                             fullWidth={true}
                             margin="dense"
                             error={errors.industry.length > 0}
@@ -441,7 +448,7 @@ class ProfileEditContent extends React.Component<IPropTypes, IStateTypes> {
                             name="summary"
                             multiline
                             fullWidth
-                            value={summary}
+                            value={summary || ""}
                             margin="dense"
                             error={errors.summary.length > 0}
                         />
