@@ -21,7 +21,7 @@ import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 // import LandingPage from './Home/containers/LandingPage';
 import { UserService, ICurrentUser } from './Services/UserService';
 import HomePage from './Home/containers/HomePage';
-import ProfileComponent from './Profile/ProfileComponent';
+import ProfileComponent from './Profile/components/ProfileComponent';
 // import Auth from './User/Auth';
 
 // import RecommendationCreateModal from './Recommendation/RecommendationCreateModal';

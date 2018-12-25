@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { Theme, CardMedia, CardContent, Typography, withStyles } from '@material-ui/core';
+import { Theme, CardMedia, CardContent, Typography, withStyles, Button, createStyles } from '@material-ui/core';
 import { IUser } from 'src/Services/UserService';
 // import { CardMedia, CardContent, Typography, Button, withStyles } from '@material-ui/core';
-// import EditIcon from '@material-ui/icons/Create';
+import EditIcon from '@material-ui/icons/Create';
+// import ProfileEditContent from './ProfileEditContent';
+// import ProfileEditContent from './containers/ProfileEditContent';
 
-const bookImage = require('../images/book.jpeg');
+const bookImage = require('../../images/book.jpeg');
 
-const styles = ({ palette, spacing }: Theme) => ({
+const styles = ({ palette, spacing }: Theme) => createStyles({
     // root: {
     //   flexGrow: 1,
     // },
@@ -24,6 +26,11 @@ const styles = ({ palette, spacing }: Theme) => ({
     //     marginRight: spacing.unit,
     //     width: "25%",
     // },
+    mediaFab: {
+        float: "right", 
+        marginTop: "-75px", 
+        marginRight: "30px"
+    },
     media: {
         height: 0,
         // paddingTop: '56.25%', // 16:9
@@ -36,14 +43,18 @@ const styles = ({ palette, spacing }: Theme) => ({
 });
 
 interface IStateTypes {
-    // user: IUser
+    // user: IUser,
+    editMode: boolean
 }
 
 interface IPropTypes {
     user: IUser,
+    openEdit: () => void,
     classes: {
         media: string,
-        cardContent: string
+        cardContent: string,
+        // button: string,
+        mediaFab: string
     }
 }
 
@@ -52,7 +63,7 @@ class ProfileInfoContent extends React.Component<IPropTypes, IStateTypes> {
         super(props);
         
         this.state = {
-            user: props.user
+            editMode: false
         }
     }
 
@@ -99,12 +110,19 @@ class ProfileInfoContent extends React.Component<IPropTypes, IStateTypes> {
     //     .then(_ => this.props.toggleCurrentUserIsFollowing());
     // }
 
+    // toggleEditMode() {
+    //     this.setState({
+    //         editMode: !this.state.editMode
+    //     });
+    // }
+
     render() {
         const { classes, user } = this.props;
-        // const {  } = this.state;
+        // const { editMode } = this.state;
 
         // const isLoggedIn = Auth().isAuthenticated();
         // const is_current_user_profile = isLoggedIn ? Auth().paraseJwt().sub.user.id === profile.id : false;
+        const is_current_user_profile = true;
 
         return (
             <div>
@@ -124,11 +142,11 @@ class ProfileInfoContent extends React.Component<IPropTypes, IStateTypes> {
                                     {profile.current_user_is_following ? "Unfollow" : "Follow"}
                                 </Button>
                         } */}
-                        { 
-                            // is_current_user_profile && 
-                            //     <Button onClick={toggleEdit} style={{float: "right", marginTop: "-108px", marginRight: "30px"}} variant="fab" color="secondary" aria-label="add" className={classes.button}>
-                            //         <EditIcon />
-                            //     </Button>
+                        {
+                            is_current_user_profile && 
+                                <Button onClick={this.props.openEdit} variant="fab" color="secondary" aria-label="add" className={classes.mediaFab}>
+                                    <EditIcon />
+                                </Button>
                         }
                     </Typography>
 

@@ -21,7 +21,7 @@ export abstract class Validator<S, E> {
     }
 
     protected isEmpty(input: string): boolean {
-        return input.trim().length == 0;
+        return input == null || input.trim().length == 0;
     }
 
     protected isImageType(imageUrl: string): boolean {

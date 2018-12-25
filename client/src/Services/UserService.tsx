@@ -14,7 +14,7 @@ export interface ILoginForm {
     password: string
 }
 
-export interface IUserEditForm {
+export interface IEditUserForm {
     id: number,
     email: string,
     // username: string,
@@ -42,7 +42,13 @@ export interface IUserFormErrors {
 }
 
 export interface IUserEditFormErrors {
-
+    first_name: Array<String>,
+    last_name: Array<String>,
+    education: Array<String>,
+    headline: Array<String>,
+    country: Array<String>,
+    industry: Array<String>,
+    summary: Array<String>
 }
 
 export interface IUser {
@@ -176,7 +182,25 @@ export class UserService extends Service {
         })
         .then(onSuccess)
         .catch(onReject);
+    }
 
+    updateUser(user: IEditUserForm, onSuccess: (res: any) => void, onError: (reason: any) => void) {
+        const formData = new FormData();
+
+        Object.keys(user).map(key => {
+            formData.append(key, user[key]);
+        });
+
+        // formData.delete("image");
+
+        // if(user.image.file != null) {
+        //     formData.append("image", course.image.file);
+        // }
+
+        axios.put(`${super.getApiUrl()}/api/v1/users/${user.id}`, formData, 
+            { headers: { 'Content-Type': 'multipart/form-data', ...super.getAuthHeader() }})
+        .then(onSuccess)
+        .catch(onError);
     }
 
     public signup(signupForm: ISignupForm, onSuccess: (res: AxiosResponse) => void, onReject: (reason: any) => void) {

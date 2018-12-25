@@ -6,8 +6,8 @@ import * as React from 'react';
 import { withStyles, Theme, Grid, List, ListItem, ListItemIcon, ListItemText, Divider, Card, AppBar, Tabs, Tab } from '@material-ui/core';
 import PersonIcon from '@material-ui/icons/Person';
 // import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
-import { IUser, UserService } from 'src/Services/UserService';
-import ProfileInfoContent from './ProfileInfoContent';
+import { IUser, UserService, IEditUserForm } from 'src/Services/UserService';
+import ProfileContent from './ProfileContent';
 
 const styles = ({ spacing, palette }: Theme) => ({
     root: {
@@ -58,13 +58,13 @@ interface IStateTypes {
         id: number
     },
     user: IUser,
-    edit: boolean, 
+    // editMode: boolean, 
     tab: IProfileTab,
     loading: boolean
 }
 
 enum IProfileTab {
-    Info = "Info",
+    Main = "Info",
     Following = "Following", 
     Followers = "Followers"
 }
@@ -76,14 +76,12 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
     constructor(props: IPropTypes) {
         super(props);
 
-        console.log(props);
-
         this.state = {
             current_user: {
                 id: -1
             },
-            edit: false,
-            tab: IProfileTab.Info,
+            // editMode: false,
+            tab: IProfileTab.Main,
 
             user: {
                 id: 0,
@@ -129,6 +127,12 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
 
         // console.log(username);
     }
+
+    // toggleEditMode() {
+    //     this.setState({
+    //         editMode: !this.state.editMode
+    //     });
+    // }
 
     // EFFECTS: Gets the parameters from the url react router style
     // getMatch() {
@@ -214,6 +218,14 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
     //     this.setState({ tab });
     // }
 
+    updateUser(form: IEditUserForm, onSuccess: () => void, onError: () => void) {
+        this.userService.updateUser(form, (res) => {
+            onSuccess();
+        }, (err) => {
+            onError();
+        });
+    }
+
     render() {
         const { classes } = this.props;
         const { user } = this.state;
@@ -266,9 +278,15 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
                                     {
                                         (() => {
                                             switch(this.state.tab) {
-                                                case IProfileTab.Info: 
+                                                case IProfileTab.Main: 
+                                                    // if()
                                                 // toggleEdit={this.toggleEdit.bind(this)} toggleCurrentUserIsFollowing={this.toggleCurrentUserIsFollowing.bind(this)} incrementFollowers={this.incrementFollowers.bind(this)}  profile={profile_info} classes={classes}
-                                                    return <ProfileInfoContent user={user} /> 
+                                                    return (
+                                                        <ProfileContent 
+                                                            user={user}
+                                                            updateUser={(form: IEditUserForm, onSuccess: () => void, onError: () => void) => this.updateUser(form, onSuccess, onError)} 
+                                                        /> 
+                                                    );
                                                 default:
                                                     return <div></div>
                                             }

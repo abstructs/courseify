@@ -118,7 +118,7 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def update_params
-    params.permit(:id, :username, :user, :first_name, :last_name, :headline, :education, :industry, :country, :summary, :banner)
+    params.permit(:id, :first_name, :last_name, :headline, :education, :industry, :country, :summary, :banner)
   end
 
   def user_data(user)
