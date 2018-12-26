@@ -26,7 +26,6 @@ class CourseInfoContent extends React.Component<IPropTypes, {}> {
         super(props);
     }
 
-
     render() {
         const { course, classes } = this.props;
 

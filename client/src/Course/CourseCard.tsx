@@ -23,8 +23,6 @@ import { ICurrentUser } from 'src/Services/UserService';
 import { Variant } from 'src/Helpers/AppSnackbar';
 import { blue } from '@material-ui/core/colors';
 
-// const bookImage = require('../images/book.jpeg');
-
 const styles = {
     card: {
         // maxWidth: 800,
@@ -47,6 +45,7 @@ interface IPropTypes {
     recommendCourse: (courseId: number, onSuccess: () => void, onError: () => void) => void,
     updateCourse: (form: IEditCourseForm, onSuccess: () => void, onError: () => void) => void,
     deleteCourse: (courseId: number, onSuccess: () => void, onError: () => void) => void,
+    deleteImage: (courseId: number, onSuccess: () => void, onError: () => void) => void,
     getCourse: (courseId: number, onSuccess: (course: ICourse) => void, onError: () => void) => void,
     classes: {
         card: string,
@@ -163,14 +162,24 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
     closeRecommendationsDialog() {
         this.setState({ openRecommendations: false });
     }
+    
+    setImageUrl(image_url: string | null) {
+        this.setState({
+            course: {
+                ...this.state.course,
+                image_url
+            }
+        });
+    }
 
-    setImage(file: File) {
+    setImage(file: File | null) {
+        
         this.setState({
             course: {
                 ...this.state.course,
                 image: {
-                    imageUrl: URL.createObjectURL(file),
-                    fileName: file.name,
+                    imageUrl: file ? URL.createObjectURL(file) : "",
+                    fileName: file ? file.name : "",
                     file
                 }
             }
@@ -350,7 +359,7 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
                 <Collapse in={editFormExpanded} timeout="auto">
                     {/* setImageUrl={this.setImageUrl.bind(this)}  */}
                     {/* handleEditError={this.handleEditError.bind(this)} handleEditLoading={this.handleEditLoading.bind(this)} handleEditSuccess={this.handleEditSuccess.bind(this)} handleEditExpand={this.handleEditExpand.bind(this)}  */}
-                    <CourseEditContent setImage={(file: File) => this.setImage(file)} showSnackbar={this.props.showSnackbar} onSuccess={(newCourse: IEditCourseForm) => this.onEditSuccess(newCourse)} updateCourse={this.props.updateCourse} handleCancel={() => this.handleEditCancel()}  course={course} />
+                    <CourseEditContent setImageUrl={(image_url: string) => this.setImageUrl(image_url)} deleteImage={this.props.deleteImage} setImage={(file: File) => this.setImage(file)} showSnackbar={this.props.showSnackbar} onSuccess={(newCourse: IEditCourseForm) => this.onEditSuccess(newCourse)} updateCourse={this.props.updateCourse} handleCancel={() => this.handleEditCancel()}  course={course} />
                 </Collapse>
             </Card>
         );

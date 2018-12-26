@@ -1,6 +1,6 @@
 class Api::V1::CoursesController < ApplicationController
   before_action :set_course, only: [:show, :update, :destroy]
-  before_action :authenticate_user, only: [:create, :destroy]
+  before_action :authenticate_user, only: [:create, :destroy, :delete_image]
 
   # GET /courses
   def index
@@ -66,6 +66,18 @@ class Api::V1::CoursesController < ApplicationController
   # DELETE /courses/1
   def destroy
     @course.destroy
+  end
+
+  def delete_image
+    @course = Course.find(params[:id])
+
+    if @course.user_id == current_user.id
+      if @course.image.attached?
+        @course.image.destroy!
+      end
+
+      render status: :ok
+    end
   end
 
   private

@@ -4,6 +4,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       post 'users/user_token' => 'user_token#create'
 
+      delete 'courses/:id/image' => 'courses#delete_image'
       
       get '/profile/:user_id/recommendations' => 'users#profile_recommendations'
       get '/courses/search' => 'recommendations#search'

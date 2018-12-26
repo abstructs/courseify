@@ -155,6 +155,10 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
         this.courseService.deleteCourse(courseId, onSuccess, onError);
     }
 
+    deleteImage(courseId: number, onSuccess: () => void, onError: () => void) {
+        this.courseService.deleteCourseImage(courseId, onSuccess, onError);
+    }
+
     closeAddExpand() {
         this.setState({ expanded: false });
     }
@@ -241,6 +245,7 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
                                             unrecommendCourse={(courseId: number, onSuccess: () => void, onError: () => void) => this.unrecommendCourse(courseId, onSuccess, onError)}
                                             updateCourse={(form: IEditCourseForm, onSuccess: () => void, onError: () => void) => this.updateCourse(form, onSuccess, onError)} 
                                             deleteCourse={(courseId: number, onSuccess: () => void, onError: () => void) => this.deleteCourse(courseId, onSuccess, onError)}
+                                            deleteImage={(courseId: number, onSuccess: () => void, onError: () => void) => this.deleteImage(courseId, onSuccess, onError)}
                                             getCourse={(courseId: number, onSuccess: (course: ICourse) => void, onError: () => void) => this.getCourse(courseId, onSuccess, onError)}
                                         />
                                     );

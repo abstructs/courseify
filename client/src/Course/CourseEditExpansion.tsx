@@ -1,7 +1,8 @@
 import * as React from 'react';
 
-import { CardContent, Button, FormControl, TextField, FormHelperText, MenuItem, withStyles, Grid, Tooltip, IconButton, Theme, createStyles, CircularProgress } from '@material-ui/core';
+import { CardContent, Button, FormControl, TextField, FormHelperText, MenuItem, withStyles, Grid, Tooltip, IconButton, Theme, createStyles, CircularProgress, Dialog, DialogTitle, DialogActions } from '@material-ui/core';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
+import DeleteIcon from '@material-ui/icons/Delete';
 import { ICourse, ICourseFormErrors, IEditCourseForm, IImage } from 'src/Services/CourseService';
 import { CourseValidator } from 'src/Validators/Course/CourseValidator';
 import { Variant } from 'src/Helpers/AppSnackbar';
@@ -32,9 +33,11 @@ const styles = ({ palette }: Theme) => createStyles({
 
 interface IPropTypes {
     handleCancel: () => any,
-    setImage: (file: File) => void,
+    setImageUrl: (image_url: string | null) => void,
+    setImage: (file: File | null) => void,
     onSuccess: (newCourse: IEditCourseForm) => any,
     updateCourse: (form: IEditCourseForm, onSuccess: () => void, onError: () => void) => any,
+    deleteImage: (courseId: number, onSuccess: () => void, onError: () => void) => void,
     showSnackbar: (message: string, variant: Variant) => void,
     course: ICourse,
     classes: {
@@ -48,7 +51,8 @@ interface IPropTypes {
 interface IStateTypes {
     form: IEditCourseForm,
     errors: ICourseFormErrors,
-    loading: boolean
+    loading: boolean,
+    deleteImageDialogOpen: boolean
 }
 
 const defaultImageState: IImage = {
@@ -83,7 +87,8 @@ class CourseEditExpansion extends React.Component<IPropTypes, IStateTypes> {
                 }
             },
             errors: defaultErrorState,
-            loading: false
+            loading: false,
+            deleteImageDialogOpen: false
         }       
 
         this.courseValidator = new CourseValidator(() => this.state.form);
@@ -175,10 +180,40 @@ class CourseEditExpansion extends React.Component<IPropTypes, IStateTypes> {
         }, this.props.handleCancel);
     }
 
+    deleteImage() {
+        this.props.deleteImage(this.props.course.id, () => {
+            this.closeDeleteDialog();
+            this.props.setImage(null);
+            this.props.setImageUrl(null);
+            this.props.showSnackbar("Image has been deleted", Variant.Success);
+
+            this.setState({
+                form: {
+                    ...this.state.form,
+                    image: defaultImageState
+                }
+            });
+        }, () => {
+            this.props.showSnackbar("Something went wrong", Variant.Error);
+        });
+    }
+
+    closeDeleteDialog() {
+        this.setState({
+            deleteImageDialogOpen: false
+        })
+    }
+
+    openDeleteDialog() {
+        this.setState({
+            deleteImageDialogOpen: true
+        })
+    }
+
     // setImageUrl(url)
     render() {
         const { classes } = this.props;
-        const { errors, loading } = this.state;
+        const { errors, loading, deleteImageDialogOpen } = this.state;
 
         const { title, author, category, url, description, image } = this.state.form;
 
@@ -196,137 +231,162 @@ class CourseEditExpansion extends React.Component<IPropTypes, IStateTypes> {
         // }
 
         return (
-            <CardContent>
-                {/* <CardMedia
-                    className={classes.media}
-                    image={image_url ? image_url : bookImage}
-                    title="Books"
-                /> */}
-                <FormControl error={errors.title.length > 0} className={classes.formControl}>
-                    <TextField
-                        error={errors.title.length > 0}
-                        className={classes.textField}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.handleInputChange(e)}
-                        type="text"
-                        id="title"
-                        name="title"
-                        label="Title"
-                        value={title}
-                    />
-                    <FormHelperText className={classes.textField}>{errors.title.length > 0 && errors.title[0]}</FormHelperText>
-                </FormControl>
-                <FormControl error={errors.author.length > 0} className={classes.formControl}>
-                    <TextField
-                        error={errors.author.length > 0}
-                        className={classes.textField}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.handleInputChange(e)}
-                        type="text"
-                        id="author"
-                        name="author"
-                        label="Author"
-                        value={author}
-                    />
-                    <FormHelperText className={classes.textField}>{errors.author.length > 0 && errors.author[0]}</FormHelperText>
-                </FormControl>
-                <FormControl error={errors.url.length > 0} className={classes.formControl}>
-                    <TextField
-                        error={errors.url.length > 0}
-                        className={classes.textField}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.handleInputChange(e)}
-                        type="url"
-                        id="url"
-                        label="Link"
-                        name="url"
-                        value={url}
-                        margin="normal"
-                    />
-                    <FormHelperText className={classes.textField}>{errors.url.length > 0 && errors.url[0]}</FormHelperText>
-                </FormControl>
-                <FormControl className={classes.formControl} error={errors.category.length > 0}>
-                    <TextField 
-                        select
-                        error={errors.category.length > 0} 
-                        name="category" 
-                        className={classes.textField}
-                        label="Category"
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.handleInputChange(e)}
-                        value={category}
-                        // InputProps={{
-                        //     startAdornment: <InputAdornment position="start">Category</InputAdornment>,
-                        // }}
-                    >
-                        {categories.map((option, i) => {
-                            return (
-                                <MenuItem 
-                                key={i}
-                                value={option.value}
-                                >
-                                {option.label}
-                                </MenuItem>
-                            );
-                        })}
-                    </TextField>
-                    <FormHelperText className={classes.textField}>{errors.category.length > 0 && errors.category[0]}</FormHelperText>
-                </FormControl>
-                <FormControl error={errors.image.length > 0} className={classes.formControl}>
-                    <Grid container spacing={0}>
-                        <Grid item xl={6}>
-                            <input accept="image/*" onChange={() => this.handleFileChange()} type="file"  ref={(ref) => this.upload = ref} style={{ display: 'none' }} />
-                            <Tooltip disableHoverListener={image.fileName == ""} title={image.fileName}>
-                                <TextField
-                                    value={image.fileName}
-                                    name="image"
-                                    margin="normal"
-                                    className={classes.textField}
-                                    label="Image"
-                                    disabled
-                                    error={errors.image.length > 0}
-                                    color="primary"
-                                />
-                            </Tooltip>
-                        </Grid>
-                        <Grid item xl={2}>
-                            <IconButton
-                                // style={{display: "inline"}}
-                                className="floatingButton"
-                                onClick={() => this.handleUpload() }
-                                style={{ marginTop: "25px", marginLeft: "5px"}}
-                                // style={{flex: ""}}
-                                // variant="fab"
-                                // mini
-                                aria-label="Upload"
-                            >
-                            <PhotoCamera />
-                        </IconButton>
-                        </Grid>
+            <div>
+                <Dialog open={deleteImageDialogOpen} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+                    <DialogTitle id="alert-dialog-title">Are you sure you want to delete this image?</DialogTitle>
+                    <DialogActions>
+                        <Button onClick={() => this.deleteImage()} color="primary" autoFocus>
+                            Delete Image
+                        </Button>
+                        <Button onClick={() => this.closeDeleteDialog()} color="secondary">
+                            Cancel
+                        </Button>
+                    </DialogActions>
+                </Dialog> 
+                <CardContent>
+                    {/* <CardMedia
+                        className={classes.media}
+                        image={image_url ? image_url : bookImage}
+                        title="Books"
+                    /> */}
+                    <FormControl error={errors.title.length > 0} className={classes.formControl}>
+                        <TextField
+                            error={errors.title.length > 0}
+                            className={classes.textField}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.handleInputChange(e)}
+                            type="text"
+                            id="title"
+                            name="title"
+                            label="Title"
+                            value={title}
+                        />
+                        <FormHelperText className={classes.textField}>{errors.title.length > 0 && errors.title[0]}</FormHelperText>
+                    </FormControl>
+                    <FormControl error={errors.author.length > 0} className={classes.formControl}>
+                        <TextField
+                            error={errors.author.length > 0}
+                            className={classes.textField}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.handleInputChange(e)}
+                            type="text"
+                            id="author"
+                            name="author"
+                            label="Author"
+                            value={author}
+                        />
+                        <FormHelperText className={classes.textField}>{errors.author.length > 0 && errors.author[0]}</FormHelperText>
+                    </FormControl>
+                    <FormControl error={errors.url.length > 0} className={classes.formControl}>
+                        <TextField
+                            error={errors.url.length > 0}
+                            className={classes.textField}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.handleInputChange(e)}
+                            type="url"
+                            id="url"
+                            label="Link"
+                            name="url"
+                            value={url}
+                            margin="normal"
+                        />
+                        <FormHelperText className={classes.textField}>{errors.url.length > 0 && errors.url[0]}</FormHelperText>
+                    </FormControl>
+                    <FormControl className={classes.formControl} error={errors.category.length > 0}>
+                        <TextField 
+                            select
+                            error={errors.category.length > 0} 
+                            name="category" 
+                            className={classes.textField}
+                            label="Category"
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.handleInputChange(e)}
+                            value={category}
+                            // InputProps={{
+                            //     startAdornment: <InputAdornment position="start">Category</InputAdornment>,
+                            // }}
+                        >
+                            {categories.map((option, i) => {
+                                return (
+                                    <MenuItem 
+                                    key={i}
+                                    value={option.value}
+                                    >
+                                    {option.label}
+                                    </MenuItem>
+                                );
+                            })}
+                        </TextField>
+                        <FormHelperText className={classes.textField}>{errors.category.length > 0 && errors.category[0]}</FormHelperText>
+                    </FormControl>
+                    <FormControl error={errors.image.length > 0} className={classes.formControl}>
                         <Grid container spacing={0}>
-                            <Grid item xl={12}>
-                                <FormHelperText className={classes.textField}>{errors.image.length > 0 && errors.image[0]}</FormHelperText>
+                            <Grid item xl={6}>
+                                <input accept="image/*" onChange={() => this.handleFileChange()} type="file"  ref={(ref) => this.upload = ref} style={{ display: 'none' }} />
+                                <Tooltip disableHoverListener={image.fileName == ""} title={image.fileName}>
+                                    <TextField
+                                        value={image.fileName}
+                                        name="image"
+                                        margin="normal"
+                                        className={classes.textField}
+                                        label="Image"
+                                        disabled
+                                        error={errors.image.length > 0}
+                                        color="primary"
+                                    />
+                                </Tooltip>
+                            </Grid>
+                            <Grid item xl={2}>
+                                <IconButton
+                                    // style={{display: "inline"}}
+                                    className="floatingButton"
+                                    onClick={() => this.handleUpload() }
+                                    style={{ marginTop: "25px", marginLeft: "5px"}}
+                                    // style={{flex: ""}}
+                                    // variant="fab"
+                                    // mini
+                                    aria-label="Upload"
+                                >
+                                    <PhotoCamera />
+                                </IconButton>
+                                <IconButton
+                                    // style={{display: "inline"}}
+                                    className="floatingButton"
+                                    onClick={() => this.openDeleteDialog() }
+                                    style={{ marginTop: "25px", marginLeft: "5px"}}
+                                    // style={{flex: ""}}
+                                    // variant="fab"
+                                    // mini
+                                    aria-label="Upload"
+                                >
+                                    <DeleteIcon />
+                                </IconButton>
+                            </Grid>
+                            <Grid container spacing={0}>
+                                <Grid item xl={12}>
+                                    <FormHelperText className={classes.textField}>{errors.image.length > 0 && errors.image[0]}</FormHelperText>
+                                </Grid>
                             </Grid>
                         </Grid>
-                    </Grid>
-                </FormControl>
-                <FormControl error={errors.description.length > 0} className={classes.formControl} fullWidth>
-                    <TextField
-                        error={errors.description.length > 0}
-                        className={classes.textField}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.handleInputChange(e)}
-                        type="text"
-                        id="description"
-                        label="Description"
-                        name="description"
-                        value={description}
-                        margin="normal"
-                        multiline
-                    />
-                    <FormHelperText className={classes.textField}>{errors.description.length > 0 && errors.description[0]}</FormHelperText>
-                </FormControl>
-                <div style={{marginTop: "20px"}}>
-                    <Button disabled={loading} className={saveBtnClassName} onClick={() => this.handleSubmit()} variant="contained" color="primary">Save</Button>
-                    {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
-                    <Button onClick={() => this.handleCancel()}>Cancel</Button>
-                </div>
-            </CardContent>
+                    </FormControl>
+                    <FormControl error={errors.description.length > 0} className={classes.formControl} fullWidth>
+                        <TextField
+                            error={errors.description.length > 0}
+                            className={classes.textField}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.handleInputChange(e)}
+                            type="text"
+                            id="description"
+                            label="Description"
+                            name="description"
+                            value={description}
+                            margin="normal"
+                            multiline
+                        />
+                        <FormHelperText className={classes.textField}>{errors.description.length > 0 && errors.description[0]}</FormHelperText>
+                    </FormControl>
+                    <div style={{marginTop: "20px"}}>
+                        <Button disabled={loading} className={saveBtnClassName} onClick={() => this.handleSubmit()} variant="contained" color="primary">Save</Button>
+                        {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
+                        <Button onClick={() => this.handleCancel()}>Cancel</Button>
+                    </div>
+                </CardContent>
+            </div>
         );
     }
 }
