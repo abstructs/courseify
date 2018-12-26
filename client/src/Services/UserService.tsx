@@ -1,6 +1,7 @@
 import { Service } from './Service';
 import axios, { AxiosResponse } from 'axios';
 import * as Cookies from 'js-cookie';
+import { IImage } from './CourseService';
 
 export interface ISignupForm {
     email: string,
@@ -16,8 +17,8 @@ export interface ILoginForm {
 
 export interface IEditUserForm {
     id: number,
-    email: string,
-    // username: string,
+    // email: string,
+    banner_url: string,
     first_name: string,
     last_name: string,
     education: string,
@@ -25,6 +26,7 @@ export interface IEditUserForm {
     country: string,
     industry: string,
     summary: string,
+    image: IImage
 }
 
 export interface IUserFormErrors {
@@ -62,7 +64,8 @@ export interface IUser {
     country: string,
     industry: string,
     summary: string,
-    banner_url: string
+    banner_url: string,
+    image: IImage
 }
 
 export interface ICurrentUser {

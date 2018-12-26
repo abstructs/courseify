@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { CardMedia, CardContent, Typography, Button, withStyles } from '@material-ui/core';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
+import { ICourse } from 'src/Services/CourseService';
 
 const bookImage = require('../images/book.jpeg');
 
@@ -14,11 +15,7 @@ const styles = {
 }
 
 interface IPropTypes {
-    course: {
-        url: string,
-        description: string,
-        image_url: string | null
-    },
+    course: ICourse,
     classes: {
         media: string
     }
@@ -29,6 +26,7 @@ class CourseInfoContent extends React.Component<IPropTypes, {}> {
         super(props);
     }
 
+
     render() {
         const { course, classes } = this.props;
 
@@ -36,7 +34,7 @@ class CourseInfoContent extends React.Component<IPropTypes, {}> {
             <div>
                 <CardMedia
                     className={classes.media}
-                    image={course.image_url || bookImage}
+                    image={course.image && course.image.file && course.image.imageUrl || course.image_url || bookImage}
                     title="Books"
                 />
                 <CardContent>

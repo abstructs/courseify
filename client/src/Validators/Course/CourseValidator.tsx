@@ -1,15 +1,16 @@
 import { Validator } from '../Validator';
-import { IAddCourseForm, ICourseFormErrors } from 'src/Services/CourseService';
+import { ICourseFormErrors, IImage } from 'src/Services/CourseService';
 
-// export interface IAddCourseForm {
-//     title: string,
-//     author: string,
-//     courseUrl: string,
-//     description: string,
-//     category: string
-// }
+export interface ICourseForm {
+    title: string,
+    author: string,
+    url: string,
+    description: string,
+    category: string,
+    image: IImage
+}
 
-export class CourseValidator extends Validator<IAddCourseForm, ICourseFormErrors> {
+export class CourseValidator extends Validator<ICourseForm, ICourseFormErrors> {
 
     private getTitle: () => string;
     private getAuthor: () => string;
@@ -18,7 +19,7 @@ export class CourseValidator extends Validator<IAddCourseForm, ICourseFormErrors
     private getDescription: () => string;
     private getCategory: () => string;
 
-    constructor(getForm: () => IAddCourseForm) {
+    constructor(getForm: () => ICourseForm) {
         super();
 
         this.getTitle = () => getForm().title;

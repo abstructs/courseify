@@ -132,9 +132,9 @@ class ProfileInfoContent extends React.Component<IPropTypes, IStateTypes> {
         return (
             <div>
                 <CardMedia
-                className={classes.media}
-                image={user.banner_url || bookImage}
-                title="Contemplative Reptile"
+                    className={classes.media}
+                    image={user.image && user.image.file && user.image.imageUrl || user.banner_url || bookImage}
+                    title="Contemplative Reptile"
                 />
                 <CardContent className={classes.cardContent}>
                     <Typography gutterBottom variant="headline" component="h2">

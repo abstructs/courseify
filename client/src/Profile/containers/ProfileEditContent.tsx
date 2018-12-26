@@ -6,6 +6,7 @@ import { Theme, CardMedia, CardContent, FormControl, TextField, FormHelperText, 
 import { IUser, IUserEditFormErrors, IEditUserForm } from 'src/Services/UserService';
 import { UserValidator } from 'src/Validators/User/UserValidator';
 import { Variant } from 'src/Helpers/AppSnackbar';
+import { IImage } from 'src/Services/CourseService';
 const bookImage = require('../../images/book.jpeg');
 
 // axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
@@ -63,6 +64,7 @@ interface IStateTypes {
 }
 
 interface IPropTypes {
+    setImage: (file: File) => void,
     updateUser: (form: IEditUserForm, onSuccess: () => void, onError: () => void) => void,
     showSnackbar: (message: string, variant: Variant) => void,
     user: IUser,
@@ -74,16 +76,26 @@ interface IPropTypes {
     }
 }
 
+const defaultImageState: IImage = {
+    fileName: "",
+    imageUrl: bookImage,
+    file: null
+}
+
 // TODO: Change ProfileEdit to handle it's own state
 class ProfileEditContent extends React.Component<IPropTypes, IStateTypes> {
 
     private userValidator: UserValidator;
+    private upload: HTMLInputElement | null;
 
     constructor(props: IPropTypes) {
         super(props);           
         
         this.state = {
-            form: props.user,
+            form: {
+                ...props.user,
+                image: defaultImageState
+            },
             errors: {
                 first_name: [],
                 last_name: [],
@@ -283,10 +295,43 @@ class ProfileEditContent extends React.Component<IPropTypes, IStateTypes> {
         this.props.closeEdit();
     }
 
+
+    handleUpload() {
+        if(this.upload) {
+            this.upload.click();
+        }
+    }
+
+    handleFileChange() {
+        if(this.upload && this.upload.files && this.upload.files.length > 0) {
+            const file = this.upload.files[0];
+
+            this.setState({
+                form: {
+                    ...this.state.form,
+                    image: {
+                        fileName: file.name,
+                        imageUrl: URL.createObjectURL(file),
+                        file
+                    }
+                }
+            }, () => {
+                this.props.setImage(file);
+            });
+        } else {
+            this.setState({
+                form: {
+                    ...this.state.form,
+                    image: defaultImageState
+                }
+            });
+        }
+    }
+
     render() {
         const { classes } = this.props;
         // education, industry
-        const { first_name, last_name, headline, education, industry, country, summary } = this.state.form;
+        const { first_name, last_name, headline, education, industry, country, summary, image, banner_url } = this.state.form;
         // const { profile, errors, loading, success, banner } = this.state;
         const { errors } = this.state;
 
@@ -297,13 +342,12 @@ class ProfileEditContent extends React.Component<IPropTypes, IStateTypes> {
             <div >
                 <CardMedia
                     className={classes.media}
-                    image={bookImage}
+                    image={image.file && image.imageUrl || banner_url || bookImage}
                     title="Contemplative Reptile"
                 />
                 <CardContent>
                     <FormControl error={errors.first_name.length > 0} className={classes.formControl}>
                         <TextField
-                            // onChange={this.handleChange.bind(this)}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.handleInputChange(e)}
                             style={{marginLeft: "0px"}} 
                             id="first_name"
@@ -402,7 +446,7 @@ class ProfileEditContent extends React.Component<IPropTypes, IStateTypes> {
                         <Grid container spacing={0}>
                             <Grid item xl={6}>
                                 {/* onChange={() => this.handleFileChange()} */}
-                                {/* <input accept="image/*" type="file"  ref={(ref) => this.upload = ref} style={{ display: 'none' }} /> */}
+                                <input accept="image/*" type="file" onChange={() => this.handleFileChange()} ref={(ref) => this.upload = ref} style={{ display: 'none' }} />
                                 {/* title={image.fileName} */}
                                 <Tooltip disableHoverListener={true} title={""}>
                                     <TextField
@@ -421,7 +465,7 @@ class ProfileEditContent extends React.Component<IPropTypes, IStateTypes> {
                                 <IconButton
                                     // style={{display: "inline"}}
                                     className="floatingButton"
-                                    // onClick={() => this.handleUpload() }
+                                    onClick={() => this.handleUpload() }
                                     style={{ marginTop: "25px", marginLeft: "5px"}}
                                     // style={{flex: ""}}
                                     // variant="fab"

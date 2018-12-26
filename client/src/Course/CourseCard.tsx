@@ -15,14 +15,15 @@ import PersonIcon from '@material-ui/icons/Person';
 import CourseInfoContent from './CourseInfoContent';
 
 // import RecommendationDialog from '../Recommendation/RecommendationDialog';
-import { ICourse, IEditCourseForm } from 'src/Services/CourseService';
+import { ICourse, IEditCourseForm, IImage } from 'src/Services/CourseService';
 // Collapse
 import { Card, Dialog, DialogTitle, DialogActions, Button, DialogContent, DialogContentText, TextField, CardHeader, Avatar, CardActions, withStyles, IconButton, Collapse, List, ListItem, ListItemAvatar, ListItemText } from '@material-ui/core';
 import CourseEditContent from './CourseEditExpansion';
 import { ICurrentUser } from 'src/Services/UserService';
 import { Variant } from 'src/Helpers/AppSnackbar';
 import { blue } from '@material-ui/core/colors';
-// import { PropTypes } from '@material-ui/core';
+
+// const bookImage = require('../images/book.jpeg');
 
 const styles = {
     card: {
@@ -66,6 +67,12 @@ interface IStateTypes {
     openShare: boolean
 }
 
+const defaultImageState: IImage = {
+    fileName: "",
+    imageUrl: "",
+    file: null
+}
+
 class CourseCard extends React.Component<IPropTypes, IStateTypes> {
     constructor(props: IPropTypes) {
         super(props);
@@ -91,7 +98,9 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
     }
 
     closeEditForm() {
-        this.setState({ editFormExpanded: false });
+        this.setState({ 
+            editFormExpanded: false
+        });
     }
 
     openDeleteDialog() {
@@ -116,14 +125,19 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
         // });
     }
 
-    handleCancel() {
-        this.setState({ 
-            deleteDialogOpen: false
-        }, () => this.handleCloseDialog());
+    handleDeleteCancel() {
+        this.setState({ deleteDialogOpen: false });
     }
 
-    handleCloseDialog() {
-        this.setState({ deleteDialogOpen: false });
+    handleEditCancel() {
+        console.log("Cancel edit")
+
+        this.setState({
+            course: {
+                ...this.props.course,
+                image: defaultImageState
+            }
+        }, this.closeEditForm);
     }
 
     handleOpenDialog() {
@@ -140,62 +154,6 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
         }, () => {
 
         });
-        // console.log("refresh")
-
-        // axios.get(`${process.env.REACT_APP_API_URL}/api/v1/courses/${this.state.course.id}`)
-        // .then(res => {
-        //     const { course } = res.data;
-        //     this.setState({ course, refreshing: false });
-        // })
-    }
-
-    handleRecommendClick() {
-        console.log("recommend")
-        // axios.post('${process.env.REACT_APP_API_URL}/api/v1/recommendations', { course_id: this.state.course.id })
-        // .then(res => {
-        //     console.log('recommend')
-        //     this.setState({ current_user_recommended: true, refreshing: true }, _ => setTimeout(_ => { 
-        //         this.refresh();
-        //         this.props.showSnackbar("Successfully recommended course", "success");
-        //     }, 500));
-        // })
-        // .catch(err => {
-        //     console.log(err);
-        // })
-    }
-
-    handleUnrecommendClick() {
-        console.log("unrecommend")
-        // axios.delete(`${process.env.REACT_APP_API_URL}/api/v1/recommendations`, { course_id: this.state.course.id })
-        // .then(res => {
-        //     this.setState({ current_user_recommended: false, refreshing: true }, _ => setTimeout(_ => {
-        //         this.refresh();
-        //         this.props.showSnackbar("Successfully unrecommended course", "success");
-        //     }, 500));
-        // })
-        // .catch(err => {
-        //     console.log(err);
-        // })
-    }
-
-    handleEditLoading() {
-        console.log("edit loading")
-        // this.setState({ expanded: false, refreshing: true }, _ => setTimeout(1000));
-    }
-
-    handleEditSuccess() {
-        console.log("valid")
-        // this.setState({ expanded: false, refreshing: true }, _ => setTimeout(_ => {
-        //     this.refresh();
-        //     this.props.showSnackbar("Course succesfully edited", "success");
-        // }, 1000));
-    }
-
-    handleEditError() {
-        console.log("Errors")
-        // this.setState({ expanded: true, refreshing: false }, _ => {
-        //     this.props.showSnackbar("Something went wrong, double check your work!", "error");
-        // });
     }
 
     openRecommendationsDialog() {
@@ -206,6 +164,19 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
         this.setState({ openRecommendations: false });
     }
 
+    setImage(file: File) {
+        this.setState({
+            course: {
+                ...this.state.course,
+                image: {
+                    imageUrl: URL.createObjectURL(file),
+                    fileName: file.name,
+                    file
+                }
+            }
+        });
+    }
+
     openShareDialog() {
         this.setState({ openShare: true });
     }
@@ -213,9 +184,6 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
     closeShareDialog() {
         this.setState({ openShare: false });
     }
-    // handleShareFocus(event) {
-    //     event.target.select();
-    // }
 
     handleCopy() {
         const copied = document.execCommand('copy');
@@ -256,12 +224,7 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
     render() {
         const { classes, currentUser } = this.props;
         const { course, deleted, editFormExpanded, deleteDialogOpen, openShare, openRecommendations } = this.state;
-        // const isLoggedIn = Auth().isAuthenticated();
 
-        // const current_user_recommended = this.state.course.recommendations.filter(recommendation => {
-        //     return recommendation.user_id == this.props.current_user.id;
-        // }).length != 0;
-        
         if(deleted) {
             return (
                 <div>
@@ -286,7 +249,7 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
                                 </Avatar>
                             </ListItemAvatar>
                             <ListItemText primary={recommendation.user.username} />
-                            <Button href={`/people/${recommendation.user.username}`}>View Profile</Button>
+                            <Button href={`/profile/${recommendation.user.username}`}>View Profile</Button>
                         </ListItem>
                     ))}
                     </List>
@@ -299,7 +262,7 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
                         <Button onClick={() => this.deleteCourse()} color="primary" autoFocus>
                             Yes, remove it
                         </Button>
-                        <Button onClick={() => this.handleCancel()}>
+                        <Button onClick={() => this.handleDeleteCancel()}>
                             Cancel
                         </Button>
                     </DialogActions>
@@ -352,17 +315,17 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
                     subheader={`by ${course.author}`}
                 />
 
-                <CourseInfoContent course={course} />
+                <CourseInfoContent course={this.state.course} />
 
                 <CardActions className={classes.actions} disableActionSpacing>
-                        <IconButton color={course.current_user_recommended ? "secondary" : "default"} 
-                            aria-label="Recommend this course"
-                            //disabled={refreshing}
-                        >
-                            <FavoriteIcon 
-                                onClick={() => course.current_user_recommended ? this.unrecommend() : this.recommend()}
-                            />
-                        </IconButton>
+                    <IconButton color={course.current_user_recommended ? "secondary" : "default"} 
+                        aria-label="Recommend this course"
+                        //disabled={refreshing}
+                    >
+                        <FavoriteIcon 
+                            onClick={() => course.current_user_recommended ? this.unrecommend() : this.recommend()}
+                        />
+                    </IconButton>
                         {/*  */}
                     <IconButton onClick={() => this.openShareDialog()} aria-label="Share">
                         <ShareIcon color={openShare ? "secondary" : "inherit"} />
@@ -387,7 +350,7 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
                 <Collapse in={editFormExpanded} timeout="auto">
                     {/* setImageUrl={this.setImageUrl.bind(this)}  */}
                     {/* handleEditError={this.handleEditError.bind(this)} handleEditLoading={this.handleEditLoading.bind(this)} handleEditSuccess={this.handleEditSuccess.bind(this)} handleEditExpand={this.handleEditExpand.bind(this)}  */}
-                    <CourseEditContent showSnackbar={this.props.showSnackbar} onSuccess={(newCourse: IEditCourseForm) => this.onEditSuccess(newCourse)} updateCourse={this.props.updateCourse} close={() => this.closeEditForm()}  course={course} />
+                    <CourseEditContent setImage={(file: File) => this.setImage(file)} showSnackbar={this.props.showSnackbar} onSuccess={(newCourse: IEditCourseForm) => this.onEditSuccess(newCourse)} updateCourse={this.props.updateCourse} handleCancel={() => this.handleEditCancel()}  course={course} />
                 </Collapse>
             </Card>
         );

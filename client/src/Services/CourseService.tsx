@@ -138,7 +138,7 @@ export class CourseService extends Service {
         .catch(onError);
     }
 
-    updateCourse(course: IEditCourseForm, onSuccess: (res: any) => void, onError: (reason: any) => void) {
+    updateCourse(course: IEditCourseForm, onSuccess: (course: IEditCourseForm) => void, onError: (reason: any) => void) {
         const formData = new FormData();
 
         Object.keys(course).map(key => {
@@ -153,7 +153,7 @@ export class CourseService extends Service {
 
         axios.put(`${super.getApiUrl()}/api/v1/courses/${course.id}`, formData, 
             { headers: { 'Content-Type': 'multipart/form-data', ...super.getAuthHeader() }})
-        .then(onSuccess)
+        .then(() => onSuccess(course))
         .catch(onError);
     }
 

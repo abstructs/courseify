@@ -52,7 +52,8 @@ class Api::V1::CoursesController < ApplicationController
       if course_params.has_key?(:image) then @course.image.attach(course_params[:image]) end
         
       @course.save
-      render json: json_with_image(@course), status: :ok
+
+      render status: :ok
     else
       if(!valid_image) then @course.errors.add(:image, 'must be jpeg, jpg, or png') end
 

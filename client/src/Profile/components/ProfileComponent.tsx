@@ -9,6 +9,9 @@ import PersonIcon from '@material-ui/icons/Person';
 import { IUser, UserService, IEditUserForm, ICurrentUser } from 'src/Services/UserService';
 import ProfileContent from './ProfileContent';
 import AppSnackbar, { Variant } from '../../Helpers/AppSnackbar';
+import { IImage } from 'src/Services/CourseService';
+
+const bookImage = require('../../images/book.jpeg');
 
 const styles = ({ spacing, palette }: Theme) => ({
     root: {
@@ -69,6 +72,12 @@ enum IProfileTab {
     Followers = 3
 }
 
+const defaultImageState: IImage = {
+    fileName: "",
+    imageUrl: bookImage,
+    file: null
+}
+
 class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
 
     private userService: UserService;
@@ -92,7 +101,8 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
                 country: "",
                 industry: "",
                 summary: "",
-                banner_url: ""
+                banner_url: "",
+                image: defaultImageState
             },
             userFound: false,
             loading: true
@@ -241,6 +251,21 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
         });
     }
 
+    setImage(file: File) {
+        this.setState({
+            user: {
+                ...this.state.user,
+                image: {
+                    imageUrl: URL.createObjectURL(file),
+                    fileName: file.name,
+                    file
+                }
+            }
+        })
+    }
+    
+
+
     render() {
         const { classes } = this.props;
         const { user, userFound, loading } = this.state;
@@ -307,6 +332,7 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
                                                         <ProfileContent
                                                             getCurrentUser={this.props.getCurrentUser}
                                                             user={user}
+                                                            setImage={(file: File) => this.setImage(file)}
                                                             showSnackbar={(message: string, variant: Variant) => this.showSnackbar(message, variant)}
                                                             updateUser={(form: IEditUserForm, onSuccess: () => void, onError: () => void) => this.updateUser(form, onSuccess, onError)} 
                                                         /> 

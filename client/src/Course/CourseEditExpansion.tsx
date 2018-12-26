@@ -6,8 +6,6 @@ import { ICourse, ICourseFormErrors, IEditCourseForm, IImage } from 'src/Service
 import { CourseValidator } from 'src/Validators/Course/CourseValidator';
 import { Variant } from 'src/Helpers/AppSnackbar';
 
-const bookImage = require('../images/book.jpeg');
-
 const categories = [
     {
         label: "Computer Science",
@@ -33,7 +31,8 @@ const styles = ({ palette }: Theme) => createStyles({
 });
 
 interface IPropTypes {
-    close: () => any,
+    handleCancel: () => any,
+    setImage: (file: File) => void,
     onSuccess: (newCourse: IEditCourseForm) => any,
     updateCourse: (form: IEditCourseForm, onSuccess: () => void, onError: () => void) => any,
     showSnackbar: (message: string, variant: Variant) => void,
@@ -54,7 +53,7 @@ interface IStateTypes {
 
 const defaultImageState: IImage = {
     fileName: "",
-    imageUrl: bookImage,
+    imageUrl: "",
     file: null
 }
 
@@ -71,7 +70,6 @@ class CourseEditExpansion extends React.Component<IPropTypes, IStateTypes> {
 
     private upload: HTMLInputElement | null;
     private courseValidator: CourseValidator;
-    // private courseService: CourseService;
     
     constructor(props: IPropTypes) {
         super(props);
@@ -79,14 +77,16 @@ class CourseEditExpansion extends React.Component<IPropTypes, IStateTypes> {
         this.state = {
             form: {
                 ...props.course,
-                image: defaultImageState
+                image: {
+                    ...defaultImageState,
+                    imageUrl: (props.course.image_url != null ? props.course.image_url : defaultImageState.imageUrl)
+                }
             },
             errors: defaultErrorState,
             loading: false
         }       
 
         this.courseValidator = new CourseValidator(() => this.state.form);
-        // this.courseService = new CourseService();
     }
 
     handleInputChange({ target }: React.ChangeEvent<HTMLInputElement>) {
@@ -108,6 +108,8 @@ class CourseEditExpansion extends React.Component<IPropTypes, IStateTypes> {
                         file
                     }
                 }
+            }, () => {
+                this.props.setImage(file);
             });
         } else {
             this.setState({
@@ -163,14 +165,14 @@ class CourseEditExpansion extends React.Component<IPropTypes, IStateTypes> {
         });
     }
 
-    close() {
+    handleCancel() {
         this.setState({ 
             form: {
                 ...this.props.course,
                 image: defaultImageState
             },
             errors: defaultErrorState
-        }, this.props.close);
+        }, this.props.handleCancel);
     }
 
     // setImageUrl(url)
@@ -322,7 +324,7 @@ class CourseEditExpansion extends React.Component<IPropTypes, IStateTypes> {
                 <div style={{marginTop: "20px"}}>
                     <Button disabled={loading} className={saveBtnClassName} onClick={() => this.handleSubmit()} variant="contained" color="primary">Save</Button>
                     {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
-                    <Button onClick={() => this.close()}>Cancel</Button>
+                    <Button onClick={() => this.handleCancel()}>Cancel</Button>
                 </div>
             </CardContent>
         );

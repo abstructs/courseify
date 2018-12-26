@@ -92,51 +92,24 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
 
     constructor(props: IPropTypes) {
         super(props);
-        // this.snackbar = React.createRef();
 
         this.state = {
             courses: [],
             expanded: false,
             loading: false,
-            // recommendationsOpen: false,
-            category: Category.All,
-            // show: false
+            category: Category.All
         }
 
         this.courseService = new CourseService();
     }
 
     componentDidMount() {
-        // const id = this.props.match.params.id;
-
-        // if(id) {
-        //     this.getCourse(id);
-        // } 
-        // else {
         this.getCourses(Category.All, () => {});
-        // }
     }
 
     setShowSnackbar(openSnackbar: (message: string, variant: string) => void) {
         this.showSnackbar = openSnackbar;
     }
-
-    // getCourse(id) {
-            // const category = tabs[Object.keys(tabs).filter(key => tabs[key].id === this.state.tab)].value;
-        // this.setState({ show: true }, _ => {
-        //     setTimeout(_ => {
-        //         axios.get(`${process.env.REACT_APP_API_URL}/v1/courses/${id}`)
-        //         .then(res => {
-        //             const { course } = res.data;
-    
-        //             // console.log(course);
-                    
-        //             this.setState({ course, loading: false, show: true });
-        //         });
-        //     }, 1000);
-        // });
-
-    // }
 
     getCourses(category: Category, onSuccess: () => void) {
         this.courseService.getByCategory(category, (courses: ICourse[]) => {
@@ -170,9 +143,9 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
         this.courseService.unrecommendCourse(courseId, onSuccess, onError);
     }
 
-    updateCourse(form: IEditCourseForm, onSuccess: () => void, onError: () => void) {
-        this.courseService.updateCourse(form, (res) => {
-            onSuccess();
+    updateCourse(form: IEditCourseForm, onSuccess: (course: IEditCourseForm) => void, onError: () => void) {
+        this.courseService.updateCourse(form, (course: IEditCourseForm) => {
+            onSuccess(course);
         }, (err) => {
             onError();
         });
@@ -187,26 +160,8 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
     }
 
     handleExpandClick() {
-        this.setState({ expanded: !this.state.expanded});
+        this.setState({ expanded: !this.state.expanded });
     }
-
-    // showSnackbar = (message, variant) => {
-    //     this.snackbar.handleClick(message, variant);
-    //     // this.setState({ snackbarClicked: true, message });
-    // }
-    
-    // getCourses() {
-    //     const category = tabs[Object.keys(tabs).filter(key => tabs[key].id === this.state.tab)].value;
-
-    //     setTimeout(_ => {
-    //         axios.get(`${process.env.REACT_APP_API_URL}/api/v1/courses?category=${category}`)
-    //         .then(res => {
-    //             const { courses } = res.data;
-                
-    //             this.setState({ courses, loading: false });
-    //         });
-    //     }, 1000);
-    // }
 
     handleTabClick(newCategory: Category) {
         this.setState({ category: newCategory }, () => this.getCourses(newCategory, () => {}));
@@ -217,24 +172,8 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
 
         const { loading, expanded, courses } = this.state;
 
-        
-
-        // if(show) {
-        //     return (
-        //         <Grid container spacing={0} justify="center" style={{marginTop: "40px"}}>
-        //         {loading ? <CircularProgress />
-        //         :
-        //             <Grid item xs={6}>
-        //                 <CourseCard key={course.id} showSnackbar={this.showSnackbar.bind(this)} current_user={current_user} course={course} />
-        //             </Grid>
-        //         }
-        //         </Grid>
-        //     )
-        // }
-
         return (
             <div className={classes.root}>
-                {/* <SimpleSnackbar onRef={ref => this.snackbar = ref} /> */}
                 <AppSnackbar setOpenSnackbar={this.setShowSnackbar.bind(this)} />
                 <Grid container spacing={0} justify="space-between">
                     <Grid item md={3}>

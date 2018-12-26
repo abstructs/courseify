@@ -45,6 +45,7 @@ interface IStateTypes {
 }
 
 interface IPropTypes {
+    setImage: (file: File) => void, 
     getCurrentUser: () => ICurrentUser | null,
     updateUser: (form: IEditUserForm, onSuccess: () => void, onError: () => void) => void,
     showSnackbar: (message: string, variant: Variant) => void,
@@ -135,6 +136,7 @@ class ProfileContent extends React.Component<IPropTypes, IStateTypes> {
                     user={user}
                     showSnackbar={this.props.showSnackbar}
                     updateUser={this.props.updateUser}
+                    setImage={this.props.setImage}
                     closeEdit={() => this.closeEdit()} 
                 />
             );
