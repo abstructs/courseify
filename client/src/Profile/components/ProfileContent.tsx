@@ -45,9 +45,11 @@ interface IStateTypes {
 }
 
 interface IPropTypes {
-    setImage: (file: File) => void, 
+    setBanner: (file: File) => void, 
+    setBannerUrl: (banner_url: string) => void,
     getCurrentUser: () => ICurrentUser | null,
     updateUser: (form: IEditUserForm, onSuccess: () => void, onError: () => void) => void,
+    deleteBanner: (userId: number, onSuccess: () => void, onError: () => void) => void,
     showSnackbar: (message: string, variant: Variant) => void,
     user: IUser,
     classes: {
@@ -136,7 +138,9 @@ class ProfileContent extends React.Component<IPropTypes, IStateTypes> {
                     user={user}
                     showSnackbar={this.props.showSnackbar}
                     updateUser={this.props.updateUser}
-                    setImage={this.props.setImage}
+                    setBannerUrl={this.props.setBannerUrl}
+                    setBanner={this.props.setBanner}
+                    deleteBanner={this.props.deleteBanner}
                     closeEdit={() => this.closeEdit()} 
                 />
             );

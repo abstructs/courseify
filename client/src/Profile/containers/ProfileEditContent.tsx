@@ -2,7 +2,8 @@ import * as React from 'react';
 // import '../App.css';
 // import { withStyles, CardContent, Button, TextField, FormControl, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, FormHelperText, CircularProgress, Grid, LinearProgress, Input, Tooltip, IconButton, CardMedia, Theme } from '@material-ui/core';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
-import { Theme, CardMedia, CardContent, FormControl, TextField, FormHelperText, Grid, IconButton, Button, withStyles, createStyles, Tooltip } from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete';
+import { Theme, CardMedia, CardContent, FormControl, TextField, FormHelperText, Grid, IconButton, Button, withStyles, createStyles, Tooltip, Dialog, DialogTitle, DialogActions } from '@material-ui/core';
 import { IUser, IUserEditFormErrors, IEditUserForm } from 'src/Services/UserService';
 import { UserValidator } from 'src/Validators/User/UserValidator';
 import { Variant } from 'src/Helpers/AppSnackbar';
@@ -59,13 +60,16 @@ const styles = ({ spacing }: Theme) => createStyles({
 });
 
 interface IStateTypes {
+    deleteDialogOpen: boolean,
     form: IEditUserForm,
     errors: IUserEditFormErrors
 }
 
 interface IPropTypes {
-    setImage: (file: File) => void,
+    setBanner: (file: File | null) => void, 
+    setBannerUrl: (banner_url: string | null) => void,
     updateUser: (form: IEditUserForm, onSuccess: () => void, onError: () => void) => void,
+    deleteBanner: (userId: number, onSuccess: () => void, onError: () => void) => void,
     showSnackbar: (message: string, variant: Variant) => void,
     user: IUser,
     closeEdit: () => void,
@@ -78,7 +82,7 @@ interface IPropTypes {
 
 const defaultImageState: IImage = {
     fileName: "",
-    imageUrl: bookImage,
+    imageUrl: "",
     file: null
 }
 
@@ -94,7 +98,7 @@ class ProfileEditContent extends React.Component<IPropTypes, IStateTypes> {
         this.state = {
             form: {
                 ...props.user,
-                image: defaultImageState
+                banner: defaultImageState
             },
             errors: {
                 first_name: [],
@@ -105,150 +109,17 @@ class ProfileEditContent extends React.Component<IPropTypes, IStateTypes> {
                 industry: [],
                 summary: []
             },
-            // open: false,
-            // loading: false,
-            // success: undefined,
-            // banner: {
-            //     file_name: "",
-            //     url: props.profile.banner_url
-            // }
+            deleteDialogOpen: false
         }
 
         this.userValidator = new UserValidator(() => this.state.form);
     }
-
-    // handleFileChange() {
-    //     if(this.upload && this.upload.files && this.upload.files.length > 0) {
-    //         const file = this.upload.files[0];
-
-    //         this.setState({
-    //             form: {
-    //                 ...this.state.form,
-    //                 image: {
-    //                     fileName: file.name,
-    //                     imageUrl: URL.createObjectURL(file),
-    //                     file
-    //                 }
-    //             }
-    //         });
-    //     } else {
-    //         this.setState({
-    //             form: {
-    //                 ...this.state.form,
-    //                 image: defaultImageState
-    //             }
-    //         });
-    //     }
-    // }
 
     handleInputChange({ target }: React.ChangeEvent<HTMLInputElement>) {
         const { name, value } = target;
 
         this.setState({ form: { ...this.state.form, [name]: value } });
     }
-
-    // handleClickOpen() {
-    //     this.setState({ open: true });
-    // }
-
-    // handleCancel(e) {
-    //     this.handleClose();
-    //     this.props.toggleEdit();
-    // }
-
-    // handleSave() {
-    //     const file = this.upload.files[0];
-    //     var formData = new FormData();
-    //     if(file) formData.append("banner", file, file.name);
-        
-
-    //     Object.keys(this.state.profile).map(key => {
-    //         formData.append(key, this.state.profile[key]);
-    //     });
-
-    //     this.setState({ loading: true }, _ => {
-    //         axios({
-    //             method: 'put',
-    //             url: `${process.env.REACT_APP_API_URL}/api/v1/users/${this.props.profile.username}`,
-    //             data: formData,
-    //             config: { headers: {'Content-Type': 'multipart/form-data' }}
-    //             })
-    //             .then(res => this.props.refreshUserInfo())
-    //             .catch(err => {
-    //                 console.log(err.response)
-    //                 console.log("error happened line 114")
-    //                 const { errors } = err.response.data;
-    //                 this.setState({ errors, loading: false });
-    //         });
-    //     });
-    // }
-
-    // handleChange(event) {
-    //     const target = event.target;
-    //     const value = target.value;
-    //     const name = target.name;
-
-    //     this.setState(prevState => ({
-    //         // ...prevState,
-    //         profile: {
-    //             ...prevState.profile,
-    //             [name]: value
-    //         }
-    //     })); 
-    // }
-
-    // handleClose() {
-    //     this.setState({ open: false })
-    // }
-
-    // shouldMarkError(paramName) {
-    //     const errors = this.state.errors[paramName] || [];
-    //     return errors.length != 0;
-    // }
-
-    // handleUpload() {
-    //     this.upload.click();
-    // }
-
-    // validateFile(file) {
-    //     return (/\.(gif|jpg|jpeg|tiff|png)$/i).test(file.name);
-    // }
-    
-    // handleFileChange() {
-    //     const uploadInput = this.upload 
-    //     const file = uploadInput && uploadInput.files.length !== 0 ? uploadInput.files[0] : false;
-
-    //     // const image = this.upload && this.upload.files.length != 0 ? URL.createObjectURL(this.upload.files[0]) : profile.banner_url;
-        
-    //     if(file) {
-    //         if(this.validateFile(file)) {
-    //             this.setState(prevState => ({
-    //                 banner: {
-    //                     ...prevState.banner,
-    //                     file_name: file.name,
-    //                     url: URL.createObjectURL(file)
-    //                 }
-    //             }));
-    //         } else {
-    //             this.setState(prevState => ({
-    //                 // ...prevState,
-    //                 errors: {
-    //                     ...prevState.errors,
-    //                     banner: [file.type + " is not a valid file format"]
-    //                 }
-    //             }));
-    //         }
-    //     }
-    //     else {
-    //         this.setState(prevState => ({
-    //             banner: {
-    //                 ...prevState.banner,
-    //                 url: this.props.profile.banner_url,
-    //                 file_name: ""
-    //             }
-    //         }));
-    //     }
-    // }
 
     getFieldsWithErrors(): Array<String> {
         return Object.keys(this.state.errors).filter(key => this.state.errors[key].length > 0);
@@ -291,6 +162,25 @@ class ProfileEditContent extends React.Component<IPropTypes, IStateTypes> {
         });
     }
 
+    deleteBanner() {
+        this.props.deleteBanner(this.props.user.id, () => {
+            this.closeDeleteDialog();
+            this.props.setBanner(null);
+            this.props.setBannerUrl(null);
+            this.props.showSnackbar("Image has been deleted", Variant.Success);
+
+            this.setState({
+                form: {
+                    ...this.state.form,
+                    banner: defaultImageState,
+                    banner_url: null
+                }
+            });
+        }, () => {
+            this.props.showSnackbar("Something went wrong", Variant.Error);
+        });
+    }
+
     handleCancel() {
         this.props.closeEdit();
     }
@@ -302,6 +192,18 @@ class ProfileEditContent extends React.Component<IPropTypes, IStateTypes> {
         }
     }
 
+    closeDeleteDialog() {
+        this.setState({
+            deleteDialogOpen: false
+        });
+    }
+
+    openDeleteDialog() {
+        this.setState({
+            deleteDialogOpen: true
+        });
+    }
+
     handleFileChange() {
         if(this.upload && this.upload.files && this.upload.files.length > 0) {
             const file = this.upload.files[0];
@@ -309,20 +211,20 @@ class ProfileEditContent extends React.Component<IPropTypes, IStateTypes> {
             this.setState({
                 form: {
                     ...this.state.form,
-                    image: {
+                    banner: {
                         fileName: file.name,
                         imageUrl: URL.createObjectURL(file),
                         file
                     }
                 }
             }, () => {
-                this.props.setImage(file);
+                this.props.setBanner(file);
             });
         } else {
             this.setState({
                 form: {
                     ...this.state.form,
-                    image: defaultImageState
+                    banner: defaultImageState
                 }
             });
         }
@@ -331,15 +233,27 @@ class ProfileEditContent extends React.Component<IPropTypes, IStateTypes> {
     render() {
         const { classes } = this.props;
         // education, industry
-        const { first_name, last_name, headline, education, industry, country, summary, image, banner_url } = this.state.form;
+        const { first_name, last_name, headline, education, industry, country, summary, banner: image, banner_url } = this.state.form;
         // const { profile, errors, loading, success, banner } = this.state;
-        const { errors } = this.state;
+        const { errors, deleteDialogOpen } = this.state;
 
         // const addBtnClassName = success != undefined ? (success ? classes.buttonSuccess : classes.buttonError) : "";
 
         return (
             // autoComplete="off"
             <div >
+                <Dialog open={deleteDialogOpen} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+                    <DialogTitle id="alert-dialog-title">{"Are you sure you want to remove your banner?"}</DialogTitle>
+                    <DialogActions>
+                        <Button onClick={() => this.deleteBanner()} color="primary" autoFocus>
+                            Yes, remove it
+                        </Button>
+                        <Button onClick={() => this.closeDeleteDialog()}>
+                            Cancel
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
                 <CardMedia
                     className={classes.media}
                     image={image.file && image.imageUrl || banner_url || bookImage}
@@ -472,8 +386,20 @@ class ProfileEditContent extends React.Component<IPropTypes, IStateTypes> {
                                     // mini
                                     aria-label="Upload"
                                 >
-                                <PhotoCamera />
-                            </IconButton>
+                                    <PhotoCamera />
+                                </IconButton>
+                                <IconButton
+                                    // style={{display: "inline"}}
+                                    className="floatingButton"
+                                    onClick={() => this.openDeleteDialog() }
+                                    style={{ marginTop: "25px", marginLeft: "5px"}}
+                                    // style={{flex: ""}}
+                                    // variant="fab"
+                                    // mini
+                                    aria-label="Upload"
+                                >
+                                    <DeleteIcon />
+                                </IconButton>
                             </Grid>
                             <Grid container spacing={0}>
                                 <Grid item xl={12}>

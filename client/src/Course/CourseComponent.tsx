@@ -5,7 +5,7 @@ import CourseAddExpansion from './CourseAddExpansion';
 import { IAddCourseForm, CourseService, ICourse, IEditCourseForm, Category } from '../Services/CourseService';
 import CourseCard from './CourseCard';
 import { ICurrentUser } from '../Services/UserService';
-import AppSnackbar from '../Helpers/AppSnackbar';
+import AppSnackbar, { Variant } from '../Helpers/AppSnackbar';
 
 const styles = ({ spacing, palette}: Theme) => createStyles({
     root: {
@@ -117,7 +117,7 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
                 courses
             }, onSuccess);
         }, (err) => {
-            console.error(err);
+            this.showSnackbar("Something went wrong", Variant.Warning);
         });
     }
 

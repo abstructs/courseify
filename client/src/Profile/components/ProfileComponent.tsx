@@ -11,7 +11,7 @@ import ProfileContent from './ProfileContent';
 import AppSnackbar, { Variant } from '../../Helpers/AppSnackbar';
 import { IImage } from 'src/Services/CourseService';
 
-const bookImage = require('../../images/book.jpeg');
+// const bookImage = require('../../images/book.jpeg');
 
 const styles = ({ spacing, palette }: Theme) => ({
     root: {
@@ -74,7 +74,7 @@ enum IProfileTab {
 
 const defaultImageState: IImage = {
     fileName: "",
-    imageUrl: bookImage,
+    imageUrl: "",
     file: null
 }
 
@@ -243,6 +243,29 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
     //     this.setState({ tab });
     // }
 
+    setBannerUrl(banner_url: string | null) {
+        this.setState({
+            user: {
+                ...this.state.user,
+                banner_url
+            }
+        });
+    }
+
+    setBanner(file: File | null) {
+        this.setState({
+            user: {
+                ...this.state.user,
+                banner: {
+                    imageUrl: file ? URL.createObjectURL(file) : "",
+                    fileName: file ? file.name : "",
+                    file
+                }
+            }
+        });
+    }
+
+
     updateUser(form: IEditUserForm, onSuccess: () => void, onError: () => void) {
         this.userService.updateUser(form, (res) => {
             this.getUser(onSuccess);
@@ -251,20 +274,9 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
         });
     }
 
-    setImage(file: File) {
-        this.setState({
-            user: {
-                ...this.state.user,
-                image: {
-                    imageUrl: URL.createObjectURL(file),
-                    fileName: file.name,
-                    file
-                }
-            }
-        })
+    deleteBanner(userId: number, onSuccess: () => void, onError: () => void) {
+        this.userService.deleteBanner(userId, onSuccess, onError);
     }
-    
-
 
     render() {
         const { classes } = this.props;
@@ -332,8 +344,10 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
                                                         <ProfileContent
                                                             getCurrentUser={this.props.getCurrentUser}
                                                             user={user}
-                                                            setImage={(file: File) => this.setImage(file)}
+                                                            setBannerUrl={(banner_url: string | null) => this.setBannerUrl(banner_url)}
+                                                            setBanner={(file: File | null) => this.setBanner(file)}
                                                             showSnackbar={(message: string, variant: Variant) => this.showSnackbar(message, variant)}
+                                                            deleteBanner={this.deleteBanner.bind(this)}
                                                             updateUser={(form: IEditUserForm, onSuccess: () => void, onError: () => void) => this.updateUser(form, onSuccess, onError)} 
                                                         /> 
                                                     );

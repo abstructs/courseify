@@ -1,6 +1,6 @@
 class Api::V1::UsersController < ApplicationController
   # skip_before_action :verify_authenticity_token
-  before_action :authenticate_user, only: [:profile, :update, :profile]
+  before_action :authenticate_user, only: [:profile, :update, :profile, :delete_banner]
   
   def index
     @users = User.select(User.column_names - ['password_digest', 'created_at', 'updated_at', 'sign_in_count'])
@@ -9,31 +9,32 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def update
-    # @user = current_user
-    user = User.find(params[:id])
+    @user = User.find(params[:id])
 
-    user.assign_attributes(update_params.except(:banner))
+    @user.assign_attributes(update_params.except(:banner))
 
-    valid_banner = if update_params.has_key?(:banner) then valid_banner_type?(update_params[:banner]) else nil end
+    # if params.has_key?(:banner)
+    #   puts "banner"
+    # end
 
-    if current_user[:id] != user[:id]
+    valid_banner = if update_params.has_key?(:banner) then valid_banner_type?(update_params[:banner]) else true end
+    # && valid_banner != false
 
-      render status: :unauthorized
-    elsif user.valid? && valid_banner != false
+    if current_user.id === @user.id && @user.valid? && valid_banner
+      if update_params.has_key?(:banner) then @user.banner.attach(update_params[:banner]) end
 
-      if update_params.has_key?(:banner) then user.banner.attach(update_params[:banner]) end
-      
-      user.save
+      @user.save!
+
       render status: :ok
-    else
-      if(!valid_banner) then user.errors.add(:banner, 'must be jpeg, jpg, or png') end
+    else 
+      if(!valid_banner) then @user.errors.add(:banner, 'must be jpeg, jpg, or png') end
 
-      puts user.errors
-      
+      puts @user.errors.messages
+
       render status: :bad_request
-    end 
+    end
   end
-
+    
   def followers
     @user = User.find(params[:user_id])
 
@@ -111,6 +112,14 @@ class Api::V1::UsersController < ApplicationController
     end
   end
 
+  def delete_banner
+    if current_user.banner.attached?
+      current_user.banner.destroy!
+    end
+
+    render status: :ok
+  end
+
   private
 
   def get_token(user)
@@ -144,10 +153,9 @@ class Api::V1::UsersController < ApplicationController
     }
   end
 
-  def valid_banner_type?(banner_blob)    
+  def valid_banner_type?(banner_blob)
     return banner_blob.content_type.downcase.in?(%w(image/jpeg image/png image/jpg))
   end
-
   # def find_param
   #   params.require()
   # end

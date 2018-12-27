@@ -18,7 +18,7 @@ export interface ILoginForm {
 export interface IEditUserForm {
     id: number,
     // email: string,
-    banner_url: string,
+    banner_url: string | null,
     first_name: string,
     last_name: string,
     education: string,
@@ -26,7 +26,7 @@ export interface IEditUserForm {
     country: string,
     industry: string,
     summary: string,
-    image: IImage
+    banner: IImage
 }
 
 export interface IUserFormErrors {
@@ -64,7 +64,7 @@ export interface IUser {
     country: string,
     industry: string,
     summary: string,
-    banner_url: string,
+    banner_url: string | null,
     image: IImage
 }
 
@@ -201,12 +201,12 @@ export class UserService extends Service {
             formData.append(key, user[key]);
         });
 
-        // formData.delete("image");
+        formData.delete("banner");
 
-        // if(user.image.file != null) {
-        //     formData.append("image", course.image.file);
-        // }
-
+        if(user.banner.file != null) {
+            formData.append("banner", user.banner.file);
+        }
+        
         axios.put(`${super.getApiUrl()}/api/v1/users/${user.id}`, formData, 
             { headers: { 'Content-Type': 'multipart/form-data', ...super.getAuthHeader() }})
         .then(onSuccess)
@@ -230,6 +230,13 @@ export class UserService extends Service {
         })
         .then(onSuccess)
         .catch(onReject);
+    }
+
+    public deleteBanner(userId: number, onSuccess: () => void, onError: () => void) {
+        axios.delete(`${super.getApiUrl()}/api/v1/users/${userId}/banner`, 
+            { headers: { 'Content-Type': 'multipart/form-data', ...super.getAuthHeader() }})
+        .then(onSuccess)
+        .catch(onError);
     }
 
 }

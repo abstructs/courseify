@@ -5,6 +5,7 @@ Rails.application.routes.draw do
       post 'users/user_token' => 'user_token#create'
 
       delete 'courses/:id/image' => 'courses#delete_image'
+      delete 'users/:id/banner' => 'users#delete_banner'
       
       get '/profile/:user_id/recommendations' => 'users#profile_recommendations'
       get '/courses/search' => 'recommendations#search'

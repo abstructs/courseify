@@ -168,9 +168,6 @@ export class CourseService extends Service {
         axios.delete(`${super.getApiUrl()}/api/v1/courses/${courseId}/image`, 
             { headers: { 'Content-Type': 'multipart/form-data', ...super.getAuthHeader() }})
         .then(onSuccess)
-        .catch((err) => {
-            console.log(err);
-            onError(err);
-        });
+        .catch(onError);
     }
 }

@@ -190,7 +190,8 @@ class CourseEditExpansion extends React.Component<IPropTypes, IStateTypes> {
             this.setState({
                 form: {
                     ...this.state.form,
-                    image: defaultImageState
+                    image: defaultImageState,
+                    image_url: null
                 }
             });
         }, () => {

@@ -48,11 +48,11 @@ class Api::V1::CoursesController < ApplicationController
     @course.assign_attributes(course_params.except(:image))
     valid_image = if course_params.has_key?(:image) then valid_image_type?(course_params[:image]) else nil end
   
-    if @course.valid? && valid_image != false
+    if current_user.id === @course.user_id && @course.valid? && valid_image != false
       if course_params.has_key?(:image) then @course.image.attach(course_params[:image]) end
         
       @course.save
-
+      
       render status: :ok
     else
       if(!valid_image) then @course.errors.add(:image, 'must be jpeg, jpg, or png') end
