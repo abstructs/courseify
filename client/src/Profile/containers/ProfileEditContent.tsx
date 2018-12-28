@@ -3,7 +3,7 @@ import * as React from 'react';
 // import { withStyles, CardContent, Button, TextField, FormControl, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, FormHelperText, CircularProgress, Grid, LinearProgress, Input, Tooltip, IconButton, CardMedia, Theme } from '@material-ui/core';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { Theme, CardMedia, CardContent, FormControl, TextField, FormHelperText, Grid, IconButton, Button, withStyles, createStyles, Tooltip, Dialog, DialogTitle, DialogActions } from '@material-ui/core';
+import { Theme, CardMedia, CardContent, FormControl, TextField, FormHelperText, Grid, IconButton, Button, withStyles, createStyles, Tooltip, Dialog, DialogTitle, DialogActions, CircularProgress } from '@material-ui/core';
 import { IUser, IUserEditFormErrors, IEditUserForm } from 'src/Services/UserService';
 import { UserValidator } from 'src/Validators/User/UserValidator';
 import { Variant } from 'src/Helpers/AppSnackbar';
@@ -56,13 +56,14 @@ const styles = ({ spacing }: Theme) => createStyles({
     wrapper: {
         margin: spacing.unit,
         position: 'relative',
-    },
+    }
 });
 
 interface IStateTypes {
     deleteDialogOpen: boolean,
     form: IEditUserForm,
-    errors: IUserEditFormErrors
+    errors: IUserEditFormErrors,
+    loading: boolean
 }
 
 interface IPropTypes {
@@ -76,7 +77,8 @@ interface IPropTypes {
     classes: {
         media: string,
         formControl: string,
-        actionButton: string
+        actionButton: string,
+        buttonProgress: string
     }
 }
 
@@ -109,6 +111,7 @@ class ProfileEditContent extends React.Component<IPropTypes, IStateTypes> {
                 industry: [],
                 summary: []
             },
+            loading: false,
             deleteDialogOpen: false
         }
 
@@ -142,22 +145,26 @@ class ProfileEditContent extends React.Component<IPropTypes, IStateTypes> {
     }
 
     onError() {
-        this.props.showSnackbar("Something went wrong", Variant.Error);
+        this.setState({
+            loading: false
+        }, () => {
+            this.props.showSnackbar("Something went wrong", Variant.Error);
+        });
     }
 
     onSuccess() {
-        this.props.closeEdit();
-        this.props.showSnackbar("Your profile has been updated", Variant.Success);
+        this.setState({
+            loading: false
+        }, () => {
+            this.props.closeEdit();
+            this.props.showSnackbar("Your profile has been updated", Variant.Success);
+        })   
     }
 
     handleSubmit() {
         this.setErrors(() => {
             if(this.thereAreNoErrors()) {
-                // this.setState({ loading: true }, this.updateCourse);
-                this.updateUser();
-            } else {
-                // this.props.showSnackbar("")
-                // console.log(this.state.errors);
+                this.setState({ loading: true }, this.updateUser);
             }
         });
     }
@@ -430,9 +437,11 @@ class ProfileEditContent extends React.Component<IPropTypes, IStateTypes> {
                         size="small"
                         onClick={() => this.handleSubmit()}
                         className={classes.actionButton}
+                        disabled={this.state.loading}
                     >
                         Save
                     </Button>
+                    {this.state.loading && <CircularProgress size={24} className={classes.buttonProgress} />}
 
                     <Button 
                         variant="contained" 

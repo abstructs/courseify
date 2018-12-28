@@ -1,6 +1,6 @@
 class Api::V1::UsersController < ApplicationController
   # skip_before_action :verify_authenticity_token
-  before_action :authenticate_user, only: [:profile, :update, :profile, :delete_banner]
+  before_action :authenticate_user, only: [:profile, :update, :profile, :delete_banner, :follow, :unfollow]
   
   def index
     @users = User.select(User.column_names - ['password_digest', 'created_at', 'updated_at', 'sign_in_count'])
@@ -51,19 +51,38 @@ class Api::V1::UsersController < ApplicationController
     render json: { following: following }
   end
 
+  def follow
+    user = User.find(params[:user_id])
+
+    if current_user && current_user.id != user.id
+
+      current_user.follow(user)
+
+      render status: :ok
+    else 
+      render status: 401
+    end
+  end
+
+  def unfollow
+    user = User.find(params[:user_id])
+
+    if current_user && current_user.id != user.id
+
+      current_user.unfollow(user)
+
+      render status: :ok
+    else 
+      render status: 401  
+    end
+  end
+
   def show
     @user = User.find_by(username: params[:id])
 
     if @user
-      user_json = user_data(@user)
 
-      if(current_user)
-        user_json[:current_user_is_following] = current_user.following?(@user)
-      else 
-        user_json[:current_user_is_following] = false
-      end
-
-      render json: { user: user_json }
+      render json: { user: get_json(@user) }
     else 
       render status: :not_found
     end
@@ -73,11 +92,7 @@ class Api::V1::UsersController < ApplicationController
     @user = current_user
 
     if @user
-      user_json = user_data(@user)
-
-      user_json[:current_user_is_following] = false
-      
-      render json: { user: user_json }
+      render json: { user: get_json(@user) }
     end
   end
 
@@ -132,6 +147,20 @@ class Api::V1::UsersController < ApplicationController
 
   def update_params
     params.permit(:id, :first_name, :last_name, :headline, :education, :industry, :country, :summary, :banner)
+  end
+
+  def get_json user
+    user.current_user_followed = current_user_followed(user)
+
+    user
+  end
+
+  def current_user_followed user
+    if current_user then current_user.following? user else false end
+  end
+
+  def banner_url user
+    if user.banner.attached? then url_for(banner.image) else nil end
   end
 
   def user_data(user)

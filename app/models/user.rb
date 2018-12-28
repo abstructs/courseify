@@ -1,4 +1,7 @@
 class User < ApplicationRecord
+  attr_accessor :banner_url
+  attr_accessor :current_user_followed
+
   has_many :recommendations, dependent: :destroy
   has_many :active_follows, class_name: "Follow",
                             foreign_key: "follower_id",
@@ -69,6 +72,30 @@ class User < ApplicationRecord
 
   def to_token_payload
     { sub: { user: { id: self.id, email: self.email } } }
+  end
+
+  def as_json (options={})
+    super(options.merge({
+      methods: [:banner_url, :current_user_followed],
+      include: [:followers, :following],
+      except: [:password_digest, :email]
+    }))
+  #   super(options.merge({
+  #     include: [:followers]
+  #   }))
+
+  # #   super(options.merge({
+  # #     methods: [:banner_url],
+  # #     include: {
+  # #       recommendations: { 
+  # #         include: {
+  # #           user: {
+  # #             only: [:id, :username] 
+  # #           } 
+  # #         } 
+  # #       }
+  # #     }
+  # #   }))
   end
 
   private

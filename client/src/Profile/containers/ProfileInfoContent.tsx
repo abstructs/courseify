@@ -50,6 +50,8 @@ interface IStateTypes {
 
 interface IPropTypes {
     getCurrentUser: () => ICurrentUser | null,
+    followUser: (userId: number, onSuccess: () => void, onError: () => void) => void,
+    unfollowUser: (userId: number, onSuccess: () => void, onError: () => void) => void,
     user: IUser,
     showSnackbar: (message: string, variant: Variant) => void,
     openEdit: () => void,
@@ -119,6 +121,14 @@ class ProfileInfoContent extends React.Component<IPropTypes, IStateTypes> {
     //     });
     // }
 
+    handleFollow() {
+        if(this.props.user.current_user_followed) {
+            this.props.unfollowUser(this.props.user.id, () => {}, () => {})
+        } else {
+            this.props.followUser(this.props.user.id, () => {}, () => {});
+        }
+    }
+
     render() {
         const { classes, user, getCurrentUser } = this.props;
         // const { editMode } = this.state;
@@ -127,7 +137,8 @@ class ProfileInfoContent extends React.Component<IPropTypes, IStateTypes> {
         // const is_current_user_profile = isLoggedIn ? Auth().paraseJwt().sub.user.id === profile.id : false;
         const currentUser = getCurrentUser();
 
-        const is_current_user_profile = currentUser != null ? currentUser.id === user.id : false;
+        const is_current_user_profile = currentUser != null && currentUser.id === user.id;
+
 
         return (
             <div>
@@ -147,6 +158,10 @@ class ProfileInfoContent extends React.Component<IPropTypes, IStateTypes> {
                                     {profile.current_user_is_following ? "Unfollow" : "Follow"}
                                 </Button>
                         } */}
+                        {currentUser && currentUser.id != user.id &&
+                            <Button onClick={() => this.handleFollow()} style={{marginLeft: "15px"}}>
+                                {user.current_user_followed ? "Unfollow" : "Follow"}
+                            </Button>}
                         {
                             is_current_user_profile && 
                                 <Button onClick={this.props.openEdit} variant="fab" color="secondary" aria-label="add" className={classes.mediaFab}>

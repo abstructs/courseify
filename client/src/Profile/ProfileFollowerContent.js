@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import '../App.css';
-import axios from 'axios';
+// import axios from 'axios';
 import Auth from '../User/Auth';
 import UserCard from '../User/UserCard';
 import { CardContent, Typography } from '@material-ui/core';
 
-axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
+// axios.defaults.headers.common['Authorization'] = Auth().headers()['Authorization'];
 
 class ProfileFollowers extends Component {
     constructor(props) {
@@ -17,16 +17,16 @@ class ProfileFollowers extends Component {
     }
 
     componentDidMount() {
-        axios.get(`${process.env.REACT_APP_API_URL}/v1/users/${this.props.profile.id}/followers/`)
-        .then(res => {
-            const followers = res.data.followers;
-            this.setState({ followers });
-            console.log("res")
+        // axios.get(`${process.env.REACT_APP_API_URL}/v1/users/${this.props.profile.id}/followers/`)
+        // .then(res => {
+        //     const followers = res.data.followers;
+        //     this.setState({ followers });
+        //     console.log("res")
             
-        })
-        .catch(err => {
-            console.log("err")
-        })
+        // })
+        // .catch(err => {
+        //     console.log("err")
+        // })
     }
 
     render() {

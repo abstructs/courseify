@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import { Menu, Fade } from '@material-ui/core';
+import { Menu, Fade, ClickAwayListener } from '@material-ui/core';
 
 const styles = {
     root: {
@@ -52,6 +52,13 @@ class Navbar extends React.Component<IPropTypes, IStateTypes> {
     handleClose() {
         this.setState({ anchorEl: null });
     }
+    
+    onClickAway() {
+        console.log("click away")
+        this.setState({
+            anchorEl: null
+        });
+    }
 
     render() {
         const { classes, isAuthenticated } = this.props;
@@ -67,15 +74,17 @@ class Navbar extends React.Component<IPropTypes, IStateTypes> {
                                 id="fade-menu"
                                 anchorEl={anchorEl}
                                 open={Boolean(anchorEl)}
-                                onClose={this.handleClose}
+                                disableAutoFocus
+                                // onClose={() => this.handleClose()}   
                                 TransitionComponent={Fade}
                             >
-                                <Button style={{ marginLeft: "5px", marginRight: "5px" }} size="medium" href="/profile">Profile</Button>
-                                <br />
-                                <Button style={{ marginLeft: "5px", marginRight: "5px" }} size="medium" href="/courses">Courses</Button>
-                                {/* <MenuItem onClick={this.handleClose}>My account</MenuItem> */}
-
-                                {/* <Button style={{ marginLeft: "5px", marginRight: "5px" }} size="medium" button href="/logout" onClick={this.handleClose}>Logout</Button> */}
+                                <ClickAwayListener onClickAway={() => {}}>
+                                    <div>
+                                        <Button style={{ marginLeft: "5px", marginRight: "5px" }} size="medium" href="/profile">Profile</Button>
+                                        <br/>
+                                        <Button style={{ marginLeft: "5px", marginRight: "5px" }} size="medium" href="/courses">Courses</Button>
+                                    </div>
+                                </ClickAwayListener>
                             </Menu>
                         </IconButton>
                         <Typography variant="title" color="inherit" className={classes.flex}>

@@ -53,6 +53,20 @@ export interface IUserEditFormErrors {
     summary: Array<String>
 }
 
+export interface IUserProfile {
+    id: number,
+    banner_url: string | null,
+    first_name: string,
+    last_name: string,
+    education: string,
+    headline: string,
+    country: string,
+    industry: string,
+    summary: string,
+    following: Array<IUser>,
+    followers: Array<IUser>
+}
+
 export interface IUser {
     id: number,
     email: string,
@@ -65,7 +79,10 @@ export interface IUser {
     industry: string,
     summary: string,
     banner_url: string | null,
-    image: IImage
+    image: IImage,
+    current_user_followed: boolean,
+    followers: Array<IUser>,
+    following: Array<IUser>
 }
 
 export interface ICurrentUser {
@@ -173,6 +190,20 @@ export class UserService extends Service {
                 callback(res.data.email_taken);
             }
         });
+    }
+
+    follow(userId: number, onSuccess: () => void, onError: () => void) { 
+        axios.post(`${super.getApiUrl()}/api/v1/users/follow/${userId}`, {},
+            { headers: { ...super.getAuthHeader() }})
+        .then(onSuccess)
+        .catch(onError);
+    }
+
+    unfollow(userId: number, onSuccess: () => void, onError: () => void) { 
+        axios.delete(`${super.getApiUrl()}/api/v1/users/unfollow/${userId}`,
+            { headers: { ...super.getAuthHeader() }})
+        .then(onSuccess)
+        .catch(onError);
     }
 
     public authenticate(loginForm: ILoginForm, onSuccess: (res: AxiosResponse) => void, onReject: (reason: any) => void) {

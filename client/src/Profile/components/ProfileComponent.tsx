@@ -10,6 +10,7 @@ import { IUser, UserService, IEditUserForm, ICurrentUser } from 'src/Services/Us
 import ProfileContent from './ProfileContent';
 import AppSnackbar, { Variant } from '../../Helpers/AppSnackbar';
 import { IImage } from 'src/Services/CourseService';
+import UserCard from 'src/User/UserCard';
 
 // const bookImage = require('../../images/book.jpeg');
 
@@ -102,7 +103,10 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
                 industry: "",
                 summary: "",
                 banner_url: "",
-                image: defaultImageState
+                image: defaultImageState,
+                current_user_followed: false,
+                followers: [],
+                following: []
             },
             userFound: false,
             loading: true
@@ -265,6 +269,27 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
         });
     }
 
+    followUser(userId: number, onSuccess: () => void, onError: () => void) {
+        this.userService.follow(userId, () => {
+            this.setState({
+                user: {
+                    ...this.state.user,
+                    current_user_followed: true
+                }
+            }, onSuccess);
+        }, onError);
+    }
+
+    unfollowUser(userId: number, onSuccess: () => void, onError: () => void) {
+        this.userService.unfollow(userId, () => {
+            this.setState({
+                user: {
+                    ...this.state.user,
+                    current_user_followed: false
+                }
+            }, onSuccess);
+        }, onError);
+    }
 
     updateUser(form: IEditUserForm, onSuccess: () => void, onError: () => void) {
         this.userService.updateUser(form, (res) => {
@@ -278,6 +303,12 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
         this.userService.deleteBanner(userId, onSuccess, onError);
     }
 
+    handleTab(tab: IProfileTab) {
+        this.setState({
+            tab
+        });
+    }
+
     render() {
         const { classes } = this.props;
         const { user, userFound, loading } = this.state;
@@ -288,17 +319,7 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
             )
         }
 
-        // const current_user = isLoggedIn ? Auth().paraseJwt().sub.user : {};
-        
-        // if(!isLoggedIn && !this.getMatch()) {
-        //     return <Redirect to='/'/>;
-        // }
-
-        // if(Object.keys(this.state.profile_info).length == 0) {
-        //     return <div>Loading</div>;
-        // 
-
-        // console.log(profile_info)
+        console.log(user)
 
         return (
             <div className={classes.root}>
@@ -328,20 +349,21 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
                             <Grid style={{paddingTop: "50px"}} item md={8}>
                                 <Card className={classes.card}>
                                     <AppBar position="static">
-                                        <Tabs value={this.state.tab} >
+                                        <Tabs value={this.state.tab} >  
                                         {/* onClick={this.handleTab(1).bind(this)}  */}
-                                            <Tab value={IProfileTab.Main} label="Info" />
-                                            {/* <Tab value={2} label={`Following (${!loading && profile_info.followingCount || 0})`} /> */}
-                                            {/* <Tab value={3} label={`Followers (${!loading && profile_info.followerCount || 0})`} /> */}
+                                            <Tab onClick={() => this.handleTab(IProfileTab.Main)} value={IProfileTab.Main} label="Info" />
+                                            <Tab onClick={() => this.handleTab(IProfileTab.Following)} value={IProfileTab.Following} label={`Following (${user.following ? user.following.length : 0})`} />
+                                            <Tab onClick={() => this.handleTab(IProfileTab.Followers)} value={IProfileTab.Followers} label={`Followers (${user.followers ? user.followers.length : 0})`} />
                                         </Tabs>
                                     </AppBar>
-
                                     {
                                         (() => {
                                             switch(this.state.tab) {
                                                 case IProfileTab.Main: 
                                                     return (
                                                         <ProfileContent
+                                                            followUser={this.followUser.bind(this)}
+                                                            unfollowUser={this.unfollowUser.bind(this)}
                                                             getCurrentUser={this.props.getCurrentUser}
                                                             user={user}
                                                             setBannerUrl={(banner_url: string | null) => this.setBannerUrl(banner_url)}
@@ -351,9 +373,26 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
                                                             updateUser={(form: IEditUserForm, onSuccess: () => void, onError: () => void) => this.updateUser(form, onSuccess, onError)} 
                                                         /> 
                                                     );
+                                                case IProfileTab.Following:
+                                                    return (
+                                                        <div>
+                                                            {user.following.map((user, index) => {
+                                                                return <UserCard key={index} user={user} />;
+                                                            })}
+                                                        </div>
+                                                    )
+                                                    break;
+                                                case IProfileTab.Following:
+                                                    return (
+                                                        <div>
+                                                            {user.followers.map((user, index) => {
+                                                                return <UserCard key={index} user={user} />;
+                                                            })}
+                                                        </div>
+                                                    )
                                                 default:
-                                                    return <div></div>
-                                            }
+                                                    return <div></div>;
+                                            }  
                                         })()
                                     }
 

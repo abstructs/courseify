@@ -47,6 +47,8 @@ interface IStateTypes {
 interface IPropTypes {
     setBanner: (file: File) => void, 
     setBannerUrl: (banner_url: string) => void,
+    followUser: (userId: number, onSuccess: () => void, onError: () => void) => void,
+    unfollowUser: (userId: number, onSuccess: () => void, onError: () => void) => void,
     getCurrentUser: () => ICurrentUser | null,
     updateUser: (form: IEditUserForm, onSuccess: () => void, onError: () => void) => void,
     deleteBanner: (userId: number, onSuccess: () => void, onError: () => void) => void,
@@ -145,7 +147,13 @@ class ProfileContent extends React.Component<IPropTypes, IStateTypes> {
                 />
             );
         } else {
-            return <ProfileInfoContent getCurrentUser={this.props.getCurrentUser} showSnackbar={this.props.showSnackbar} openEdit={() => this.openEdit()} user={user} />
+            return <ProfileInfoContent 
+                followUser={this.props.followUser}
+                unfollowUser={this.props.unfollowUser}
+                getCurrentUser={this.props.getCurrentUser} 
+                showSnackbar={this.props.showSnackbar} 
+                openEdit={() => this.openEdit()} 
+                user={user} />
         }
     }
 }

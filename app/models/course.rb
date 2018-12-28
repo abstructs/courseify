@@ -22,7 +22,7 @@ class Course < ApplicationRecord
         recommendations: { 
           include: {
             user: {
-              only: [:id, :username] 
+              only: [:id, :username]
             } 
           } 
         }

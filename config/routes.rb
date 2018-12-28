@@ -12,6 +12,9 @@ Rails.application.routes.draw do
       delete '/recommendations' => 'recommendations#destroy'
       put 'users/:user_username' => 'users#update'
 
+      post 'users/follow/:user_id' => 'users#follow'
+      delete 'users/unfollow/:user_id' => 'users#unfollow'
+
       post 'users/profile' => 'users#profile'
       post 'users/username_taken' => 'users#username_taken'
       post 'users/email_taken' => 'users#email_taken'
