@@ -99,7 +99,7 @@ class Api::V1::CoursesController < ApplicationController
 
     def get_json(course) 
       course.current_user_recommended = current_user_recommended(course)
-      course.image_url = image_url(course)
+      # course.image_url = image_url(course)
 
       course
     end
@@ -114,9 +114,9 @@ class Api::V1::CoursesController < ApplicationController
       end
     end
 
-    def image_url course
-      if course.image.attached? then url_for(course.image) else nil end
-    end
+    # def image_url course
+    #   if course.image.attached? then url_for(course.image) else nil end
+    # end
 
     def valid_image_type?(image_blob)
       return image_blob.content_type.downcase.in?(%w(image/jpeg image/png image/jpg))

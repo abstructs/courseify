@@ -79,10 +79,6 @@ class User < ApplicationRecord
     { sub: { user: { id: self.id, email: self.email } } }
   end
 
-  # : {
-  #   include: [:course]
-  # }
-
   def recommendations
     course_recommendations.as_json
   end

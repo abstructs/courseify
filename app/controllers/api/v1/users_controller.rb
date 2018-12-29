@@ -151,6 +151,17 @@ class Api::V1::UsersController < ApplicationController
 
   def get_json user
     user.current_user_followed = current_user_followed(user)
+    # recommenders.exists?({ user_id: current_user.id })
+
+    if current_user
+      user.recommendations.map do |recommendation|        
+        recommendation[:course].current_user_recommended = recommendation[:course].recommenders.exists?({ user_id: current_user.id })
+
+        recommendation
+      end
+
+      user
+    end
 
     user
   end

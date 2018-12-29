@@ -264,20 +264,20 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
                                                 case IProfileTab.Recommendations:
                                                     return (
                                                         <Grid container spacing={0}>
-                                                            <Grid item md={3}></Grid>
-                                                            {user.recommendations.map((recommendation, index) => {
-                                                                return (
-                                                                    <Grid item xs={6}>
+                                                            <Grid item xs={3}></Grid>
+                                                            <Grid style={{marginTop: 50}} item xs={6}>
+                                                                {user.recommendations.map((recommendation, index) => {
+                                                                    return (
                                                                         <CourseCard 
                                                                             key={index}
                                                                             currentUser={this.props.getCurrentUser()}
                                                                             course={recommendation.course} 
                                                                             showSnackbar={(message: string, variant: Variant) => this.showSnackbar(message, variant)}
                                                                         />
-                                                                    </Grid>
-                                                                );
-                                                            })}
-                                                            <Grid item md={3}></Grid>
+                                                                    );
+                                                                })}
+                                                            </Grid>
+                                                            <Grid item xs={3}></Grid>
                                                         </Grid>
                                                     );
                                                 case IProfileTab.Following:
