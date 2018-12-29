@@ -1,13 +1,11 @@
-/* tslint:disable */s
-
-import React, { Component } from 'react';
-import '../App.css';
-import { Paper } from '@material-ui/core';
+import * as React from 'react';
+// import '../App.css';
+// import { Paper } from '@material-ui/core';
 // import axios from 'axios';
 // import Auth from './Auth';
 
-class Footer extends Component {
-    constructor(props) {
+class Footer extends React.Component<{}, {}> {
+    constructor(props: {}) {
         super(props);
     }
 

@@ -96,7 +96,8 @@ export class UserService extends Service {
     }
 
     public getOne(username: string, onSuccess: (user: IUser) => void, onError: () => void) {
-        axios.get(`${super.getApiUrl()}/api/v1/users/${username}`)
+        axios.get(`${super.getApiUrl()}/api/v1/users/${username}`, 
+            { headers: { ...super.getAuthHeader() }})
         .then(res => res.data.user)
         .then(onSuccess)
         .catch(onError);
@@ -104,14 +105,15 @@ export class UserService extends Service {
 
     public getCurrentUserProfile(onSuccess: (user: IUser) => void, onError: () => void) {
         axios.post(`${super.getApiUrl()}/api/v1/users/profile`, {},
-            { headers: { 'Content-Type': 'multipart/form-data', ...super.getAuthHeader() }})
+            { headers: { ...super.getAuthHeader() }})
         .then(res => res.data.user)
         .then(onSuccess)
         .catch(onError);
     }
 
     public getAll(callback: (users: Array<IUser>) => void) {
-        axios.get(`${super.getApiUrl()}/api/v1/users`)
+        axios.get(`${super.getApiUrl()}/api/v1/users`,
+            { headers: { ...super.getAuthHeader() }})
         .then(res => {
             const users: Array<IUser> = res.data.users;
             
@@ -120,7 +122,12 @@ export class UserService extends Service {
     }
 
     private storeToken(token: string): void {
-        Cookies.set("token", token);
+        const today = new Date();
+        const oneWeek = new Date(new Date().setDate(today.getDate() + 7));
+
+        Cookies.set("token", token, {
+            expires: oneWeek
+        });
     }
 
     public static revokeToken() {

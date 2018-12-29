@@ -4,7 +4,8 @@ class Course < ApplicationRecord
   attr_accessor :image_url
   attr_accessor :current_user_recommended
 
-  URL_REGEXP = /^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/ix
+  # URL_REGEXP = /^(http|https|):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/ix
+  URL_REGEXP = URI::regexp
   enum category: [:computer_science, :data_science, :other]
   belongs_to :user
   has_many :recommendations

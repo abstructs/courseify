@@ -108,7 +108,6 @@ class Api::V1::CoursesController < ApplicationController
 
     def current_user_recommended course
       if current_user
-
         course.recommendations.exists?({ user_id: current_user.id })
       else 
         false

@@ -157,96 +157,6 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
         }
     }
 
-    // toggleEditMode() {
-    //     this.setState({
-    //         editMode: !this.state.editMode
-    //     });
-    // }
-
-    // EFFECTS: Gets the parameters from the url react router style
-    // getMatch() {
-        
-        // return matchPath(this.props.history.location.pathname, {
-        //     path: '/people/:username',
-        //     exact: true,
-        //     strict: false
-        // });
-    // }
-
-    // componentDidMount() {
-    //     this.refreshUserInfo();
-    // }
-
-    // incrementRecommendations(num) {
-    //     this.setState(prevState => ({
-    //         profile_info: {
-    //             ...prevState.profile_info,
-    //             recommendationsCount: this.state.profile_info.recommendationsCount + num
-    //         }
-    //     }));
-    // }
-
-    // toggleCurrentUserIsFollowing() {
-    //     this.setState(prevState => ({
-    //         profile_info: {
-    //             ...prevState.profile_info,
-    //             current_user_is_following: !this.state.profile_info.current_user_is_following
-    //         }
-    //     }));
-    // }
-
-    // incrementFollowers(num) {
-    //     this.setState(prevState => ({
-    //         profile_info: {
-    //             ...prevState.profile_info,
-    //             followerCount: this.state.profile_info.followerCount + num
-    //         }
-    //     }));
-    // }
-
-    // EFFECTS: Manages the data set on the profile page depending on if it's the current users profile or another user's
-    // refreshUserInfo() {
-    //     const url = this.props.match.url.split("/")[1] == "people" ? `${process.env.REACT_APP_API_URL}/api/v1/users/${this.props.match.params.username}` : 
-    //                                                                  `${process.env.REACT_APP_API_URL}/api/v1/profile`;
-    //     setTimeout(() => {
-    //         axios.get(url)
-    //         .then(res => {
-    //             const isLoggedIn = Auth().isAuthenticated();
-    //             const profile_info = res.data.user;
-    //             const new_profile_info = isLoggedIn && profile_info.is_current_user_profile ? profile_info : [];
-                
-    //             this.setState({ profile_info, new_profile_info, edit: false, loading: false });
-    //         })
-    //         .catch(err => {
-    //             console.log(err);
-    //         });
-    //     }, 500);
-    // }
-
-    // toggleEdit() {
-    //     this.setState({ edit: !this.state.edit });
-    // }
-
-    // handleUserInfoChange(event) {
-    //     const target = event.target;
-    //     const value = target.value;
-    //     const name = target.name;
-
-    //     this.setState(prevState => ({
-    //         // ...prevState,
-    //         new_profile_info: {
-    //             ...prevState.new_profile_info,
-    //             [name]: value
-    //         },
-    //         loading: true
-    //     })); 
-    // }
-
-    // handleTab = tab => _ => {
-    //     console.log(tab);
-    //     this.setState({ tab });
-    // }
-
     setBannerUrl(banner_url: string | null) {
         this.setState({
             user: {
@@ -274,9 +184,9 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
             this.setState({
                 user: {
                     ...this.state.user,
-                    current_user_followed: true
+                    current_user_followed: true 
                 }
-            }, onSuccess);
+            }, () => this.getUser(onSuccess));
         }, onError);
     }
 
@@ -287,7 +197,7 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
                     ...this.state.user,
                     current_user_followed: false
                 }
-            }, onSuccess);
+            }, () => this.getUser(onSuccess));
         }, onError);
     }
 
@@ -382,7 +292,7 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
                                                         </div>
                                                     )
                                                     break;
-                                                case IProfileTab.Following:
+                                                case IProfileTab.Followers:
                                                     return (
                                                         <div>
                                                             {user.followers.map((user, index) => {

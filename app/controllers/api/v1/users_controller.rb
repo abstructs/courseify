@@ -1,6 +1,6 @@
 class Api::V1::UsersController < ApplicationController
   # skip_before_action :verify_authenticity_token
-  before_action :authenticate_user, only: [:profile, :update, :profile, :delete_banner, :follow, :unfollow]
+  before_action :authenticate_user, only: [:profile, :update, :delete_banner, :follow, :unfollow]
   
   def index
     @users = User.select(User.column_names - ['password_digest', 'created_at', 'updated_at', 'sign_in_count'])
@@ -156,7 +156,11 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def current_user_followed user
-    if current_user then current_user.following? user else false end
+    if current_user 
+      current_user.following? user 
+    else 
+      false 
+    end
   end
 
   def banner_url user

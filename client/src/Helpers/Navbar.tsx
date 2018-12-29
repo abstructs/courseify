@@ -8,7 +8,8 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import { Menu, Fade, ClickAwayListener } from '@material-ui/core';
+import { Menu, MenuItem, MenuList } from '@material-ui/core';
+import { Link } from 'react-router-dom';
 
 const styles = {
     root: {
@@ -21,19 +22,33 @@ const styles = {
         marginLeft: -12,
         marginRight: 20,
     },
+    menuItem: {
+        textDecoration: 'none', 
+        border: 'none'
+    },
+    menuItemFocused: {
+        textDecoration: 'none'
+    },
+    menuList: {
+        margin: "-8px 0 -8px 0",
+        padding: "0 !important"
+    }
 };
 
 interface IPropTypes {
     classes: {
         flex: string,
         root: string,
-        menuButton: string
+        menuButton: string,
+        menuItem: string,
+        menuList: string
     },
     isAuthenticated: () => boolean
 }
 
 interface IStateTypes {
-    anchorEl: (HTMLElement | null);
+    anchorEl: (HTMLElement | null),
+    menuOpen: boolean
 }
 
 class Navbar extends React.Component<IPropTypes, IStateTypes> {
@@ -42,11 +57,24 @@ class Navbar extends React.Component<IPropTypes, IStateTypes> {
 
         this.state = {
             anchorEl: null,
+            menuOpen: false
         };
     }
 
-    handleClick(event: React.MouseEvent<HTMLElement>) {
-        this.setState({ anchorEl: event.currentTarget });
+    openMenu(event: React.MouseEvent<HTMLElement>) {
+        // this.setState({ anchorEl: event.currentTarget });
+        event.preventDefault();
+        
+        this.setState({
+            menuOpen: true,
+            anchorEl: event.currentTarget
+        });
+    }
+
+    closeMenu() {
+        this.setState({
+            menuOpen: false
+        });
     }
 
     handleClose() {
@@ -68,25 +96,43 @@ class Navbar extends React.Component<IPropTypes, IStateTypes> {
             <div className={classes.root}>
                 <AppBar position="static" color="primary">
                     <Toolbar>
-                        <IconButton onClick={(e) => this.handleClick(e)} className={classes.menuButton} color="inherit" aria-label="Menu">
+                        <IconButton
+                            onClick={(e: React.MouseEvent<HTMLElement>) => this.openMenu(e)} 
+                            className={classes.menuButton} 
+                            color="inherit" 
+                            aria-label="Menu"
+                            aria-owns={anchorEl ? 'simple-menu' : undefined}
+                            aria-haspopup="true"
+                        >
                             <MenuIcon />
+                        </IconButton>
                             <Menu
                                 id="fade-menu"
                                 anchorEl={anchorEl}
                                 open={Boolean(anchorEl)}
-                                disableAutoFocus
-                                // onClose={() => this.handleClose()}   
-                                TransitionComponent={Fade}
-                            >
-                                <ClickAwayListener onClickAway={() => {}}>
-                                    <div>
-                                        <Button style={{ marginLeft: "5px", marginRight: "5px" }} size="medium" href="/profile">Profile</Button>
-                                        <br/>
-                                        <Button style={{ marginLeft: "5px", marginRight: "5px" }} size="medium" href="/courses">Courses</Button>
-                                    </div>
-                                </ClickAwayListener>
+                                disableAutoFocus={true}
+                                onClose={() => this.handleClose()}   
+                                // TransitionComponent={Fade}
+                            >   
+                                <MenuList className={classes.menuList}>
+                                    <Link to='/profile' className={classes.menuItem}>
+                                        <MenuItem>Profile</MenuItem>
+                                    </Link>
+                                    <Link to='/courses' className={classes.menuItem}>
+                                        <MenuItem>Courses</MenuItem>
+                                    </Link>
+                                </MenuList>
+                                
+                                {/* <ClickAwayListener onClickAway={() => {}}> */}
+                                    {/* <div> */}
+                                        
+                                        {/* <Button style={{ marginLeft: "5px", marginRight: "5px" }} size="medium" href="/profile">Profile</Button> */}
+                                        {/* <br/> */}
+                                        {/* <Button style={{ marginLeft: "5px", marginRight: "5px" }} size="medium" href="/courses">Courses</Button> */}
+                                    {/* </div> */}
+                                {/* </ClickAwayListener> */}
                             </Menu>
-                        </IconButton>
+                        {/* </IconButton> */}
                         <Typography variant="title" color="inherit" className={classes.flex}>
                             Courseify
                     </Typography>

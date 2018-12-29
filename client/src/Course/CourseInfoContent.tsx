@@ -40,7 +40,7 @@ class CourseInfoContent extends React.Component<IPropTypes, {}> {
                     <Typography component="p" style={{marginBottom: "20px"}} gutterBottom> 
                         {course.description}
                     </Typography>
-                    <Button target="_blank" href={`http://${course.url}`} variant="contained" color="primary" style={{float: "right"}}>
+                    <Button target="_blank" href={`${course.url}`} variant="contained" color="primary" style={{float: "right"}}>
                         <AddCircleIcon style={{marginRight: "10px"}} />
                         Take Course
                     </Button>

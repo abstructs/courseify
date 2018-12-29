@@ -38,8 +38,6 @@ class UserCard extends React.Component<IPropTypes, {}>{
         // className={classes.card}
         // className={classes.media}
 
-        console.log(this.state)
-
         return (
             <Card style={{margin: "20px"}} >
                 <CardMedia
@@ -62,7 +60,7 @@ class UserCard extends React.Component<IPropTypes, {}>{
                     </Typography>
                 </CardContent>
                 <CardActions>
-                    <Button href={`/people/${user.username}`} size="small" color="primary">
+                    <Button href={`/profile/${user.username}`} size="small" color="primary">
                         Check Out Their Profile
                     </Button>
                     <Button size="small" color="primary">

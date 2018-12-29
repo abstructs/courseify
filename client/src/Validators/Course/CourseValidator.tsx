@@ -55,7 +55,7 @@ export class CourseValidator extends Validator<ICourseForm, ICourseFormErrors> {
         const errors = new Array<String>();
 
         if(super.isValidUrl(this.getCourseUrl())) {
-            errors.push("Not a valid url");
+            errors.push("Not a valid url, did you specify http/https?");
         }
 
         return errors;

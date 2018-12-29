@@ -211,12 +211,20 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
         }, this.closeEditForm);
     }
 
-    unrecommend() {
-        this.props.unrecommendCourse(this.state.course.id, () => this.refresh(), () => this.refresh());
-    }
+    // unrecommend() {
+    //     this.props.unrecommendCourse(this.state.course.id, () => this.refresh(), () => this.refresh());
+    // }
 
-    recommend() {
-        this.props.recommendCourse(this.state.course.id, () => this.refresh(), () => this.refresh());
+    // recommend() {
+    //     this.props.recommendCourse(this.state.course.id, () => this.refresh(), () => this.refresh());
+    // }
+
+    handleRecommend() {
+        if(this.state.course.current_user_recommended) {
+            this.props.unrecommendCourse(this.state.course.id, () => this.refresh(), () => this.refresh());
+        } else {
+            this.props.recommendCourse(this.state.course.id, () => this.refresh(), () => this.refresh());
+        }
     }
 
     // setImageUrl(new_url) {
@@ -328,11 +336,12 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
 
                 <CardActions className={classes.actions} disableActionSpacing>
                     <IconButton color={course.current_user_recommended ? "secondary" : "default"} 
+                        onClick={() => this.handleRecommend()}
                         aria-label="Recommend this course"
                         //disabled={refreshing}
                     >
                         <FavoriteIcon 
-                            onClick={() => course.current_user_recommended ? this.unrecommend() : this.recommend()}
+                            
                         />
                     </IconButton>
                         {/*  */}

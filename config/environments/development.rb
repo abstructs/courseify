@@ -54,4 +54,7 @@ Rails.application.configure do
 
   # default mailer url
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+
+  # token options
+  config.token_lifetime = 7.days
 end

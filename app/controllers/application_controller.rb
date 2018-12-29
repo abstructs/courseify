@@ -1,15 +1,6 @@
 class ApplicationController < ActionController::API
     include Knock::Authenticable
 
-    def lol_hi
-        # authenticate_user
-        # puts "hello"
-        # puts current_user
-        
-        # puts current_user
-        # current_user
-    end
-
     private
 
     def error_messages(entity, type="danger")

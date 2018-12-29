@@ -10,23 +10,6 @@ import { Variant } from 'src/Helpers/AppSnackbar';
 const bookImage = require('../../images/book.jpeg');
 
 const styles = ({ palette, spacing }: Theme) => createStyles({
-    // root: {
-    //   flexGrow: 1,
-    // },
-    // paper: {
-    //   padding: spacing.unit * 2,
-    //   textAlign: 'center',
-    //   color: palette.text.secondary,
-    // },
-    // container: {
-    //     display: 'flex',
-    //     flexWrap: 'wrap',
-    // },
-    //     textField: {
-    //     marginLeft: spacing.unit,
-    //     marginRight: spacing.unit,
-    //     width: "25%",
-    // },
     mediaFab: {
         float: "right", 
         marginTop: "-75px", 
@@ -34,17 +17,11 @@ const styles = ({ palette, spacing }: Theme) => createStyles({
     },
     media: {
         height: 0,
-        // paddingTop: '56.25%', // 16:9
         paddingTop: '30%', // 16:9
-        // maxHeight: "200px"
     },
-    cardContent: {
-
-    }
 });
 
 interface IStateTypes {
-    // user: IUser,
     editMode: boolean
 }
 
@@ -57,7 +34,6 @@ interface IPropTypes {
     openEdit: () => void,
     classes: {
         media: string,
-        cardContent: string,
         // button: string,
         mediaFab: string
     }
@@ -72,55 +48,6 @@ class ProfileInfoContent extends React.Component<IPropTypes, IStateTypes> {
         }
     }
 
-    // handleFollow(e) {
-    //     const { profile } = this.state;
-
-    //     if(profile.current_user_is_following) {
-    //         this.unfollow(profile.id);
-    //     } else {
-    //         this.follow(profile.id);
-    //     }
-    // }
-
-    // follow(user_id) {
-    //     axios.post(`${process.env.REACT_APP_API_URL}/api/v1/follows`, { user_id })
-    //     .then(res => {
-    //         this.setState(prevState => ({ 
-    //             profile: {
-    //                 ...prevState.profile,
-    //                 current_user_is_following: true
-    //             }
-    //         }))
-    //     })
-    //     .then(_ => {
-    //         this.props.incrementFollowers(1);
-    //     })
-    //     .then(_ => this.props.toggleCurrentUserIsFollowing());
-    // }
-
-    // unfollow(user_id) {
-    //     if(this.state.is_current_user_profile) return;
-    //     axios.delete(`${process.env.REACT_APP_API_URL}/api/v1/follows/` + user_id)
-    //     .then(res => {
-    //         this.setState(prevState => ({ 
-    //             profile: {
-    //                 ...prevState.profile,
-    //                 current_user_is_following: false
-    //             }
-    //         }))
-    //     })
-    //     .then(_ => {
-    //         this.props.incrementFollowers(-1);
-    //     })
-    //     .then(_ => this.props.toggleCurrentUserIsFollowing());
-    // }
-
-    // toggleEditMode() {
-    //     this.setState({
-    //         editMode: !this.state.editMode
-    //     });
-    // }
-
     handleFollow() {
         if(this.props.user.current_user_followed) {
             this.props.unfollowUser(this.props.user.id, () => {}, () => {})
@@ -131,10 +58,7 @@ class ProfileInfoContent extends React.Component<IPropTypes, IStateTypes> {
 
     render() {
         const { classes, user, getCurrentUser } = this.props;
-        // const { editMode } = this.state;
 
-        // const isLoggedIn = Auth().isAuthenticated();
-        // const is_current_user_profile = isLoggedIn ? Auth().paraseJwt().sub.user.id === profile.id : false;
         const currentUser = getCurrentUser();
 
         const is_current_user_profile = currentUser != null && currentUser.id === user.id;
@@ -147,17 +71,10 @@ class ProfileInfoContent extends React.Component<IPropTypes, IStateTypes> {
                     image={user.image && user.image.file && user.image.imageUrl || user.banner_url || bookImage}
                     title="Contemplative Reptile"
                 />
-                <CardContent className={classes.cardContent}>
+                <CardContent>
                     <Typography gutterBottom variant="headline" component="h2">
                         @{user.username} <br/> {user.first_name} {user.last_name}
-                        {/* {user.is_current_user_profile ? 
-                            <div></div>
-                        :
-                            isLoggedIn &&
-                                <Button onClick={this.handleFollow.bind(this)} style={{marginLeft: "15px"}}>
-                                    {profile.current_user_is_following ? "Unfollow" : "Follow"}
-                                </Button>
-                        } */}
+
                         {currentUser && currentUser.id != user.id &&
                             <Button onClick={() => this.handleFollow()} style={{marginLeft: "15px"}}>
                                 {user.current_user_followed ? "Unfollow" : "Follow"}
