@@ -6,9 +6,9 @@ class Recommendation < ApplicationRecord
   def as_json(options={})
     super(options.merge(
       include: {
-        course: { 
+        course: {
           include: {
-            recommendations: { 
+            recommenders: { 
               include: { 
                 user: { 
                   only: [:id, :username] 

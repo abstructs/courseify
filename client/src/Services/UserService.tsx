@@ -1,7 +1,7 @@
 import { Service } from './Service';
 import axios, { AxiosResponse } from 'axios';
 import * as Cookies from 'js-cookie';
-import { IImage } from './CourseService';
+import { IImage, ICourse } from './CourseService';
 
 export interface ISignupForm {
     email: string,
@@ -67,6 +67,13 @@ export interface IUserProfile {
     followers: Array<IUser>
 }
 
+export interface IRecommendation {
+    id: number,
+    user_id: number,
+    course_id: number,
+    course: ICourse
+}
+
 export interface IUser {
     id: number,
     email: string,
@@ -82,7 +89,8 @@ export interface IUser {
     image: IImage,
     current_user_followed: boolean,
     followers: Array<IUser>,
-    following: Array<IUser>
+    following: Array<IUser>,
+    recommendations: Array<IRecommendation>
 }
 
 export interface ICurrentUser {
@@ -98,6 +106,10 @@ export class UserService extends Service {
     public getOne(username: string, onSuccess: (user: IUser) => void, onError: () => void) {
         axios.get(`${super.getApiUrl()}/api/v1/users/${username}`, 
             { headers: { ...super.getAuthHeader() }})
+        .then(res => {
+            console.log(res);
+            return res;
+        })
         .then(res => res.data.user)
         .then(onSuccess)
         .catch(onError);
@@ -106,6 +118,10 @@ export class UserService extends Service {
     public getCurrentUserProfile(onSuccess: (user: IUser) => void, onError: () => void) {
         axios.post(`${super.getApiUrl()}/api/v1/users/profile`, {},
             { headers: { ...super.getAuthHeader() }})
+        .then(res => {
+            console.log(res);
+            return res;
+        })
         .then(res => res.data.user)
         .then(onSuccess)
         .catch(onError);

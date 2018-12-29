@@ -22,70 +22,30 @@ import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 import { UserService, ICurrentUser } from './Services/UserService';
 import HomePage from './Home/containers/HomePage';
 import ProfileComponent from './Profile/components/ProfileComponent';
+import CourseShow from './Course/CourseShow';
 // import Auth from './User/Auth';
 
 // import RecommendationCreateModal from './Recommendation/RecommendationCreateModal';
 
 const blueTheme = createMuiTheme({
   palette: {
+    type: 'dark',
     primary: {
-      light: '#5472d3',
-      main: '#0d47a1',
-      dark: '#002171',
+      light: '#ff5131',
+      main: '#d50000',
+      dark: '#9b0000',
       contrastText: '#ffffff',
     },
     secondary: {
-      light: '#819ca9',
-      main: '#546e7a',
-      dark: '#29434e',
+      light: '#fd558f',
+      main: '#c51162',
+      dark: '#8e0038',
       contrastText: '#ffffff'
     },
   },
 });
 
-// const pinkTheme = createMuiTheme({
-//   palette: {
-//     primary: {
-//       light: '#e35183',
-//       main: '#ad1457',
-//       dark: '#78002e',
-//       contrastText: '#ffffff',
-//     },
-//     secondary: {
-//       light: '#9a67ea',
-//       main: '#673ab7',
-//       dark: '#320b86',
-//       contrastText: '#ffffff'
-//     },
-//   },
-// });
-
-// const darkTheme = createMuiTheme({
-//   palette: {
-//     primary: {
-//       light: '#4f5b62',
-//       main: '#263238',
-//       dark: '#000a12',
-//       contrastText: '#ffffff',
-//     },
-//     secondary: {
-//       light: '#ffc947',
-//       main: '#ff9800',
-//       dark: '#c66900',
-//       contrastText: '#000000'
-//     },
-//   },
-// });
-
-// const requireAuth = () => {
-//   if(!localStorage.getItem('token')) {
-//     <Redirect to={'/login'}/>
-//   }
-// }
-
 const userService: UserService = new UserService();
-
-// const isAuthenticated: () => boolean = () => userService.isAuthenticated();
 
 const getCurrentUser: () => ICurrentUser | null = () => userService.getCurrentUser();
 
@@ -100,9 +60,8 @@ const App = () => (
 
       <Route exact path="/courses" component={(props: any) => <CourseComponent getCurrentUser={() => getCurrentUser()} {...props} />} />
 
-      {/* <Route path="/courses/:id" component={CourseContainer} /> */}
+      <Route path="/courses/:id" component={(props: any) => <CourseShow getCurrentUser={() => getCurrentUser()} {...props} />} />
 
-      {/* <Route strict exact path="/people" component={ProfileContainer} /> */}
       {/* <Route strict exact path="/profile/recommendations" component={RecommendationsContainer}/> */}
       <Route exact path="/profile" component={(props: any) => <ProfileComponent getCurrentUser={() => getCurrentUser()} {...props} />} />
       <Route strict exact path="/profile/:username" component={(props: any) => <ProfileComponent getCurrentUser={() => getCurrentUser()} {...props} />} />

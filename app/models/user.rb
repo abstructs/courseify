@@ -2,7 +2,12 @@ class User < ApplicationRecord
   attr_accessor :banner_url
   attr_accessor :current_user_followed
 
-  has_many :recommendations, dependent: :destroy
+  has_many :course_recommendations, class_name: "Recommendation",
+                                    foreign_key: "user_id", 
+                                    dependent: :destroy
+
+  # alias_method :recommendations, :user_recommendations
+
   has_many :active_follows, class_name: "Follow",
                             foreign_key: "follower_id",
                             dependent: :destroy
@@ -74,28 +79,23 @@ class User < ApplicationRecord
     { sub: { user: { id: self.id, email: self.email } } }
   end
 
+  # : {
+  #   include: [:course]
+  # }
+
+  def recommendations
+    course_recommendations.as_json
+  end
+
   def as_json (options={})
     super(options.merge({
-      methods: [:banner_url, :current_user_followed],
-      include: [:followers, :following],
+      methods: [:banner_url, :current_user_followed, :recommendations],
+      include: [
+        :followers, 
+        :following
+      ],
       except: [:password_digest, :email]
     }))
-  #   super(options.merge({
-  #     include: [:followers]
-  #   }))
-
-  # #   super(options.merge({
-  # #     methods: [:banner_url],
-  # #     include: {
-  # #       recommendations: { 
-  # #         include: {
-  # #           user: {
-  # #             only: [:id, :username] 
-  # #           } 
-  # #         } 
-  # #       }
-  # #     }
-  # #   }))
   end
 
   private

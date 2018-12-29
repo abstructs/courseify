@@ -211,7 +211,6 @@ class CourseEditExpansion extends React.Component<IPropTypes, IStateTypes> {
         })
     }
 
-    // setImageUrl(url)
     render() {
         const { classes } = this.props;
         const { errors, loading, deleteImageDialogOpen } = this.state;
@@ -219,17 +218,6 @@ class CourseEditExpansion extends React.Component<IPropTypes, IStateTypes> {
         const { title, author, category, url, description, image } = this.state.form;
 
         const saveBtnClassName = this.thereAreNoErrors() ? "" : classes.buttonError;
-
-        // const image_url = this.state.course.image_url;
-
-        // const shouldMarkError = {
-        //     title: this.shouldMarkError("title"),
-        //     author: this.shouldMarkError("author"),
-        //     url: this.shouldMarkError("url"),
-        //     description: this.shouldMarkError("description"),
-        //     category: this.shouldMarkError("category"),
-        //     image: this.shouldMarkError("image"),
-        // }
 
         return (
             <div>

@@ -11,6 +11,7 @@ import ProfileContent from './ProfileContent';
 import AppSnackbar, { Variant } from '../../Helpers/AppSnackbar';
 import { IImage } from 'src/Services/CourseService';
 import UserCard from 'src/User/UserCard';
+import CourseCard from 'src/Course/CourseCard';
 
 // const bookImage = require('../../images/book.jpeg');
 
@@ -18,29 +19,6 @@ const styles = ({ spacing, palette }: Theme) => ({
     root: {
       flexGrow: 1,
     },
-    // paper: {
-    //   padding: spacing.unit * 2,
-    //   textAlign: 'center',
-    //   color: palette.text.secondary,
-    // },
-    // container: {
-    //     display: 'flex',
-    //     flexWrap: 'wrap',
-    // },
-    // textField: {
-    //     marginLeft: spacing.unit,
-    //     marginRight: spacing.unit,
-    //     width: "25%",
-    // },
-    // media: {
-    //     height: 0,
-    //     // paddingTop: '56.25%', // 16:9
-    //     paddingTop: '30%', // 16:9
-    //     // maxHeight: "200px"
-    // },
-    // cardContent: {
-    //     // width: "500px"
-    // },
     card: {
 
     }
@@ -70,7 +48,8 @@ interface IStateTypes {
 enum IProfileTab {
     Main = 1,
     Following = 2, 
-    Followers = 3
+    Followers = 3,
+    Recommendations = 4
 }
 
 const defaultImageState: IImage = {
@@ -106,7 +85,8 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
                 image: defaultImageState,
                 current_user_followed: false,
                 followers: [],
-                following: []
+                following: [],
+                recommendations: []
             },
             userFound: false,
             loading: true
@@ -229,8 +209,6 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
             )
         }
 
-        console.log(user)
-
         return (
             <div className={classes.root}>
                 <AppSnackbar setOpenSnackbar={this.setShowSnackbar.bind(this)} />
@@ -260,8 +238,8 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
                                 <Card className={classes.card}>
                                     <AppBar position="static">
                                         <Tabs value={this.state.tab} >  
-                                        {/* onClick={this.handleTab(1).bind(this)}  */}
                                             <Tab onClick={() => this.handleTab(IProfileTab.Main)} value={IProfileTab.Main} label="Info" />
+                                            <Tab onClick={() => this.handleTab(IProfileTab.Recommendations)} value={IProfileTab.Recommendations} label="Recommendations" />
                                             <Tab onClick={() => this.handleTab(IProfileTab.Following)} value={IProfileTab.Following} label={`Following (${user.following ? user.following.length : 0})`} />
                                             <Tab onClick={() => this.handleTab(IProfileTab.Followers)} value={IProfileTab.Followers} label={`Followers (${user.followers ? user.followers.length : 0})`} />
                                         </Tabs>
@@ -283,6 +261,25 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
                                                             updateUser={(form: IEditUserForm, onSuccess: () => void, onError: () => void) => this.updateUser(form, onSuccess, onError)} 
                                                         /> 
                                                     );
+                                                case IProfileTab.Recommendations:
+                                                    return (
+                                                        <Grid container spacing={0}>
+                                                            <Grid item md={3}></Grid>
+                                                            {user.recommendations.map((recommendation, index) => {
+                                                                return (
+                                                                    <Grid item xs={6}>
+                                                                        <CourseCard 
+                                                                            key={index}
+                                                                            currentUser={this.props.getCurrentUser()}
+                                                                            course={recommendation.course} 
+                                                                            showSnackbar={(message: string, variant: Variant) => this.showSnackbar(message, variant)}
+                                                                        />
+                                                                    </Grid>
+                                                                );
+                                                            })}
+                                                            <Grid item md={3}></Grid>
+                                                        </Grid>
+                                                    );
                                                 case IProfileTab.Following:
                                                     return (
                                                         <div>
@@ -290,8 +287,7 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
                                                                 return <UserCard key={index} user={user} />;
                                                             })}
                                                         </div>
-                                                    )
-                                                    break;
+                                                    );
                                                 case IProfileTab.Followers:
                                                     return (
                                                         <div>
@@ -299,7 +295,7 @@ class ProfileComponent extends React.Component<IPropTypes, IStateTypes> {
                                                                 return <UserCard key={index} user={user} />;
                                                             })}
                                                         </div>
-                                                    )
+                                                    );
                                                 default:
                                                     return <div></div>;
                                             }  

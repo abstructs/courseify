@@ -1,8 +1,4 @@
-/* tslint:disable */
-
 import * as React from 'react';
-
-// import { CardHeader, CardActions, Collapse, Card, Button, IconButton, Avatar, Dialog, DialogTitle, DialogActions, LinearProgress, DialogContent, TextField, DialogContentText, withStyles } from '@material-ui/core';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import DoneIcon from '@material-ui/icons/Done';
@@ -10,13 +6,11 @@ import EditIcon from '@material-ui/icons/Create';
 import DeleteIcon from '@material-ui/icons/Delete';
 import PeopleIcon from '@material-ui/icons/SupervisorAccount';
 import PersonIcon from '@material-ui/icons/Person';
-// import CourseEditContent from './CourseEditContent';
 
 import CourseInfoContent from './CourseInfoContent';
 
-// import RecommendationDialog from '../Recommendation/RecommendationDialog';
-import { ICourse, IEditCourseForm, IImage } from 'src/Services/CourseService';
-// Collapse
+import { ICourse, IEditCourseForm, IImage, CourseService } from 'src/Services/CourseService';
+
 import { Card, Dialog, DialogTitle, DialogActions, Button, DialogContent, DialogContentText, TextField, CardHeader, Avatar, CardActions, withStyles, IconButton, Collapse, List, ListItem, ListItemAvatar, ListItemText } from '@material-ui/core';
 import CourseEditContent from './CourseEditExpansion';
 import { ICurrentUser } from 'src/Services/UserService';
@@ -25,7 +19,6 @@ import { blue } from '@material-ui/core/colors';
 
 const styles = {
     card: {
-        // maxWidth: 800,
         marginBottom: "40px"
     },
     actions: {
@@ -41,12 +34,12 @@ interface IPropTypes {
     course: ICourse,
     currentUser: ICurrentUser | null,
     showSnackbar: (message: string, variant: Variant) => void,
-    unrecommendCourse: (courseId: number, onSuccess: () => void, onError: () => void) => void,
-    recommendCourse: (courseId: number, onSuccess: () => void, onError: () => void) => void,
-    updateCourse: (form: IEditCourseForm, onSuccess: () => void, onError: () => void) => void,
-    deleteCourse: (courseId: number, onSuccess: () => void, onError: () => void) => void,
-    deleteImage: (courseId: number, onSuccess: () => void, onError: () => void) => void,
-    getCourse: (courseId: number, onSuccess: (course: ICourse) => void, onError: () => void) => void,
+    // unrecommendCourse: (courseId: number, onSuccess: () => void, onError: () => void) => void,
+    // recommendCourse: (courseId: number, onSuccess: () => void, onError: () => void) => void,
+    // updateCourse: (form: IEditCourseForm, onSuccess: () => void, onError: () => void) => void,
+    // deleteCourse: (courseId: number, onSuccess: () => void, onError: () => void) => void,
+    // deleteImage: (courseId: number, onSuccess: () => void, onError: () => void) => void,
+    // getCourse: (courseId: number, onSuccess: (course: ICourse) => void, onError: () => void) => void,
     classes: {
         card: string,
         avatar: string,
@@ -73,6 +66,8 @@ const defaultImageState: IImage = {
 }
 
 class CourseCard extends React.Component<IPropTypes, IStateTypes> {
+
+    private courseService: CourseService;
     constructor(props: IPropTypes) {
         super(props);
 
@@ -86,6 +81,32 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
             openRecommendations: false,
             openShare: false
         }
+
+        this.courseService = new CourseService();
+    }
+
+    getCourse(courseId: number, onSuccess: (course: ICourse) => void, onError: () => void) {
+        this.courseService.getOne(courseId, onSuccess, onError);
+    }
+
+    recommendCourse(courseId: number, onSuccess: () => void, onError: () => void) {
+        this.courseService.recommendCourse(courseId, onSuccess, onError);
+    }
+
+    unrecommendCourse(courseId: number, onSuccess: () => void, onError: () => void) {
+        this.courseService.unrecommendCourse(courseId, onSuccess, onError);
+    }
+
+    updateCourse(form: IEditCourseForm, onSuccess: (course: IEditCourseForm) => void, onError: () => void) {
+        this.courseService.updateCourse(form, onSuccess, onError);
+    }
+
+    deleteCourse(courseId: number, onSuccess: () => void, onError: () => void) {
+        this.courseService.deleteCourse(courseId, onSuccess, onError);
+    }
+
+    deleteImage(courseId: number, onSuccess: () => void, onError: () => void) {
+        this.courseService.deleteCourseImage(courseId, onSuccess, onError);
     }
 
     expandEditForm() {
@@ -106,22 +127,13 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
         this.setState({ deleteDialogOpen: true });
     }
 
-    deleteCourse() {
-        this.props.deleteCourse(this.state.course.id, () => {
+    handleDelete() {
+        this.deleteCourse(this.state.course.id, () => {
             this.setState({ deleted: true });
             this.props.showSnackbar("Course has been deleted", Variant.Success);
         }, () => {
             this.props.showSnackbar("Something went wrong", Variant.Error);
         });
-
-        console.log("delete");
-        // axios.delete(`${process.env.REACT_APP_API_URL}/api/v1/courses/${this.state.course.id}`)
-        // .then(res => {
-        //     this.setState({ refreshing: true, deleteDialogOpen: false }, _ => setTimeout(_ => {
-        //         this.setState({ deleted: true })
-        //         this.props.showSnackbar("Successfully deleted course", "success");
-        //     }, 1000));
-        // });
     }
 
     handleDeleteCancel() {
@@ -144,7 +156,7 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
     }
 
     refresh() {
-        this.props.getCourse(this.state.course.id, (course: ICourse) => {
+        this.getCourse(this.state.course.id, (course: ICourse) => {
             this.setState({
                 course: {
                     ...course
@@ -211,32 +223,13 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
         }, this.closeEditForm);
     }
 
-    // unrecommend() {
-    //     this.props.unrecommendCourse(this.state.course.id, () => this.refresh(), () => this.refresh());
-    // }
-
-    // recommend() {
-    //     this.props.recommendCourse(this.state.course.id, () => this.refresh(), () => this.refresh());
-    // }
-
     handleRecommend() {
         if(this.state.course.current_user_recommended) {
-            this.props.unrecommendCourse(this.state.course.id, () => this.refresh(), () => this.refresh());
+            this.unrecommendCourse(this.state.course.id, () => this.refresh(), () => this.refresh());
         } else {
-            this.props.recommendCourse(this.state.course.id, () => this.refresh(), () => this.refresh());
+            this.recommendCourse(this.state.course.id, () => this.refresh(), () => this.refresh());
         }
     }
-
-    // setImageUrl(new_url) {
-    //     console.log("set url called")
-    //     this.setState(prevState => ({
-    //         // ...prevState,
-    //         course: {
-    //             ...prevState.course,
-    //             image_url: new_url
-    //         }
-    //     })); 
-    // }
  
     render() {
         const { classes, currentUser } = this.props;
@@ -251,32 +244,29 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
 
         return (
             <Card className={classes.card}>
-                {/* <SimpleSnackbar message={"hi"} /> */}
-
-                {/* <RecommendationDialog recommendations={course.recommendations} onClose={() => this.closeRecommendationsDialog()} course_id={course.id} open={this.state.openRecommendations} /> */}
                 <Dialog onClose={() => this.closeRecommendationsDialog()} open={openRecommendations}>
-                <DialogTitle id="simple-dialog-title">People Who Recommended This Course</DialogTitle>
-                <div>
-                    <List>
-                    {course.recommendations.map(recommendation => (
-                        <ListItem key={recommendation.id}>
-                            <ListItemAvatar>
-                                <Avatar className={`${classes.userAvatar}`}>
-                                    <PersonIcon />
-                                </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText primary={recommendation.user.username} />
-                            <Button href={`/profile/${recommendation.user.username}`}>View Profile</Button>
-                        </ListItem>
-                    ))}
-                    </List>
-                </div>
-            </Dialog>
+                    <DialogTitle id="simple-dialog-title">People Who Recommended This Course</DialogTitle>
+                    <div>
+                        <List>
+                        {course.recommenders.map((recommender, index) => (
+                            <ListItem key={index}>
+                                <ListItemAvatar>
+                                    <Avatar className={`${classes.userAvatar}`}>
+                                        <PersonIcon />
+                                    </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText primary={recommender.user.username} />
+                                <Button href={`/profile/${recommender.user.username}`}>View Profile</Button>
+                            </ListItem>
+                        ))}
+                        </List>
+                    </div>
+                </Dialog>
 
                 <Dialog open={deleteDialogOpen} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
                     <DialogTitle id="alert-dialog-title">{"Are you sure you want to remove this course?"}</DialogTitle>
                     <DialogActions>
-                        <Button onClick={() => this.deleteCourse()} color="primary" autoFocus>
+                        <Button onClick={() => this.handleDelete()} color="primary" autoFocus>
                             Yes, remove it
                         </Button>
                         <Button onClick={() => this.handleDeleteCancel()}>
@@ -297,14 +287,14 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
                             Copy the link below
                         </DialogContentText>
                         <TextField
-                        autoFocus
-                        // onFocus={() => this.handleShareFocus()}
-                        margin="normal"
-                        id="link"
-                        value={`/courses/${course.id}`}
-                        label="Copy Link"
-                        type="text"
-                        fullWidth
+                            autoFocus
+                            // onFocus={() => this.handleShareFocus()}
+                            margin="normal"
+                            id="link"
+                            value={`http://localhost:3000/courses/${course.id}`}
+                            label="Copy Link"
+                            type="text"
+                            fullWidth
                         />
                     </DialogContent>
                     <DialogActions>
@@ -338,13 +328,9 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
                     <IconButton color={course.current_user_recommended ? "secondary" : "default"} 
                         onClick={() => this.handleRecommend()}
                         aria-label="Recommend this course"
-                        //disabled={refreshing}
                     >
-                        <FavoriteIcon 
-                            
-                        />
+                        <FavoriteIcon />
                     </IconButton>
-                        {/*  */}
                     <IconButton onClick={() => this.openShareDialog()} aria-label="Share">
                         <ShareIcon color={openShare ? "secondary" : "inherit"} />
                     </IconButton>
@@ -363,12 +349,9 @@ class CourseCard extends React.Component<IPropTypes, IStateTypes> {
                         </div>
                     }
                 </CardActions>
-                {/* {refreshing && <LinearProgress />} */}
 
                 <Collapse in={editFormExpanded} timeout="auto">
-                    {/* setImageUrl={this.setImageUrl.bind(this)}  */}
-                    {/* handleEditError={this.handleEditError.bind(this)} handleEditLoading={this.handleEditLoading.bind(this)} handleEditSuccess={this.handleEditSuccess.bind(this)} handleEditExpand={this.handleEditExpand.bind(this)}  */}
-                    <CourseEditContent setImageUrl={(image_url: string) => this.setImageUrl(image_url)} deleteImage={this.props.deleteImage} setImage={(file: File) => this.setImage(file)} showSnackbar={this.props.showSnackbar} onSuccess={(newCourse: IEditCourseForm) => this.onEditSuccess(newCourse)} updateCourse={this.props.updateCourse} handleCancel={() => this.handleEditCancel()}  course={course} />
+                    <CourseEditContent setImageUrl={(image_url: string) => this.setImageUrl(image_url)} deleteImage={this.deleteImage.bind(this)} setImage={(file: File) => this.setImage(file)} showSnackbar={this.props.showSnackbar} onSuccess={(newCourse: IEditCourseForm) => this.onEditSuccess(newCourse)} updateCourse={this.updateCourse.bind(this)} handleCancel={() => this.handleEditCancel()}  course={course} />
                 </Collapse>
             </Card>
         );

@@ -30,7 +30,7 @@ export interface ICourseFormErrors {
     category: Array<String>
 }
 
-export interface IRecommendation {
+export interface IRecommender {
     id: number,
     user_id: number,
     course_id: number,
@@ -50,7 +50,7 @@ export interface ICourse {
     created_at: string,
     updated_at: string,
     current_user_recommended: boolean,
-    recommendations: Array<IRecommendation>
+    recommenders: Array<IRecommender>
 }
 
 export interface IImage {

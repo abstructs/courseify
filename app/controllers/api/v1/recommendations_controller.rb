@@ -28,7 +28,7 @@ class Api::V1::RecommendationsController < ApplicationController
 
   # POST /recommendations
   def create
-    @recommendation = current_user.recommendations.new(recommendation_params)
+    @recommendation = current_user.course_recommendations.new(recommendation_params)
     # @recommendation.user_id = current_user.id
 
     if @recommendation.save!
@@ -51,7 +51,7 @@ class Api::V1::RecommendationsController < ApplicationController
 
   # DELETE /recommendations/1
   def destroy
-    @recommendation = current_user.recommendations.find_by(recommendation_params)
+    @recommendation = current_user.course_recommendations.find_by(recommendation_params)
     @recommendation.destroy
   end
 
