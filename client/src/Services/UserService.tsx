@@ -107,7 +107,6 @@ export class UserService extends Service {
         axios.get(`${super.getApiUrl()}/api/v1/users/${username}`, 
             { headers: { ...super.getAuthHeader() }})
         .then(res => {
-            console.log(res);
             return res;
         })
         .then(res => res.data.user)
@@ -119,7 +118,6 @@ export class UserService extends Service {
         axios.post(`${super.getApiUrl()}/api/v1/users/profile`, {},
             { headers: { ...super.getAuthHeader() }})
         .then(res => {
-            console.log(res);
             return res;
         })
         .then(res => res.data.user)
@@ -164,10 +162,6 @@ export class UserService extends Service {
 
             return JSON.parse(window.atob(base64));
         }
-        // }
-        // catch(error) {
-            // return {};
-        // }
 
         return null;
     }
@@ -176,10 +170,15 @@ export class UserService extends Service {
     public getCurrentUser(): ICurrentUser | null {
         const parsedJwt = this.getParsedJwt();
 
+        
         if(parsedJwt) {
-            return {
-                id: parsedJwt['sub']["user"]['id']
-            }
+            try {
+                return {
+                    id: parsedJwt['sub']["user"]['id']
+                }
+            } catch(e) {
+                UserService.revokeToken();
+            } 
         }
         
         return null;

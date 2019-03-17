@@ -91,8 +91,6 @@ export class CourseService extends Service {
         axios.get(`${super.getApiUrl()}/api/v1/courses?category=${category}`, 
         { headers: { ...super.getAuthHeader() }})
         .then(res => { 
-            console.log("hi")
-            console.log(res.data);
             return res.data.courses;
         })
         .then(onSuccess)

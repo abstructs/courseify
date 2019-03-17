@@ -257,7 +257,7 @@ class HomePage extends React.Component<IPropTypes, IStateTypes> {
                     {  this.state.tab == ITab.People ? 
                             <Paper style={{paddingTop: "20px", paddingBottom: "20px", marginTop: "20px"}}>
                                 <div>
-                                    <Typography style={{marginTop: "50px", color: "black"}} align="center" variant="display1">
+                                    <Typography style={{marginTop: "50px"}} align="center" variant="display1">
                                         New People
                                     </Typography>
                                         {this.state.users.map((user: any) => {
