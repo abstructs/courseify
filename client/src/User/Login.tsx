@@ -138,7 +138,7 @@ class Login extends React.Component<IPropTypes, IStateTypes> {
             <AppSnackbar setOpenSnackbar={this.setShowSnackbar.bind(this)} />
             <Grid container spacing={24}>
                 <Grid item xs={12}>
-                    <Typography align="center" style={{color: "black", marginTop: "50px", marginBottom: "20px"}} variant="display2">
+                    <Typography align="center" style={{marginTop: "50px", marginBottom: "20px"}} variant="display2">
                         Login
                     </Typography>
                     <Typography align="center" variant="subheading">

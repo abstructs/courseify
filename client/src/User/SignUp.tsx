@@ -155,7 +155,7 @@ class SignUp extends React.Component<IPropTypes, IStateTypes> {
 
                 <Grid container spacing={24}>
                     <Grid item xs={12}>
-                        <Typography align="center" style={{color: "black", marginTop: "50px", marginBottom: "20px"}} variant="display2">
+                        <Typography align="center" style={{marginTop: "50px", marginBottom: "20px"}} variant="display2">
                             Sign Up
                         </Typography>
                         <Typography align="center" variant="subheading">

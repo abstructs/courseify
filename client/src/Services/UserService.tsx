@@ -104,6 +104,8 @@ export class UserService extends Service {
     }
 
     public getOne(username: string, onSuccess: (user: IUser) => void, onError: () => void) {
+        console.log("get called");
+
         axios.get(`${super.getApiUrl()}/api/v1/users/${username}`, 
             { headers: { ...super.getAuthHeader() }})
         .then(res => {
@@ -115,6 +117,7 @@ export class UserService extends Service {
     }
 
     public getCurrentUserProfile(onSuccess: (user: IUser) => void, onError: () => void) {
+        console.log(super.getAuthHeader());
         axios.post(`${super.getApiUrl()}/api/v1/users/profile`, {},
             { headers: { ...super.getAuthHeader() }})
         .then(res => {
@@ -140,7 +143,8 @@ export class UserService extends Service {
         const oneWeek = new Date(new Date().setDate(today.getDate() + 7));
 
         Cookies.set("token", token, {
-            expires: oneWeek
+            expires: oneWeek,
+            path: ''
         });
     }
 
@@ -153,7 +157,6 @@ export class UserService extends Service {
     }
 
     private getParsedJwt(): object | null {
-        // try {
         const token = super.getToken();
         
         if(token) {
@@ -170,7 +173,6 @@ export class UserService extends Service {
     public getCurrentUser(): ICurrentUser | null {
         const parsedJwt = this.getParsedJwt();
 
-        
         if(parsedJwt) {
             try {
                 return {
@@ -180,6 +182,8 @@ export class UserService extends Service {
                 UserService.revokeToken();
             } 
         }
+
+        console.log
         
         return null;
     }

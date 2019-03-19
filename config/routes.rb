@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   resources :curriculums
   namespace :api do
     namespace :v1 do
+
       post 'users/user_token' => 'user_token#create'
 
       delete 'courses/:id/image' => 'courses#delete_image'
@@ -27,6 +28,7 @@ Rails.application.routes.draw do
       resources :follows, param: :user_id
       resources :recommendations
 
+      get '/*path', to: 'react#index'
     end
   end
   # devise_for :users, controllers: {
