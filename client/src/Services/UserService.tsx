@@ -117,7 +117,6 @@ export class UserService extends Service {
     }
 
     public getCurrentUserProfile(onSuccess: (user: IUser) => void, onError: () => void) {
-        console.log(super.getAuthHeader());
         axios.post(`${super.getApiUrl()}/api/v1/users/profile`, {},
             { headers: { ...super.getAuthHeader() }})
         .then(res => {
@@ -277,15 +276,13 @@ export class UserService extends Service {
             }
         }
 
+        const loginForm: ILoginForm = {
+            email: signupForm.email,
+            password: signupForm.password
+        };
+
         axios.post(`${super.getApiUrl()}/api/v1/users/`, payload)
-        .then(res => {
-            if(res.data) {
-                this.storeToken(res.data.jwt);
-            }
-            
-            return res;
-        })
-        .then(onSuccess)
+        .then(_ => this.authenticate(loginForm, onSuccess, onReject))
         .catch(onReject);
     }
 

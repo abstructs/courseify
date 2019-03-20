@@ -16,6 +16,13 @@ gem 'puma', '~> 3.11'
 # Use ActiveModel has_secure_password
 gem 'bcrypt', '~> 3.1.7'
 
+#gcloud sql
+# Added at 2017-08-07 11:54:06 -0700 by USER:
+# gem "mysql2", "~> 0.4.10"
+
+# Added at 2017-08-07 11:54:12 -0700 by USER:
+# gem "appengine", "~> 0.4.1"
+
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
 

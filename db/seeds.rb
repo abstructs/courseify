@@ -5,20 +5,3 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
-videos = Video.create([
-    {
-        title: "Video 1",
-        description: "content",
-        url: "https://google.com"
-    },
-    {
-        title: "Video 2",
-        description: "more content",
-        url: "https://google.com"
-    },
-    {
-        title: "Video 3",
-        description: "more more content",
-        url: "https://google.com"
-    }
-])

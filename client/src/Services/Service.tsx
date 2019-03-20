@@ -2,7 +2,7 @@ import * as Cookies from 'js-cookie';
 
 export abstract class Service {
     protected getApiUrl(): string {
-        return "";
+        return "http://localhost:3000";
     }
 
     protected getToken(): string | undefined {
@@ -11,7 +11,7 @@ export abstract class Service {
 
     protected getAuthHeader(): object {
         return {
-            'Authorization': `${this.getToken()}`
+            'Authorization': `Bearer ${this.getToken()}`
         };
     }
 }
