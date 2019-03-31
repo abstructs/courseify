@@ -105,8 +105,6 @@ class CourseComponent extends React.Component<IPropTypes, IStateTypes> {
         });
     }
 
-
-
     addCourse(form: IAddCourseForm, onSuccess: () => void, onError: () => void) {
         this.courseService.addCourse(form, (res) => {
             this.setState({ expanded: false}, () => this.getCourses(this.state.category, () => {
