@@ -12,11 +12,14 @@
 
 ActiveRecord::Schema.define(version: 2018_12_21_052817) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
-    t.integer "record_id", null: false
-    t.integer "blob_id", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
@@ -38,7 +41,7 @@ ActiveRecord::Schema.define(version: 2018_12_21_052817) do
     t.string "url"
     t.text "description"
     t.string "author"
-    t.integer "user_id"
+    t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "category"
@@ -49,7 +52,7 @@ ActiveRecord::Schema.define(version: 2018_12_21_052817) do
     t.string "title"
     t.string "category"
     t.text "description"
-    t.integer "user_id"
+    t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_curriculums_on_user_id"
@@ -66,10 +69,10 @@ ActiveRecord::Schema.define(version: 2018_12_21_052817) do
   end
 
   create_table "recommendations", force: :cascade do |t|
-    t.integer "user_id"
+    t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "course_id"
+    t.bigint "course_id"
     t.index ["course_id", "user_id"], name: "index_recommendations_on_course_id_and_user_id"
     t.index ["course_id"], name: "index_recommendations_on_course_id"
     t.index ["user_id"], name: "index_recommendations_on_user_id"
@@ -92,12 +95,6 @@ ActiveRecord::Schema.define(version: 2018_12_21_052817) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
-  create_table "videos", force: :cascade do |t|
-    t.string "title"
-    t.text "description"
-    t.string "url"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
+  add_foreign_key "courses", "users"
+  add_foreign_key "recommendations", "users"
 end
